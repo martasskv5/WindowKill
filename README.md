@@ -159,6 +159,7 @@ Zhrnutie projektu to jednotlivých bodov
     -   [ ] Keyboard shortcuts
         -   [ ] ESC to open pause menu
     -   [ ] Achievements (pravdepodobne zo Steamu)
+        -   [ ] get 37 monitors and unlock the Open World 
     -   [ ] Game restart
     -   [ ] Score counter
     -   [ ] ? Multiple windows - [little help here](https://www.youtube.com/watch?v=3Hye_47c0Pc)

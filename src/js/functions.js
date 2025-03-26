@@ -208,6 +208,56 @@ class GameUtils {
     }
 }
 
+/**
+ * Smoothly resizes and centers the window.
+ * @param {Object} appWindow - The Tauri app window object.
+ * @param {number} targetWidth - The target width of the window.
+ * @param {number} targetHeight - The target height of the window.
+ * @param {number} targetX - The target X position of the window.
+ * @param {number} targetY - The target Y position of the window.
+ * @param {number} durationMs - The duration of the animation in milliseconds.
+ * @returns {Promise<void>}
+ */
+async function animateWindowResizeAndCenter(appWindow, targetWidth, targetHeight, targetX, targetY, durationMs) {
+    const startTime = Date.now();
+    const startSize = await appWindow.innerSize();
+    const startPos = await appWindow.outerPosition();
+
+    const deltaWidth = targetWidth - startSize.width;
+    const deltaHeight = targetHeight - startSize.height;
+    const deltaX = targetX - startPos.x;
+    const deltaY = targetY - startPos.y;
+
+    return new Promise((resolve) => {
+        const animate = () => {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / durationMs, 1);
+
+            // Calculate new size and position using linear interpolation
+            const newWidth = startSize.width + deltaWidth * progress;
+            const newHeight = startSize.height + deltaHeight * progress;
+            const newX = startPos.x + deltaX * progress;
+            const newY = startPos.y + deltaY * progress;
+
+            // Update window size and position
+            appWindow.setSize(new LogicalSize(newWidth, newHeight)).catch(console.error);
+            appWindow.setPosition(new LogicalPosition(newX, newY)).catch(console.error);
+
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                resolve();
+            }
+        };
+
+        requestAnimationFrame(animate);
+    });
+}
+
+/**
+ * Starts the game.
+ * @param {Object} appWindow - The Tauri app window object.
+ */
 function startGame(appWindow) {
     const canvas = document.querySelector("canvas");
     const c = canvas.getContext("2d");
@@ -224,22 +274,22 @@ function startGame(appWindow) {
     let gameOver = false;
 
     const gameUtils = new GameUtils(appWindow, canvas, player, playerRadius, projectiles, gameOver);
-
+    
     player.draw(c);
     gameUtils.updateCanvasSize();
     gameUtils.centerPlayer();
-
+    
     // Resize canvas when window is resized
     window.addEventListener("resize", () => {
         gameUtils.updateCanvasSize();
         gameUtils.centerPlayer();
     });
-
+    
     // Update player position when window is moved
     appWindow.onMoved(() => {
         gameUtils.centerPlayer();
     });
-
+    
     document.addEventListener("click", (event) => {
         const angle = Math.atan2(event.clientY - player.y, event.clientX - player.x);
         const velocity = {
@@ -249,7 +299,8 @@ function startGame(appWindow) {
         projectiles.push(new C.Projectile(player.x, player.y, 5, "white", velocity));
     });
     gameUtils.animate();
+    // gameUtils.animateWindowSize(-400, -400, 3000);
     gameUtils.shrinkWindow();
 }
 
-export default startGame;
+export { startGame, animateWindowResizeAndCenter };
