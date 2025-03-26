@@ -52,8 +52,8 @@ WindowKill je strieľačka pre jedného hráča, hrá sa v okne so začiatočnou
     -   Vlastnosti nepriateľov
 -   Vytváranie nepriateľov na základe náročnosti:
     -   Môžu sa rýchlejšie pohybovať, uberať viac životov alebo mať viac životov
--   Logika pre [[01 - Appslab/windowkill/README#Nastavenia hry|Nastavenia hry]]
--   Logika pre [[01 - Appslab/windowkill/README#Používateľské rozhranie|Používateľské rozhranie]]
+-   Logika pre [[README#Nastavenia hry|Nastavenia hry]]
+-   Logika pre [[README#Používateľské rozhranie|Používateľské rozhranie]]
 -   Ukladanie najlepšieho skóre do súboru
 -   Ukladanie nastavení do súboru
 -   Ukladanie úspechov hráča do súboru
