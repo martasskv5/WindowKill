@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Jersey+20&display=swap');
+
 :root {
     font-size: 16px;
     line-height: 24px;
@@ -37,15 +39,21 @@ body {
     padding: 1rem 2rem;
     background-color: rgba(0, 0, 0, 0.7);
     border-radius: 0.5rem;
-    cursor: pointer;
+    // cursor: pointer;
     user-select: none;
     display: flex;
     flex-direction: column;
+    
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.9);
+    }
+
+    h1 {
+        font-family: "Jersey 20", sans-serif;
+        font-size: 4rem;
+    }
 }
 
-#gameStart:hover {
-    background-color: rgba(0, 0, 0, 0.9);
-}
 
 .button {
     display: block;
@@ -60,46 +68,46 @@ body {
     font-weight: bold;
     cursor: pointer;
     transition: all 0.2s ease;
-}
 
-.button:hover {
-    background-color: #2a2a2a;
-    border-color: #6d6d6d;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-}
+    &:hover {
+        background-color: #2a2a2a;
+        border-color: #6d6d6d;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    &:active {
+        transform: translateY(1px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    
+    &.green {
+        background-color: #2c7a28;
+        border-color: #3c9a38;
 
-.button:active {
-    transform: translateY(1px);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-#startButton {
-    background-color: #2c7a28;
-    border-color: #3c9a38;
-}
-
-#startButton:hover {
-    background-color: #39913a;
-    border-color: #4ab54a;
-}
-
-#optionsButton {
-    background-color: #344e81;
-    border-color: #4468a5;
-}
-
-#optionsButton:hover {
-    background-color: #445e91;
-    border-color: #5478b5;
-}
-
-#quitButton {
-    background-color: #7a2828;
-    border-color: #9a3838;
-}
-
-#quitButton:hover {
-    background-color: #913939;
-    border-color: #b54a4a;
+        &:hover {
+            background-color: #39913a;
+            border-color: #4ab54a;
+        }
+    }
+    
+    &.blue {
+        background-color: #344e81;
+        border-color: #4468a5;
+        
+        &:hover {
+            background-color: #445e91;
+            border-color: #5478b5;
+        }
+    }
+    
+    &.red {
+        background-color: #7a2828;
+        border-color: #9a3838;
+        
+        &:hover {
+            background-color: #913939;
+            border-color: #b54a4a;
+        }
+    }
 }
