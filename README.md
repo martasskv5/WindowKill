@@ -52,8 +52,8 @@ WindowKill je strieľačka pre jedného hráča, hrá sa v okne so začiatočnou
     -   Vlastnosti nepriateľov
 -   Vytváranie nepriateľov na základe náročnosti:
     -   Môžu sa rýchlejšie pohybovať, uberať viac životov alebo mať viac životov
--   Logika pre [[01 - Appslab/windowkill/README#Nastavenia hry|Nastavenia hry]]
--   Logika pre [[01 - Appslab/windowkill/README#Používateľské rozhranie|Používateľské rozhranie]]
+-   Logika pre [[README#Nastavenia hry|Nastavenia hry]]
+-   Logika pre [[README#Používateľské rozhranie|Používateľské rozhranie]]
 -   Ukladanie najlepšieho skóre do súboru
 -   Ukladanie nastavení do súboru
 -   Ukladanie úspechov hráča do súboru
@@ -121,7 +121,7 @@ WindowKill je strieľačka pre jedného hráča, hrá sa v okne so začiatočnou
 Zhrnutie projektu to jednotlivých bodov
 
 -  [ ] UI
-    -   [ ] Game start
+    -   [x] Game start
     -   [ ] Game end
         -   [ ] Different for new best score
     -   [ ] Score counter & timer
@@ -159,6 +159,7 @@ Zhrnutie projektu to jednotlivých bodov
     -   [ ] Keyboard shortcuts
         -   [ ] ESC to open pause menu
     -   [ ] Achievements (pravdepodobne zo Steamu)
+        -   [ ] get 37 monitors and unlock the Open World 
     -   [ ] Game restart
     -   [ ] Score counter
     -   [ ] ? Multiple windows - [little help here](https://www.youtube.com/watch?v=3Hye_47c0Pc)
