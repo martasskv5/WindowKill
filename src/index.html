@@ -1,20 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="stylesheet" href="style.css" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>windowkill</title>
-        <script type="module" src="main.js" defer></script>
-    </head>
 
-    <body>
-        <div id="gameStart">
-            <h1>WindowKill</h1>
-            <button class="button green" id="startButton">Start Game</button>
-            <button class="button blue" id="optionsButton">Options</button>
-            <button class="button red" id="quitButton">Exit</button>
-        </div>
-        <canvas></canvas>
-    </body>
+<head>
+	<meta charset="UTF-8" />
+	<link rel="stylesheet" href="style.css" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>windowkill</title>
+	<!-- <script type="module" src="main.js" defer></script> -->
+</head>
+
+<body>
+	<div id="gameStart" class="uiWrapper">
+		<h1>WindowKill</h1>
+		<button class="button green" id="startButton">Start Game</button>
+		<button class="button blue" id="optionsButton">Options</button>
+		<button class="button red" id="quitButton">Exit</button>
+	</div>
+
+	<div id="settings" class="uiWrapper hidden">
+		<h1>Settings</h1>
+		<label for="difficulty">Difficulty:</label>
+		<select id="difficulty" name="difficulty">
+			<option value="easy">Easy</option>
+			<option value="medium">Medium</option>
+			<option value="hard">Hard</option>
+			<option value="impossible">Impossible</option>
+		</select>
+		<label for="volume">Volume:</label>
+		<div class="volume-container">
+			<input type="range" id="volume" name="volume" min="0" max="100" value="50"
+				oninput="document.querySelector('#volumeValue').textContent = this.value" />
+			<span id="volumeValue">50</span>
+		</div>
+		<label for="playerColor">Player Color:</label>
+		<input type="color" id="playerColor" name="playerColor" value="#ff0000" />
+
+		<button class="button green" id="saveButton">Save</button>
+		<button class="button yellow" id="backButton">Back</button>
+	</div>
+	<canvas></canvas>
+</body>
+
 </html>

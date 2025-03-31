@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is Vanilla JS Tauri v2 project. We use HTML, CSS, and JavaScript and ONLY if its necessary Rust (if not possible via JS). We use ESLint to enforce coding standards. Use of any other JavaScript libraries or frameworks is not prohibited unless it is necessary (Tauri framework doesn't count for this). The JS part of project is split into multiple files (eg. `main.js`, `classes.js`, `functions.js`, etc.). The `main.js` file is the entry point of the application. Don't forget to update export and import statements when adding new functions.
+This is Vanilla JS Tauri v2 project. We use HTML, CSS, and JavaScript and ONLY if its necessary Rust (if not possible via JS). We use ESLint to enforce coding standards. Use of any other JavaScript libraries or frameworks is not prohibited unless it is necessary (Tauri framework doesn't count for this). The JS part of project is split into multiple files (eg. `main.js`, `classes.js`, `functions.js`, etc.). The `main.js` file is the entry point of the application. Don't forget to update export and import statements when adding new functions. For styling we use SCSS to keep the code clean and organized. The `style.scss` file is the main file for styling. Don't forget to update import statements when adding new styles. The `index.html` file is the main file for the application. Don't forget to update import statements when adding new files.
 
 ## Indentation
 

@@ -18,10 +18,27 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     optionsButton.addEventListener("click", () => {
         // Hide main menu
-        // document.querySelector("#gameStart").style.display = "none";
-        // Show options menu
-        // document.querySelector("#options").style.display = "block";
-        alert("Options menu not implemented yet.");
+        document.querySelector("#gameStart").classList.toggle("hidden");
+		// Show options menu
+		document.querySelector("#settings").classList.toggle("hidden");
+
+        // Buttons in options menu
+        const backButton = document.querySelector("#backButton");
+        const saveButton = document.querySelector("#saveButton");
+
+        backButton.addEventListener("click", () => {
+            // Hide options menu
+            document.querySelector("#settings").classList.toggle("hidden");
+            // Show main menu
+            document.querySelector("#gameStart").classList.toggle("hidden");
+        });
+    
+        saveButton.addEventListener("click", () => {
+            const difficulty = document.querySelector("#difficulty").value;
+            const volume = document.querySelector("#volume").value;
+            console.log(`Difficulty: ${difficulty}, Volume: ${volume}`);
+            alert("Save logic not implemented yet.");
+        });
     });
 
     quitButton.addEventListener("click", () => {
