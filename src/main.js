@@ -1,9 +1,15 @@
 import { startGame } from "./js/functions.js";
+import { Options } from "./js/options.js";
 const { getCurrentWindow } = window.__TAURI__.window;
 const { invoke } = window.__TAURI__.core;
 
 window.addEventListener("DOMContentLoaded", async () => {
     let appWindow = await getCurrentWindow();
+
+    // Load options
+    const options = new Options();
+    await options.initialize();
+
     const startButton = document.querySelector("#startButton");
     const optionsButton = document.querySelector("#optionsButton");
     const quitButton = document.querySelector("#quitButton");
@@ -13,7 +19,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         // Hide main menu
         document.querySelector("#gameStart").style.display = "none";
 
-        await startGame(appWindow);
+        await startGame(appWindow, options);
     });
 
     optionsButton.addEventListener("click", () => {
@@ -36,8 +42,16 @@ window.addEventListener("DOMContentLoaded", async () => {
         saveButton.addEventListener("click", () => {
             const difficulty = document.querySelector("#difficulty").value;
             const volume = document.querySelector("#volume").value;
-            console.log(`Difficulty: ${difficulty}, Volume: ${volume}`);
-            alert("Save logic not implemented yet.");
+            const playerColor = document.querySelector("#playerColor").value;
+
+            const newOptions = {
+                difficulty: difficulty,
+                volume: volume,
+                playerColor: playerColor,
+            };
+            console.log(newOptions);
+            // Update options
+            options.updateOptions(newOptions);
         });
     });
 
