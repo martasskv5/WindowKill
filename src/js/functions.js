@@ -255,8 +255,9 @@ async function _shrinkWindow(appWindow, decreaseAmount, durationMs) {
 /**
  * Starts the game.
  * @param {Object} appWindow - The Tauri app window object.
+ * @param {Object} options - The game options object.
  */
-async function startGame(appWindow) {
+async function startGame(appWindow, options) {
     // Resize the window to 400x400px
     await _shrinkWindow(appWindow, 200, 200, 100);
 
@@ -270,7 +271,7 @@ async function startGame(appWindow) {
     let playerX = canvas.width / 2;
     let playerY = canvas.height / 2;
 
-    const player = new C.Player(playerX, playerY, playerRadius, "white");
+    const player = new C.Player(playerX, playerY, playerRadius, options.playerColor);
     const projectiles = [];
     let gameOver = false;
 
@@ -297,7 +298,7 @@ async function startGame(appWindow) {
             x: Math.cos(angle) * 5,
             y: Math.sin(angle) * 5,
         };
-        projectiles.push(new C.Projectile(player.x, player.y, 5, "white", velocity));
+        projectiles.push(new C.Projectile(player.x, player.y, 5, options.playerColor, velocity));
     });
     gameUtils.animate();
     gameUtils.shrinkWindow();

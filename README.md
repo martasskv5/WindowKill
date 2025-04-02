@@ -124,6 +124,7 @@ Zhrnutie projektu to jednotlivých bodov
     -   [x] Game start
     -   [ ] Game end
         -   [ ] Different for new best score
+    -   [x] Settings menu
     -   [ ] Score counter & timer
     -   [ ] Pause menu
     -   [ ] Animations
@@ -142,16 +143,16 @@ Zhrnutie projektu to jednotlivých bodov
             -   [ ] More health
             -   [ ] Bigger damage
     -   [ ] Settings
-        -   [ ] Player options - color change
+        -   [x] Player options - color change
         -   [ ] Difficulties
-            -   [ ] Predefined options
+            -   [x] Predefined options
             -   [ ] ? Separate settings for each game aspect
-        -   [ ] Save options
+        -   [x] Save options
         -   [ ] Shortcuts customization & display
     -   [ ] UI buttons
     -   [ ] Save
         -   [ ] Best score
-        -   [ ] Settings
+        -   [x] Settings
         -   [ ] Achievements
     -   [ ] Dynamic start size
     -   [ ] Dynamic window size
