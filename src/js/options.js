@@ -22,7 +22,7 @@ class Options {
     constructor() {
         // Default options
         this.difficulty = "easy";
-        this.volume = 50;
+        this.volume = "50";
         this.playerColor = "#ffffff";
         this.config = "options.json";
     }
@@ -101,6 +101,26 @@ class Options {
         this.volume = newOptions.volume || this.volume;
         this.playerColor = newOptions.playerColor || this.playerColor;
         await this.saveOptions();
+    }
+
+    /**
+     * Check if there are unsaved changes in the options
+     * Compares current form values with saved options
+     * @returns {boolean} True if there are unsaved changes, false otherwise
+     */
+    unsavedChanges() {
+        // Get current form values
+        const formDifficulty = document.querySelector("#difficulty")?.value;
+        const formVolume = document.querySelector("#volume")?.value;
+        const formPlayerColor = document.querySelector("#playerColor")?.value;
+
+        // Compare with saved options
+        if (formDifficulty !== this.difficulty) return true;
+        if (formVolume !== String(this.volume)) return true;
+        if (formPlayerColor !== this.playerColor) return true;
+
+        // No changes detected
+        return false;
     }
 }
 
