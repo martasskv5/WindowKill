@@ -20,7 +20,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     // Start the game
     startButton.addEventListener("click", async () => {
         // Hide main menu
-        document.querySelector("#gameStart").style.display = "none";
+        document.querySelector("#gameStart").classList.toggle("hidden");
 
         await startGame(appWindow, options);
     });
