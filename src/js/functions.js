@@ -147,7 +147,7 @@ class GameUtils {
 
         if (newWidth <= this.playerRadius * 2 || newHeight <= this.playerRadius * 2) {
             this.gameOver = true;
-            alert("Game Over");
+            this._gameOver();
             return;
         }
 
@@ -203,8 +203,18 @@ class GameUtils {
             this.player.y + this.player.radius >= this.canvas.height
         ) {
             this.gameOver = true;
-            alert("Game Over");
+            this._gameOver();
         }
+    }
+
+    /**
+     * Displays the game over message.
+     */
+    async _gameOver() {
+        // Expand the window to 600x600px
+        // const windowPosition = await this.appWindow.outerPosition();
+        await _shrinkWindow(this.appWindow, -200, 100);
+        alert("Game Over!");
     }
 }
 
