@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Jersey+20&display=swap");
+
 :root {
   font-size: 16px;
   line-height: 24px;
@@ -41,18 +42,23 @@ body {
           user-select: none;
   display: flex;
   flex-direction: column;
+  z-index: 1000; /* Ensure it's on top */
 }
+
 .uiWrapper:hover {
   background-color: rgba(0, 0, 0, 0.9);
 }
+
 .uiWrapper h1 {
   font-family: "Jersey 20", sans-serif;
   font-size: 4rem;
 }
+
 .uiWrapper label {
   font-size: 1.2rem;
   margin-bottom: 1rem;
 }
+
 .uiWrapper select {
   font-size: 1.2rem;
   padding: 0.5rem;
@@ -64,16 +70,19 @@ body {
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
 .uiWrapper select:hover {
   background-color: #2a2a2a;
   border-color: #6d6d6d;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
+
 .uiWrapper select:active {
   transform: translateY(1px);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
+
 .uiWrapper input {
   font-size: 1.2rem;
   padding: 0.5rem;
@@ -85,21 +94,25 @@ body {
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
 .uiWrapper input:hover {
   background-color: #2a2a2a;
   border-color: #6d6d6d;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
+
 .uiWrapper input:active {
   transform: translateY(1px);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
+
 .uiWrapper input#playerColor {
   position: relative;
   width: 100%;
   padding: 0.1rem !important;
 }
+
 .uiWrapper input::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -109,6 +122,7 @@ body {
   border-radius: 50%;
   cursor: pointer;
 }
+
 .uiWrapper input::-moz-range-thumb {
   width: 20px;
   height: 20px;
@@ -116,27 +130,32 @@ body {
   border-radius: 50%;
   cursor: pointer;
 }
+
 .uiWrapper input::-webkit-color-swatch {
   border: 2px solid #4d4d4d;
   border-radius: 5px;
   cursor: pointer;
   padding: 0px !important;
 }
+
 .uiWrapper input::-moz-color-swatch {
   border: 2px solid #4d4d4d;
   border-radius: 5px;
   cursor: pointer;
   padding: 0px !important;
 }
+
 .uiWrapper span {
   font-size: 1.2rem;
   margin-bottom: 1rem;
 }
+
 .uiWrapper .volume-container {
   display: flex;
   align-items: center; /* Vertically center the input and span */
   gap: 10px; /* Add spacing between the input and span */
 }
+
 .uiWrapper #volumeValue {
   display: inline-block;
   width: 2.5ch; /* Reserve space for up to 3 digits */
@@ -161,53 +180,82 @@ body {
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
 .button:hover {
   background-color: #2a2a2a;
   border-color: #6d6d6d;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
+
 .button:active {
   transform: translateY(1px);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
+
 .button.green {
   background-color: #2c7a28;
   border-color: #3c9a38;
 }
+
 .button.green:hover {
   background-color: #39913a;
   border-color: #4ab54a;
 }
+
 .button.blue {
   background-color: #344e81;
   border-color: #4468a5;
 }
+
 .button.blue:hover {
   background-color: #445e91;
   border-color: #5478b5;
 }
+
 .button.red {
   background-color: #7a2828;
   border-color: #9a3838;
 }
+
 .button.red:hover {
   background-color: #913939;
   border-color: #b54a4a;
 }
+
 .button.yellow {
   background-color: #7a7a28;
   border-color: #9a9a38;
 }
+
 .button.yellow:hover {
   background-color: #919139;
   border-color: #b5b54a;
 }
 
-#timer {
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
-  color: white;
-  text-align: center;
-  font-weight: bold;
-}/*# sourceMappingURL=style.css.map */
+/* Špecifické štýly pre tlačidlá na koncovej obrazovke */
+.game-end-button {
+  width: auto; /* Zmeníme šírku na auto, aby tlačidlá nedosahovali celej šírky */
+  margin: 0.5rem auto; /* Vycentrujeme tlačidlá a pridáme medzeru */
+  max-width: 80%; /* Obmedzíme maximálnu šírku tlačidiel */
+}
+
+.button.orange {
+  background-color: orange;
+  border-color: darkorange;
+}
+
+.button.orange:hover {
+  background-color: darkorange;
+  border-color: orangered;
+}
+
+.button.gray {
+  background-color: gray;
+  border-color: darkgray;
+}
+
+.button.gray:hover {
+  background-color: darkgray;
+  border-color: dimgray;
+}
