@@ -234,6 +234,16 @@ body {
             border-color: #b5b54a;
         }
     }
+
+    &.gray {
+        background-color: gray;
+        border-color: darkgray;
+
+        &:hover {
+            background-color: darkgray;
+            border-color: dimgray;
+        }
+    }
 }
 
 #timer {

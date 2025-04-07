@@ -122,7 +122,7 @@ Zhrnutie projektu to jednotlivých bodov
 
 -  [ ] UI
     -   [x] Game start
-    -   [ ] Game end
+    -   [x] Game end
         -   [ ] Different for new best score
     -   [x] Settings menu
     -   [x] Score counter & timer
@@ -161,7 +161,7 @@ Zhrnutie projektu to jednotlivých bodov
         -   [ ] ESC to open pause menu
     -   [ ] Achievements (pravdepodobne zo Steamu)
         -   [ ] get 37 monitors and unlock the Open World 
-    -   [ ] Game restart
+    -   [x] Game restart
     -   [x] Score counter
     -   [ ] ? Multiple windows - [little help here](https://www.youtube.com/watch?v=3Hye_47c0Pc)
     -   [ ] ? Game modes
@@ -172,6 +172,8 @@ Zhrnutie projektu to jednotlivých bodov
 -   [ ] ! Fix
     -   [ ] Fix glitches on resize
     -   [ ] Shrinking stops when resizing
+    -   [ ] Window flickering when resizing
+    -   [ ] Correctly set window size on restart
 
 
 ## Development

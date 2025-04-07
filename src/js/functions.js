@@ -218,7 +218,8 @@ class GameUtils {
         // Calculate the new size and position
         const newWidth = 600 - currentSize.width;
         await _resizeWindow(this.appWindow, newWidth, 100);
-        alert(`Game Over! Your score is: ${this.score}`);
+        document.querySelector("#score").innerText = `Your score is: ${this.score}`;
+        document.querySelector("#gameEnd").classList.toggle("hidden");
     }
 }
 

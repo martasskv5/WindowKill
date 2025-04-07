@@ -10,12 +10,16 @@ window.addEventListener("DOMContentLoaded", async () => {
     const options = new Options();
     await options.initialize();
 
+    // Buttons in main menu
     const startButton = document.querySelector("#startButton");
     const optionsButton = document.querySelector("#optionsButton");
     const quitButton = document.querySelector("#quitButton");
     // Buttons in options menu
     const backButton = document.querySelector("#backButton");
     const saveButton = document.querySelector("#saveButton");
+    // Buttons in game end menu
+    const restartButton = document.querySelector("#restartButton");
+    const mainMenuButton = document.querySelector("#mainMenuButton");
 
     const timer = document.querySelector("#timer");
 
@@ -73,5 +77,20 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     quitButton.addEventListener("click", () => {
         invoke("quit");
+    });
+
+    // Game end menu buttons
+    restartButton.addEventListener("click", async () => {
+        // Hide game end menu
+        document.querySelector("#gameEnd").classList.toggle("hidden");
+
+        await startGame(appWindow, options, timer);
+    });
+
+    mainMenuButton.addEventListener("click", () => {
+        // Hide game end menu
+        document.querySelector("#gameEnd").classList.toggle("hidden");
+        // Show main menu
+        document.querySelector("#gameStart").classList.toggle("hidden");
     });
 });
