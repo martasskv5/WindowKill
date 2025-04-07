@@ -213,20 +213,23 @@ class GameUtils {
      * Displays the game over message.
      */
     async _gameOver() {
-        // Expand the window to 600x600px
-        // const windowPosition = await this.appWindow.outerPosition();
-        await _shrinkWindow(this.appWindow, -200, 100);
-        alert("Game Over!");
+        // Get current window size and position
+        const currentSize = await this.appWindow.innerSize();
+        // Calculate the new size and position
+        const newWidth = 600 - currentSize.width;
+        await _resizeWindow(this.appWindow, newWidth, 100);
+        alert(`Game Over! Your score is: ${this.score}`);
     }
 }
 
 /**
- * Helper function for starting the game. Shrinks the window continuously while keeping it centered.
+ * Helper function for resizing the window. Can shrink or expand the window while keeping it centered.
  * @param {Object} appWindow - The Tauri app window object.
- * @param {number} decreaseAmount - The amount to decrease the window size.
+ * @param {number} sizeChange - The amount to change the window size (positive for expand, negative for shrink).
  * @param {number} durationMs - The duration of the animation in milliseconds.
+ * @returns {Promise<void>}
  */
-async function _shrinkWindow(appWindow, decreaseAmount, durationMs) {
+async function _resizeWindow(appWindow, sizeChange, durationMs) {
     // Get the initial window size and position
     const startSize = await appWindow.innerSize();
     const startPos = await appWindow.outerPosition();
@@ -236,7 +239,7 @@ async function _shrinkWindow(appWindow, decreaseAmount, durationMs) {
         throw new Error("Failed to retrieve window size or position.");
     }
 
-    // Animate the shrinking process
+    // Animate the resizing process
     const startTime = Date.now();
     return new Promise((resolve) => {
         const animate = () => {
@@ -244,10 +247,10 @@ async function _shrinkWindow(appWindow, decreaseAmount, durationMs) {
             const progress = Math.min(elapsed / durationMs, 1);
 
             // Calculate new size and position to keep the window centered
-            const newWidth = startSize.width - decreaseAmount * progress;
-            const newHeight = startSize.height - decreaseAmount * progress;
-            const newX = startPos.x + (startSize.width - newWidth) / 2;
-            const newY = startPos.y + (startSize.height - newHeight) / 2;
+            const newWidth = startSize.width + sizeChange * progress;
+            const newHeight = startSize.height + sizeChange * progress;
+            const newX = startPos.x - (newWidth - startSize.width) / 2;
+            const newY = startPos.y - (newHeight - startSize.height) / 2;
 
             // Update window size and position
             appWindow.setSize(new LogicalSize(newWidth, newHeight)).catch(console.error);
@@ -272,7 +275,7 @@ async function _shrinkWindow(appWindow, decreaseAmount, durationMs) {
  */
 async function startGame(appWindow, options, timer) {
     // Resize the window to 400x400px
-    await _shrinkWindow(appWindow, 200, 200, 100);
+    await _resizeWindow(appWindow, -200, 200);
 
     const canvas = document.querySelector("canvas");
     const c = canvas.getContext("2d");
@@ -299,7 +302,8 @@ async function startGame(appWindow, options, timer) {
     const timerInterval = setInterval(() => {
         if (gameUtils.gameOver) {
             clearInterval(timerInterval); // Stop the timer when the game is over
-            this.score = Math.floor((Date.now() - startTime) / 1000); // Calculate score in seconds
+            gameUtils.score = Math.floor((Date.now() - startTime) / 1000); // Calculate score in seconds
+            timer.classList.toggle("hidden"); // Hide the timer display
         } else {
             const elapsedTime = Date.now() - startTime; // Calculate elapsed time in milliseconds
             const minutes = Math.floor(elapsedTime / 60000).toString().padStart(2, "0"); // Convert to minutes
