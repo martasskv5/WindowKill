@@ -202,4 +202,12 @@ body {
 .button.yellow:hover {
   background-color: #919139;
   border-color: #b5b54a;
+}
+
+#timer {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: white;
+  text-align: center;
+  font-weight: bold;
 }/*# sourceMappingURL=style.css.map */

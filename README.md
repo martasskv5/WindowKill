@@ -125,7 +125,7 @@ Zhrnutie projektu to jednotlivých bodov
     -   [ ] Game end
         -   [ ] Different for new best score
     -   [x] Settings menu
-    -   [ ] Score counter & timer
+    -   [x] Score counter & timer
     -   [ ] Pause menu
     -   [ ] Animations
         -   [ ] Hover FX
@@ -162,7 +162,7 @@ Zhrnutie projektu to jednotlivých bodov
     -   [ ] Achievements (pravdepodobne zo Steamu)
         -   [ ] get 37 monitors and unlock the Open World 
     -   [ ] Game restart
-    -   [ ] Score counter
+    -   [x] Score counter
     -   [ ] ? Multiple windows - [little help here](https://www.youtube.com/watch?v=3Hye_47c0Pc)
     -   [ ] ? Game modes
 	       - [ ] Player stays in center of screen (default - currently working on)

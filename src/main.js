@@ -17,12 +17,15 @@ window.addEventListener("DOMContentLoaded", async () => {
     const backButton = document.querySelector("#backButton");
     const saveButton = document.querySelector("#saveButton");
 
+    const timer = document.querySelector("#timer");
+
     // Start the game
     startButton.addEventListener("click", async () => {
         // Hide main menu
         document.querySelector("#gameStart").classList.toggle("hidden");
+        timer.classList.toggle("hidden");
 
-        await startGame(appWindow, options);
+        await startGame(appWindow, options, timer);
     });
 
     optionsButton.addEventListener("click", () => {

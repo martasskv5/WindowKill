@@ -13,6 +13,7 @@ class GameUtils {
      * @param {number} playerRadius - The radius of the player.
      * @param {Array} projectiles - The array of projectiles.
      * @param {boolean} gameOver - The game over flag.
+     * @param {number} score - The score of the game.
      */
     constructor(appWindow, canvas, player, playerRadius, projectiles, gameOver) {
         this.appWindow = appWindow;
@@ -22,6 +23,7 @@ class GameUtils {
         this.projectiles = projectiles;
         this.gameOver = gameOver;
         this.c = canvas.getContext("2d");
+        this.score = 0;
     }
 
     /**
@@ -266,8 +268,9 @@ async function _shrinkWindow(appWindow, decreaseAmount, durationMs) {
  * Starts the game.
  * @param {Object} appWindow - The Tauri app window object.
  * @param {Object} options - The game options object.
+ * @param {HTMLElement} timer - The timer element.
  */
-async function startGame(appWindow, options) {
+async function startGame(appWindow, options, timer) {
     // Resize the window to 400x400px
     await _shrinkWindow(appWindow, 200, 200, 100);
 
@@ -290,6 +293,22 @@ async function startGame(appWindow, options) {
     player.draw(c);
     gameUtils.updateCanvasSize();
     gameUtils.centerPlayer();
+
+    // Timer logic
+    let startTime = Date.now(); // Record the start time
+    const timerInterval = setInterval(() => {
+        if (gameUtils.gameOver) {
+            clearInterval(timerInterval); // Stop the timer when the game is over
+            this.score = Math.floor((Date.now() - startTime) / 1000); // Calculate score in seconds
+        } else {
+            const elapsedTime = Date.now() - startTime; // Calculate elapsed time in milliseconds
+            const minutes = Math.floor(elapsedTime / 60000).toString().padStart(2, "0"); // Convert to minutes
+            const seconds = Math.floor((elapsedTime % 60000) / 1000).toString().padStart(2, "0"); // Convert to seconds
+            const milliseconds = (elapsedTime % 1000).toString().padStart(3, "0"); // Get milliseconds
+            timer.innerText = `${minutes}:${seconds}:${milliseconds}`; // Update timer display
+        }
+    }, 10); // Update timer every 10ms for better precision
+
 
     // Resize canvas when window is resized
     window.addEventListener("resize", () => {
