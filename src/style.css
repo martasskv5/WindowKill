@@ -214,8 +214,10 @@ body {
 
 #timer {
   font-size: 1.2rem;
-  margin-bottom: 1rem;
+  margin: 0.5rem 0 0 0.5rem;
   color: white;
   text-align: center;
   font-weight: bold;
+  z-index: 1000;
+  position: absolute;
 }/*# sourceMappingURL=style.css.map */

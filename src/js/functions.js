@@ -225,14 +225,14 @@ class GameUtils {
         if (this.score > this.highScore) {
             this.highScore = this.score;
             await this.save_score(this.highScore);
-            document.querySelector("#scoreHigh").innerText = `Your new high score is: ${this.score}`;
-            document.querySelector("#gameEndBest").classList.toggle("hidden");
+            document.querySelector("#score").innerText = `Your new high score is: ${this.score}`;
+            document.querySelector("#gameEnd").getElementsByTagName("h1")[0].innerText = "New High Score!";
         }
         else {
             document.querySelector("#score").innerText = `Your score is: ${this.score}`;
             document.querySelector("#scoreBest").innerText = `Your best score is: ${this.highScore}`;
-            document.querySelector("#gameEnd").classList.toggle("hidden");
         }
+        document.querySelector("#gameEnd").classList.toggle("hidden");
     }
 
     /**
@@ -250,8 +250,8 @@ class GameUtils {
             }
         } catch (error) {
             console.error("Error loading options:", error);
+            this.highScore = 0; // Default score if file doesn't exist
         }
-        this.highScore = 0; // Default score if file doesn't exist
     }
 
     /**

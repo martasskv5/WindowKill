@@ -174,13 +174,17 @@ Zhrnutie projektu to jednotlivých bodov
 -   [ ] Other
     -   [ ] ? Good Soundtrack
 -   [ ] ! Fix
+    -   [ ] !! Correctly set window size on restart
     -   [ ] Fix glitches on resize
     -   [ ] Shrinking stops when resizing
     -   [ ] Window flickering when resizing
-    -   [ ] Correctly set window size on restart
 
 
 ## Development
+
+### Verzie
+
+- Pri zmene verzie projektu je potrebné zmeniť číslo verzie v súbore `package.json`, `src-tauri/tauri.conf.json` a `src-tauri/Cargo.toml`.
 
 ### Predpríprava
 
