@@ -23,6 +23,7 @@
         {
             "identifier": "fs:scope",
             "allow": [{ "path": "$APPLOCALDATA" }, { "path": "$APPLOCALDATA/*" }]
-        }
+        },
+        "prevent-default:default"
     ]
 }

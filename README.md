@@ -123,7 +123,7 @@ Zhrnutie projektu to jednotlivých bodov
 -  [ ] UI
     -   [x] Game start
     -   [x] Game end
-        -   [ ] Different for new best score
+        -   [x] Different for new best score
     -   [x] Settings menu
     -   [x] Score counter & timer
     -   [ ] Pause menu
@@ -137,6 +137,8 @@ Zhrnutie projektu to jednotlivých bodov
         -   [ ] More enemies
         -   [ ] Slower fire rate
         -   [ ] Player power
+        -   [ ] ? Lost focus - faster shrinking
+        -   [ ] Impossible mode - transparent window
     -   [ ] Spawn enemies
         -   [ ] Controlled by difficulties
             -   [ ] Faster movement
@@ -151,13 +153,15 @@ Zhrnutie projektu to jednotlivých bodov
         -   [ ] Shortcuts customization & display
     -   [ ] UI buttons
     -   [ ] Save
-        -   [ ] Best score
+        -   [x] Best score
+            -   [ ] ? Encrypt file
         -   [x] Settings
         -   [ ] Achievements
     -   [ ] Dynamic start size
     -   [ ] Dynamic window size
     -   [ ] Players health - enemies deal damage
     -   [ ] Keyboard shortcuts
+        -   [x] Disable default shortcuts ! at end also dev tools
         -   [ ] ESC to open pause menu
     -   [ ] Achievements (pravdepodobne zo Steamu)
         -   [ ] get 37 monitors and unlock the Open World 

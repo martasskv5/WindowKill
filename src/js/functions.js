@@ -225,10 +225,14 @@ class GameUtils {
         if (this.score > this.highScore) {
             this.highScore = this.score;
             await this.save_score(this.highScore);
+            document.querySelector("#scoreHigh").innerText = `Your new high score is: ${this.score}`;
+            document.querySelector("#gameEndBest").classList.toggle("hidden");
         }
-
-        document.querySelector("#score").innerText = `Your score is: ${this.score}`;
-        document.querySelector("#gameEnd").classList.toggle("hidden");
+        else {
+            document.querySelector("#score").innerText = `Your score is: ${this.score}`;
+            document.querySelector("#scoreBest").innerText = `Your best score is: ${this.highScore}`;
+            document.querySelector("#gameEnd").classList.toggle("hidden");
+        }
     }
 
     /**

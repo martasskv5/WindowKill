@@ -23,6 +23,7 @@ tauri-plugin-opener = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tauri-plugin-fs = "2"
+tauri-plugin-prevent-default = "=0.2.1"
 
 [build]
 target-dir = "C:\\Users\\martinko\\AppData\\Local\\tauri\\windowkill\\src-tauri\\target"
