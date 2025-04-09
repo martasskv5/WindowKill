@@ -16,6 +16,21 @@
 		<button class="button blue" id="optionsButton">Options</button>
 		<button class="button red" id="quitButton">Exit</button>
 	</div>
+	
+	<div id="gameEnd" class="uiWrapper hidden">
+		<h1>Game Over!</h1>
+        <div id="score"></div>
+        <div id="scoreBest"></div>
+		<button id="restartButton" class="button green">Restart Game</button>
+		<button id="mainMenuButton" class="button yellow">Back to Main Menu</button>
+	</div>
+	<!-- <div id="gameEndBest" class="uiWrapper hidden">
+		<h1>New High Score</h1>
+        <div id="scoreHigh"></div>
+		<button id="restartButton" class="button green">Try Again</button>
+		<button id="mainMenuButton" class="button yellow">Back to Main Menu</button>
+	</div> -->
+	
 
 	<div id="settings" class="uiWrapper hidden">
 		<h1 style="margin: 0px;">Settings</h1>
@@ -38,6 +53,8 @@
 		<button class="button green" id="saveButton">Save</button>
 		<button class="button yellow" id="backButton">Back</button>
 	</div>
+
+    <div id="timer" class="hidden">00:00:00</div>
 	<canvas></canvas>
 </body>
 

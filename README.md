@@ -122,10 +122,10 @@ Zhrnutie projektu to jednotlivých bodov
 
 -  [ ] UI
     -   [x] Game start
-    -   [ ] Game end
-        -   [ ] Different for new best score
+    -   [x] Game end
+        -   [x] Different for new best score
     -   [x] Settings menu
-    -   [ ] Score counter & timer
+    -   [x] Score counter & timer
     -   [ ] Pause menu
     -   [ ] Animations
         -   [ ] Hover FX
@@ -137,6 +137,8 @@ Zhrnutie projektu to jednotlivých bodov
         -   [ ] More enemies
         -   [ ] Slower fire rate
         -   [ ] Player power
+        -   [ ] ? Lost focus - faster shrinking
+        -   [ ] Impossible mode - transparent window
     -   [ ] Spawn enemies
         -   [ ] Controlled by difficulties
             -   [ ] Faster movement
@@ -151,18 +153,20 @@ Zhrnutie projektu to jednotlivých bodov
         -   [ ] Shortcuts customization & display
     -   [ ] UI buttons
     -   [ ] Save
-        -   [ ] Best score
+        -   [x] Best score
+            -   [ ] ? Encrypt file
         -   [x] Settings
         -   [ ] Achievements
     -   [ ] Dynamic start size
     -   [ ] Dynamic window size
     -   [ ] Players health - enemies deal damage
     -   [ ] Keyboard shortcuts
+        -   [x] Disable default shortcuts ! at end also dev tools
         -   [ ] ESC to open pause menu
     -   [ ] Achievements (pravdepodobne zo Steamu)
         -   [ ] get 37 monitors and unlock the Open World 
-    -   [ ] Game restart
-    -   [ ] Score counter
+    -   [x] Game restart
+    -   [x] Score counter
     -   [ ] ? Multiple windows - [little help here](https://www.youtube.com/watch?v=3Hye_47c0Pc)
     -   [ ] ? Game modes
 	       - [ ] Player stays in center of screen (default - currently working on)
@@ -170,11 +174,17 @@ Zhrnutie projektu to jednotlivých bodov
 -   [ ] Other
     -   [ ] ? Good Soundtrack
 -   [ ] ! Fix
+    -   [ ] !! Correctly set window size on restart
     -   [ ] Fix glitches on resize
     -   [ ] Shrinking stops when resizing
+    -   [ ] Window flickering when resizing
 
 
 ## Development
+
+### Verzie
+
+- Pri zmene verzie projektu je potrebné zmeniť číslo verzie v súbore `package.json`, `src-tauri/tauri.conf.json` a `src-tauri/Cargo.toml`.
 
 ### Predpríprava
 
