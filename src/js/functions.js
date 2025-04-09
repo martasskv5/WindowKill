@@ -1,5 +1,6 @@
 import * as C from "./classes.js";
 const { currentMonitor, LogicalSize, LogicalPosition } = window.__TAURI__.window;
+const { exists, BaseDirectory, readTextFile, writeTextFile, mkdir } = window.__TAURI__.fs;
 
 /**
  * Class containing utility functions for the game.
@@ -24,6 +25,7 @@ class GameUtils {
         this.gameOver = gameOver;
         this.c = canvas.getContext("2d");
         this.score = 0;
+        this.highScore = this.load_score();
     }
 
     /**
@@ -218,8 +220,46 @@ class GameUtils {
         // Calculate the new size and position
         const newWidth = 600 - currentSize.width;
         await _resizeWindow(this.appWindow, newWidth, 100);
+        console.log(this.score, this.highScore);
+        (this.highScore, this.score);
+        if (this.score > this.highScore) {
+            this.highScore = this.score;
+            await this.save_score(this.highScore);
+        }
+
         document.querySelector("#score").innerText = `Your score is: ${this.score}`;
         document.querySelector("#gameEnd").classList.toggle("hidden");
+    }
+
+    /**
+     * Saves the score to a file.
+     * @param {number} score - The score to save.
+     */
+    async load_score() {
+        try {
+            if (await exists("score", { baseDir: BaseDirectory.AppLocalData })) {
+                const data = await readTextFile("score", { baseDir: BaseDirectory.AppLocalData });
+                this.highScore = parseInt(data);
+            }
+            else {
+                this.highScore = 0; // Default score if file doesn't exist
+            }
+        } catch (error) {
+            console.error("Error loading options:", error);
+        }
+        this.highScore = 0; // Default score if file doesn't exist
+    }
+
+    /**
+     * Saves the score to a file.
+     * * @param {number} score - The score to save.
+     */
+    async save_score(score) {
+        try {
+            await writeTextFile("score", score | this.score, { baseDir: BaseDirectory.AppLocalData });
+        } catch (error) {
+            console.error("Error saving options:", error);
+        }
     }
 }
 
