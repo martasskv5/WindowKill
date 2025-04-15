@@ -84,5 +84,103 @@ class Projectile {
         this.y = this.y + this.velocity.y;
     }
 }
+/**
+ * This class is used to create a confetti-like effect on the screen.
+ * It uses the Anime.js library for animation.
+ */
+class ParticleSystem {
+    constructor() {
+        this.container = document.getElementsByTagName('body')[0];
+        this.particles = [];
+        this.colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff'];
+    }
 
-export { Player, Projectile };
+    /**
+     * Creates a particle element and adds it to the container.
+     * @param {number} x - The x-coordinate of the particle.
+     * @param {number} y - The y-coordinate of the particle.
+     * @return {HTMLElement} The created particle element.
+     */
+    createParticle(x, y) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        // Random color and size
+        particle.style.backgroundColor = this.colors[Math.floor(Math.random() * this.colors.length)];
+        particle.style.width = `${Math.random() * 10 + 10}px`; // Wider rectangles
+        particle.style.height = `${Math.random() * 5 + 5}px`;  // Taller than wide
+        
+        // Make particles rectangular
+        particle.style.borderRadius = '0%';
+        
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        
+        this.container.appendChild(particle);
+        this.particles.push(particle);
+
+        return particle;
+    }
+
+    /**
+     * Explodes particles from a given point on the screen.
+     * @param {number} x - The x-coordinate of the explosion.
+     * @param {number} y - The y-coordinate of the explosion.
+     * @param {number} count - The number of particles to create.
+     * @return {void}
+     */
+    explode(x, y, count = 50) {
+        // Create particles
+        for (let i = 0; i < count; i++) {
+            const particle = this.createParticle(x, y);
+            
+            // Physics parameters
+            const angle = Math.random() * 45 - 22.5; // Narrower angle for downward motion
+            const speed = Math.random() * 3 + 2;
+            
+            // Initial velocity
+            const velocityX = Math.cos(angle) * speed;
+            const velocityY = Math.sin(angle) * speed + 5; // Extra downward force
+            
+            anime({
+                targets: particle,
+                translateX: [
+                    {
+                        value: velocityX * 200,
+                        duration: 1500,
+                        easing: 'easeInOutQuad'
+                    }
+                ],
+                translateY: [
+                    {
+                        value: velocityY * 200,
+                        duration: 1500,
+                        easing: 'easeInQuad' // Accelerates downward
+                    }
+                ],
+                rotate: {
+                    value: Math.random() * 360,
+                    duration: 1500,
+                    easing: 'linear',
+                    delay: Math.random() * 300 // Random rotation start
+                },
+                opacity: [
+                    {value: 1},
+                    {value: 0, duration: 500, delay: 1200}
+                ],
+                complete: () => particle.remove()
+            });
+        }
+    }
+
+    /**
+     * Cleans up the particles by removing them from the DOM.
+     * @return {void}
+     */
+    cleanup() {
+        this.particles.forEach(particle => particle.remove());
+        this.particles = [];
+    }
+}
+
+export { Player, Projectile, ParticleSystem };

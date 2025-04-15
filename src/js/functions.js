@@ -222,15 +222,17 @@ class GameUtils {
         const newHeight = 600 - currentSize.height;
         await _resizeWindow(this.appWindow, newWidth, newHeight, 100);
         console.log(this.score, this.highScore);
-        (this.highScore, this.score);
+        this.highScore, this.score;
         document.querySelector("#timer").classList.toggle("hidden"); // Hide the timer display
         if (this.score > this.highScore) {
             this.highScore = this.score;
             await this.save_score(this.highScore);
             document.querySelector("#score").innerText = `Your new high score is: ${this.score}`;
             document.querySelector("#gameEnd").getElementsByTagName("h1")[0].innerText = "New High Score!";
-        }
-        else {
+            const particleSystem = new C.ParticleSystem();           
+            particleSystem.explode(0, 0);
+            particleSystem.explode(this.canvas.width, 0);
+        } else {
             document.querySelector("#score").innerText = `Your score is: ${this.score}`;
             document.querySelector("#scoreBest").innerText = `Your best score is: ${this.highScore}`;
         }
@@ -246,8 +248,7 @@ class GameUtils {
             if (await exists("score", { baseDir: BaseDirectory.AppLocalData })) {
                 const data = await readTextFile("score", { baseDir: BaseDirectory.AppLocalData });
                 this.highScore = parseInt(data);
-            }
-            else {
+            } else {
                 this.highScore = 0; // Default score if file doesn't exist
             }
         } catch (error) {
@@ -353,13 +354,16 @@ async function startGame(appWindow, options, timer) {
             gameUtils.score = Math.floor((Date.now() - startTime) / 1000); // Calculate score in seconds
         } else {
             const elapsedTime = Date.now() - startTime; // Calculate elapsed time in milliseconds
-            const minutes = Math.floor(elapsedTime / 60000).toString().padStart(2, "0"); // Convert to minutes
-            const seconds = Math.floor((elapsedTime % 60000) / 1000).toString().padStart(2, "0"); // Convert to seconds
+            const minutes = Math.floor(elapsedTime / 60000)
+                .toString()
+                .padStart(2, "0"); // Convert to minutes
+            const seconds = Math.floor((elapsedTime % 60000) / 1000)
+                .toString()
+                .padStart(2, "0"); // Convert to seconds
             const milliseconds = (elapsedTime % 1000).toString().padStart(3, "0"); // Get milliseconds
             timer.innerText = `${minutes}:${seconds}:${milliseconds}`; // Update timer display
         }
     }, 10); // Update timer every 10ms for better precision
-
 
     // Resize canvas when window is resized
     window.addEventListener("resize", () => {

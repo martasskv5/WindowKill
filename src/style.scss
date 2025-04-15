@@ -255,3 +255,11 @@ body {
     z-index: 1000;
     position: absolute;
 }
+
+.particle {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    pointer-events: none;
+}
