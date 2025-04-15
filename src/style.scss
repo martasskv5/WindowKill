@@ -39,7 +39,6 @@ body {
     padding: 1rem 2rem;
     background-color: rgba(0, 0, 0, 0.7);
     border-radius: 0.5rem;
-    // cursor: pointer;
     user-select: none;
     display: flex;
     flex-direction: column;
@@ -107,7 +106,6 @@ body {
 
         &#playerColor {
             position: relative;
-            // left: 37%;
             width: 100%;
             padding: 0.1rem !important;
         }
@@ -138,7 +136,7 @@ body {
             cursor: pointer;
             padding: 0px !important;
         }
-        
+
         &::-moz-color-swatch {
             border: 2px solid #4d4d4d;
             border-radius: 5px;
@@ -254,4 +252,29 @@ body {
     font-weight: bold;
     z-index: 1000;
     position: absolute;
+}
+
+// Štýl pre tlačidlo pauzy
+#pauseButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 10px 20px;
+    background-color: #7a7a28; // Žltá farba pre viditeľnosť
+    color: black;
+    border: 2px solid #9a9a38;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); // Tieň pre lepší vzhľad
+    transition: background-color 0.3s, transform 0.3s;
+
+    &:hover {
+        background-color: #919139; // Svetlejší odtieň pri nájazde
+        transform: scale(1.05);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
 }

@@ -220,4 +220,26 @@ body {
   font-weight: bold;
   z-index: 1000;
   position: absolute;
+}
+
+#pauseButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 10px 20px;
+  background-color: #7a7a28;
+  color: black;
+  border: 2px solid #9a9a38;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s, transform 0.3s;
+}
+#pauseButton:hover {
+  background-color: #919139;
+  transform: scale(1.05);
+}
+#pauseButton:active {
+  transform: scale(0.95);
 }/*# sourceMappingURL=style.css.map */

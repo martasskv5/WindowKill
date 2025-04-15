@@ -26,6 +26,7 @@ class GameUtils {
         this.c = canvas.getContext("2d");
         this.score = 0;
         this.highScore = this.load_score();
+        this.isPaused = false; // Nová premenná pre pause
     }
 
     /**
@@ -141,7 +142,7 @@ class GameUtils {
      * Shrinks the window continuously.
      */
     async shrinkWindow() {
-        if (this.gameOver) return;
+        if (this.gameOver || this.isPaused) return; // Zastaví zmenšovanie, ak je hra v pauze
 
         const currentSize = await this.appWindow.innerSize();
         const decreaseAmount = 3; // Amount to decrease the window size
@@ -169,7 +170,7 @@ class GameUtils {
      * Animates the game elements.
      */
     animate() {
-        if (this.gameOver) return;
+        if (this.gameOver || this.isPaused) return; // Zastaví animáciu, ak je hra v pauze
 
         requestAnimationFrame(() => this.animate());
         this.c.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -337,6 +338,7 @@ async function startGame(appWindow, options, timer) {
     let gameOver = false;
 
     const gameUtils = new GameUtils(appWindow, canvas, player, playerRadius, projectiles, gameOver);
+    window.gameUtils = gameUtils; // Uložíme gameUtils do globálnej premennej
 
     player.draw(c);
     gameUtils.updateCanvasSize();
@@ -357,7 +359,6 @@ async function startGame(appWindow, options, timer) {
             timer.innerText = `${minutes}:${seconds}:${milliseconds}`; // Update timer display
         }
     }, 10); // Update timer every 10ms for better precision
-
 
     // Resize canvas when window is resized
     window.addEventListener("resize", () => {
