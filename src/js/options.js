@@ -1,4 +1,3 @@
-const { path } = window.__TAURI__;
 const { exists, BaseDirectory, readTextFile, writeTextFile, mkdir } = window.__TAURI__.fs;
 
 /**

@@ -83,6 +83,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     restartButton.addEventListener("click", async () => {
         // Hide game end menu
         document.querySelector("#gameEnd").classList.toggle("hidden");
+        timer.classList.toggle("hidden");
 
         await startGame(appWindow, options, timer);
     });

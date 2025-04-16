@@ -254,4 +254,13 @@ body {
     font-weight: bold;
     z-index: 1000;
     position: absolute;
+    user-select: none;
+}
+
+.particle {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    pointer-events: none;
 }
