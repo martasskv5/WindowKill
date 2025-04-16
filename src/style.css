@@ -220,6 +220,9 @@ body {
   font-weight: bold;
   z-index: 1000;
   position: absolute;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
 }
 
 .particle {

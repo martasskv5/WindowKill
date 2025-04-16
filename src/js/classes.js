@@ -84,6 +84,7 @@ class Projectile {
         this.y = this.y + this.velocity.y;
     }
 }
+
 /**
  * This class is used to create a confetti-like effect on the screen.
  * It uses the Anime.js library for animation.
