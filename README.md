@@ -150,7 +150,7 @@ Zhrnutie projektu to jednotlivých bodov
             -   [x] Predefined options
             -   [ ] ? Separate settings for each game aspect
         -   [x] Save options
-        -   [ ] Shortcuts customization & display
+        -   [ ] ~~Shortcuts customization & display~~
     -   [ ] UI buttons
     -   [ ] Save
         -   [x] Best score
