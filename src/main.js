@@ -10,6 +10,12 @@ window.addEventListener("DOMContentLoaded", async () => {
     const options = new Options();
     await options.initialize();
 
+    if (await appWindow.scaleFactor() > 1) {
+        alert(
+            "For best experience, please set your display scaling to 100%."
+        );
+    }
+
     // Buttons in main menu
     const startButton = document.querySelector("#startButton");
     const optionsButton = document.querySelector("#optionsButton");
