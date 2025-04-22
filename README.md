@@ -178,7 +178,7 @@ Zhrnutie projektu to jednotlivých bodov
     -   [ ] Fix glitches on resize
     -   [ ] Shrinking stops when resizing
     -   [ ] Window flickering when resizing
-    -   [x] **Temporal fix** Incorrect window position when scaling is applied on Windows: When Windows uses display scaling above 100%, it creates a mismatch between physical and logical pixel coordinates. This affects how Tauri handles window positioning
+    -   [x] **Temporal fix:** Incorrect window position when scaling is applied on Windows: When Windows uses display scaling above 100%, it creates a mismatch between physical and logical pixel coordinates. This affects how Tauri handles window positioning
 
 ## Development
 
