@@ -178,7 +178,7 @@ Zhrnutie projektu to jednotlivých bodov
     -   [ ] Fix glitches on resize
     -   [ ] Shrinking stops when resizing
     -   [ ] Window flickering when resizing
-    -   [ ] !! On Windows, when using 125% or higher scaling, the window when game is started moves to bottom right corner of the screen and triggers game over
+    -   [x] **Temporal fix** Incorrect window position when scaling is applied on Windows: When Windows uses display scaling above 100%, it creates a mismatch between physical and logical pixel coordinates. This affects how Tauri handles window positioning
 
 ## Development
 

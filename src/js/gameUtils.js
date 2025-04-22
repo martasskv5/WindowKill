@@ -27,6 +27,7 @@ class GameUtils {
         this.c = canvas.getContext("2d");
         this.score = 0;
         this.highScore = this.load_score();
+        this.scaleFactor = this.appWindow.scaleFactor();
     }
 
     /**
@@ -84,6 +85,7 @@ class GameUtils {
         const targetHeight = startX.height + increaseHeight;
         const deltaX = targetWidth - startX.width;
         const deltaY = targetHeight - startX.height;
+        console.log(this.scaleFactor);
 
         return new Promise((resolve) => {
             const animate = () => {
@@ -161,7 +163,7 @@ class GameUtils {
         const newY = (await this.appWindow.outerPosition()).y + decreaseAmount / 2;
 
         await this.animateWindowSize(-decreaseAmount, -decreaseAmount, 100, "shrink");
-        await this.appWindow.setPosition(new LogicalPosition(newX, newY)).catch(console.error);
+        // await this.appWindow.setPosition(new LogicalPosition(newX, newY)).catch(console.error);
 
         setTimeout(() => this.shrinkWindow(), 100);
     }
