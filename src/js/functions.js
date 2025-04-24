@@ -71,8 +71,9 @@ async function startGame(appWindow, options, timer) {
     const player = new C.Player(playerX, playerY, playerRadius, options.playerColor);
     const projectiles = [];
     let gameOver = false;
+    const enemies = [];
 
-    const gameUtils = new GameUtils(appWindow, canvas, player, playerRadius, projectiles, gameOver);
+    const gameUtils = new GameUtils(appWindow, canvas, player, playerRadius, projectiles, gameOver, enemies);
 
     player.draw(c);
     gameUtils.updateCanvasSize();
@@ -117,6 +118,7 @@ async function startGame(appWindow, options, timer) {
         projectiles.push(new C.Projectile(player.x, player.y, 5, options.playerColor, velocity));
     });
     gameUtils.animate();
+    gameUtils.spawnEnemies()
     gameUtils.shrinkWindow();
 }
 
