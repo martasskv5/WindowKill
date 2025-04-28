@@ -144,6 +144,8 @@ Zhrnutie projektu to jednotlivých bodov
             -   [ ] Faster movement
             -   [ ] More health
             -   [ ] Bigger damage
+        -   [ ] Update enemy position calculation to follow player
+        -   [ ] Update scoring system to include enemies killed
     -   [ ] Settings
         -   [x] Player options - color change
         -   [ ] Difficulties
@@ -179,7 +181,7 @@ Zhrnutie projektu to jednotlivých bodov
     -   [ ] Shrinking stops when resizing
     -   [ ] Window flickering when resizing
     -   [x] **Temporal fix:** Incorrect window position when scaling is applied on Windows: When Windows uses display scaling above 100%, it creates a mismatch between physical and logical pixel coordinates. This affects how Tauri handles window positioning
-    -   [ ] !! In version 0.2.2 window is not resizing to center, but to top left corner of the screen.
+    -   [x] !! In version 0.2.2 window is not resizing to center, but to top left corner of the screen.
 
 ## Development
 

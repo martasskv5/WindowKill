@@ -189,18 +189,11 @@ class GameUtils {
         }
 
         // Calculate new position to shrink from all sides
-        const newX =
-            (await this.appWindow.outerPosition()).x + decreaseAmount / 2;
-        const newY =
-            (await this.appWindow.outerPosition()).y + decreaseAmount / 2;
+        const newX = (await this.appWindow.outerPosition()).x + decreaseAmount / 2;
+        const newY = (await this.appWindow.outerPosition()).y + decreaseAmount / 2;
 
-        await this.animateWindowSize(
-            -decreaseAmount,
-            -decreaseAmount,
-            100,
-            "shrink"
-        );
-        // await this.appWindow.setPosition(new LogicalPosition(newX, newY)).catch(console.error);
+        await this.animateWindowSize(-decreaseAmount, -decreaseAmount, 100, "shrink");
+        await this.appWindow.setPosition(new LogicalPosition(newX, newY)).catch(console.error);
 
         setTimeout(() => this.shrinkWindow(), 100);
     }
@@ -208,13 +201,13 @@ class GameUtils {
     /**
      * Animates the game elements.
      */
-        animate() {
+    animate() {
         if (this.gameOver) return;
-    
+
         requestAnimationFrame(() => this.animate());
         this.c.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.player.draw(this.c);
-    
+
         // Update and handle projectiles
         this.projectiles.forEach((projectile, projectilesIndex) => {
             projectile.update(this.c);
@@ -234,18 +227,18 @@ class GameUtils {
                 } else if (projectile.y - projectile.radius > this.canvas.height) {
                     this.expandWindow("bottom");
                 }
-    
+
                 setTimeout(() => {
                     this.projectiles.splice(projectilesIndex, 1);
                 }, 0);
             }
         });
-    
+
         // Update and handle enemies
         for (let index = this.enemies.length - 1; index >= 0; index--) {
             const enemy = this.enemies[index];
             enemy.update(this.c);
-    
+
             // Check for collision between player and enemy
             const dist = Math.hypot(this.player.x - enemy.x, this.player.y - enemy.y);
             if (dist - enemy.radius - this.player.radius < 1) {
@@ -253,12 +246,12 @@ class GameUtils {
                 this._gameOver();
                 return;
             }
-    
+
             // Check for collision between projectiles and enemy
             for (let projectilesIndex = this.projectiles.length - 1; projectilesIndex >= 0; projectilesIndex--) {
                 const projectile = this.projectiles[projectilesIndex];
                 const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
-    
+
                 // When projectile hits enemy
                 if (dist - enemy.radius - projectile.radius < 1) {
                     if (enemy.radius - 10 > 5) {
@@ -276,7 +269,7 @@ class GameUtils {
                 }
             }
         }
-    
+
         // Check for collisions between player and canvas edges
         if (
             this.player.x - this.player.radius <= 0 ||
@@ -372,18 +365,18 @@ class GameUtils {
             let y;
 
             if (Math.random() < 0.5) {
-                x = Math.random() < 0.5 ? 0 - radius : canvas.width + radius;
-                y = Math.random() * canvas.height;
+                x = Math.random() < 0.5 ? 0 - radius : this.canvas.width + radius;
+                y = Math.random() * this.canvas.height;
             } else {
-                x = Math.random() * canvas.width;
-                y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius;
+                x = Math.random() * this.canvas.width;
+                y = Math.random() < 0.5 ? 0 - radius : this.canvas.height + radius;
             }
 
             const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
 
             const angle = Math.atan2(
-                canvas.height / 2 - y,
-                canvas.width / 2 - x
+                this.canvas.height / 2 - y,
+                this.canvas.width / 2 - x
             );
 
             const velocity = {
@@ -391,7 +384,7 @@ class GameUtils {
                 y: Math.sin(angle),
             };
 
-            this.enemies.push(new Enemy(x, y, radius, color, velocity));
+            this.enemies.push(new C.Player(x, y, radius, color, velocity));
         }, 1000);
     }
 }
