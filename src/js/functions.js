@@ -338,7 +338,7 @@ async function startGame(appWindow, options, timer) {
     let gameOver = false;
 
     const gameUtils = new GameUtils(appWindow, canvas, player, playerRadius, projectiles, gameOver);
-    window.gameUtils = gameUtils; // Uložíme gameUtils do globálnej premennej
+    // window.gameUtils = gameUtils; // Uložíme gameUtils do globálnej premennej
 
     player.draw(c);
     gameUtils.updateCanvasSize();
@@ -379,6 +379,20 @@ async function startGame(appWindow, options, timer) {
         };
         projectiles.push(new C.Projectile(player.x, player.y, 5, options.playerColor, velocity));
     });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+            gameUtils.isPaused = !gameUtils.isPaused; // Prepne stav pauzy
+            if (gameUtils.isPaused) {
+                document.querySelector("#pauseButton").innerText = "Resume";
+                timer.classList.toggle("hidden"); // Skryje časovač
+            } else {
+                document.querySelector("#pauseButton").innerText = "Pause";
+                timer.classList.toggle("hidden"); // Zobrazí časovač
+            }
+        }
+    });
+    
     gameUtils.animate();
     gameUtils.shrinkWindow();
 }

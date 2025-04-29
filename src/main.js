@@ -94,15 +94,12 @@ window.addEventListener("DOMContentLoaded", async () => {
         document.querySelector("#gameStart").classList.toggle("hidden");
     });
 
-    // Pause button
-    const pauseButton = document.querySelector("#pauseButton");
-    pauseButton.addEventListener("click", togglePause);
+    // // Pause button
+    // const pauseButton = document.querySelector("#pauseButton");
+    // pauseButton.addEventListener("click", togglePause);
 });
 
-// Pause/Resume function
-let gameUtils; // Bude nastavené v startGame
-
-function togglePause() {
+function togglePause(gameUtils) {
     gameUtils.isPaused = !gameUtils.isPaused; // Prepne stav pauzy
     if (gameUtils.isPaused) {
         document.querySelector("#pauseButton").innerText = "Resume";
