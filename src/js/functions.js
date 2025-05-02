@@ -102,11 +102,13 @@ async function startGame(appWindow, options, timer) {
     window.addEventListener("resize", () => {
         gameUtils.updateCanvasSize();
         gameUtils.centerPlayer();
+        gameUtils.updateEnemies();
     });
 
     // Update player position when window is moved
     appWindow.onMoved(() => {
         gameUtils.centerPlayer();
+        gameUtils.updateEnemies();
     });
 
     document.addEventListener("click", (event) => {

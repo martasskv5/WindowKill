@@ -1,9 +1,7 @@
 import * as C from "./classes.js";
 import { _resizeWindow } from "./functions.js";
-const { currentMonitor, LogicalSize, LogicalPosition } =
-    window.__TAURI__.window;
-const { exists, BaseDirectory, readTextFile, writeTextFile } =
-    window.__TAURI__.fs;
+const { currentMonitor, LogicalSize, LogicalPosition } = window.__TAURI__.window;
+const { exists, BaseDirectory, readTextFile, writeTextFile } = window.__TAURI__.fs;
 
 /**
  * Class containing utility functions for the game.
@@ -21,15 +19,7 @@ class GameUtils {
      * @param {number} highScore - The high score of the game.
      * @param {Array} enemies - The array of enemies.
      */
-    constructor(
-        appWindow,
-        canvas,
-        player,
-        playerRadius,
-        projectiles,
-        gameOver,
-        enemies
-    ) {
+    constructor(appWindow, canvas, player, playerRadius, projectiles, gameOver, enemies) {
         this.appWindow = appWindow;
         this.canvas = canvas;
         this.player = player;
@@ -90,12 +80,7 @@ class GameUtils {
      * @param {string} direction - The direction of the window expansion.
      * @returns {Promise<void>}
      */
-    async animateWindowSize(
-        increaseWidth,
-        increaseHeight,
-        durationMs,
-        direction
-    ) {
+    async animateWindowSize(increaseWidth, increaseHeight, durationMs, direction) {
         const startTime = Date.now();
         const startX = await this.appWindow.innerSize();
         const startPos = await this.appWindow.outerPosition();
@@ -124,12 +109,8 @@ class GameUtils {
                 }
 
                 // Update window size and position
-                this.appWindow
-                    .setSize(new LogicalSize(newWidth, newHeight))
-                    .catch(console.error);
-                this.appWindow
-                    .setPosition(new LogicalPosition(newX, newY))
-                    .catch(console.error);
+                this.appWindow.setSize(new LogicalSize(newWidth, newHeight)).catch(console.error);
+                this.appWindow.setPosition(new LogicalPosition(newX, newY)).catch(console.error);
 
                 if (progress < 1) {
                     requestAnimationFrame(animate);
@@ -159,12 +140,7 @@ class GameUtils {
             newHeight += increaseAmount;
         }
 
-        await this.animateWindowSize(
-            newWidth - currentSize.width,
-            newHeight - currentSize.height,
-            500,
-            direction
-        );
+        await this.animateWindowSize(newWidth - currentSize.width, newHeight - currentSize.height, 500, direction);
     }
 
     /**
@@ -179,10 +155,7 @@ class GameUtils {
         let newWidth = currentSize.width - decreaseAmount;
         let newHeight = currentSize.height - decreaseAmount;
 
-        if (
-            newWidth <= this.playerRadius * 2 ||
-            newHeight <= this.playerRadius * 2
-        ) {
+        if (newWidth <= this.playerRadius * 2 || newHeight <= this.playerRadius * 2) {
             this.gameOver = true;
             this._gameOver();
             return;
@@ -298,22 +271,14 @@ class GameUtils {
         if (this.score > this.highScore) {
             this.highScore = this.score;
             await this.save_score(this.highScore);
-            document.querySelector(
-                "#score"
-            ).innerText = `Your new high score is: ${this.score}`;
-            document
-                .querySelector("#gameEnd")
-                .getElementsByTagName("h1")[0].innerText = "New High Score!";
+            document.querySelector("#score").innerText = `Your new high score is: ${this.score}`;
+            document.querySelector("#gameEnd").getElementsByTagName("h1")[0].innerText = "New High Score!";
             const particleSystem = new C.ParticleSystem();
             particleSystem.explode(0, 0);
             particleSystem.explode(this.canvas.width, 0);
         } else {
-            document.querySelector(
-                "#score"
-            ).innerText = `Your score is: ${this.score}`;
-            document.querySelector(
-                "#scoreBest"
-            ).innerText = `Your best score is: ${this.highScore}`;
+            document.querySelector("#score").innerText = `Your score is: ${this.score}`;
+            document.querySelector("#scoreBest").innerText = `Your best score is: ${this.highScore}`;
         }
         document.querySelector("#gameEnd").classList.toggle("hidden");
     }
@@ -324,9 +289,7 @@ class GameUtils {
      */
     async load_score() {
         try {
-            if (
-                await exists("score", { baseDir: BaseDirectory.AppLocalData })
-            ) {
+            if (await exists("score", { baseDir: BaseDirectory.AppLocalData })) {
                 const data = await readTextFile("score", {
                     baseDir: BaseDirectory.AppLocalData,
                 });
@@ -355,7 +318,7 @@ class GameUtils {
     }
 
     /**
-     * Spawns enemies at random intervals and positions.
+     * Spawns enemies at random intervals and positions, targeting the player.
      */
     spawnEnemies() {
         setInterval(() => {
@@ -374,10 +337,8 @@ class GameUtils {
 
             const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
 
-            const angle = Math.atan2(
-                this.canvas.height / 2 - y,
-                this.canvas.width / 2 - x
-            );
+            // Calculate angle towards the player's current position
+            const angle = Math.atan2(this.player.y - y, this.player.x - x);
 
             const velocity = {
                 x: Math.cos(angle),
@@ -386,6 +347,20 @@ class GameUtils {
 
             this.enemies.push(new C.Player(x, y, radius, color, velocity));
         }, 1000);
+    }
+
+    /**
+     * Updates the enemies to target the player.
+     */
+    updateEnemies() {
+        this.enemies.forEach((enemy) => {
+            const angle = Math.atan2(this.player.y - enemy.y, this.player.x - enemy.x);
+            const velocity = {
+                x: Math.cos(angle),
+                y: Math.sin(angle),
+            };
+            enemy.velocity = velocity;
+        });
     }
 }
 
