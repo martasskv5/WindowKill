@@ -18,6 +18,7 @@ class GameUtils {
      * @param {number} score - The score of the game.
      * @param {number} highScore - The high score of the game.
      * @param {Array} enemies - The array of enemies.
+     * @param {number} killCount - The number of enemies killed.
      */
     constructor(appWindow, canvas, player, playerRadius, projectiles, gameOver, enemies) {
         this.appWindow = appWindow;
@@ -31,6 +32,7 @@ class GameUtils {
         this.highScore = this.load_score();
         this.scaleFactor = this.appWindow.scaleFactor();
         this.enemies = enemies;
+        this.killCount = 0;
     }
 
     /**
@@ -228,14 +230,12 @@ class GameUtils {
                 // When projectile hits enemy
                 if (dist - enemy.radius - projectile.radius < 1) {
                     if (enemy.radius - 10 > 5) {
-                        this.score += 100;
-                        document.querySelector("#score").innerHTML = this.score;
                         enemy.radius -= 10;
                         this.projectiles.splice(projectilesIndex, 1);
                     } else {
                         // Remove enemy if too small
-                        this.score += 150;
-                        document.querySelector("#score").innerHTML = this.score;
+                        this.killCount++;
+                        document.querySelector("#killCount").innerHTML = this.killCount;
                         this.enemies.splice(index, 1);
                         this.projectiles.splice(projectilesIndex, 1);
                     }
@@ -265,19 +265,23 @@ class GameUtils {
         const newWidth = 600 - currentSize.width;
         const newHeight = 600 - currentSize.height;
         await _resizeWindow(this.appWindow, newWidth, newHeight, 100);
-        console.log(this.score, this.highScore);
-        this.highScore, this.score;
+        console.log(`score: ${this.score}, highScore: ${this.highScore}, killCount: ${this.killCount}`);
+        // this.highScore, this.score;
+
+        const score = this.score * Math.round(this.killCount / 2); // 0 kills = 0 score
+
         document.querySelector("#timer").classList.toggle("hidden"); // Hide the timer display
-        if (this.score > this.highScore) {
-            this.highScore = this.score;
+        document.querySelector("#killCount").classList.toggle("hidden");
+        if (score > this.highScore) {
+            this.highScore = score;
             await this.save_score(this.highScore);
-            document.querySelector("#score").innerText = `Your new high score is: ${this.score}`;
+            document.querySelector("#score").innerText = `Your new high score is: ${score}`;
             document.querySelector("#gameEnd").getElementsByTagName("h1")[0].innerText = "New High Score!";
             const particleSystem = new C.ParticleSystem();
             particleSystem.explode(0, 0);
             particleSystem.explode(this.canvas.width, 0);
         } else {
-            document.querySelector("#score").innerText = `Your score is: ${this.score}`;
+            document.querySelector("#score").innerText = `Your score is: ${score}`;
             document.querySelector("#scoreBest").innerText = `Your best score is: ${this.highScore}`;
         }
         document.querySelector("#gameEnd").classList.toggle("hidden");

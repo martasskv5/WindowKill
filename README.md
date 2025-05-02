@@ -127,8 +127,8 @@ Zhrnutie projektu to jednotlivých bodov
     -   [x] Settings menu
     -   [x] Score counter & timer
     -   [ ] Pause menu
-    -   [ ] Animations
-        -   [ ] Hover FX
+    -   [x] Animations
+        -   [x] Hover FX
     -   [ ] Set app icon
     -   [x] Disable Windows header
 -   [ ] Mechanics
@@ -140,13 +140,14 @@ Zhrnutie projektu to jednotlivých bodov
         -   [ ] Player power
         -   [ ] ? Lost focus - faster shrinking
         -   [ ] Impossible mode - transparent window
+        -   [ ] Score multiplier
     -   [x] Spawn enemies
         -   [ ] Controlled by difficulties
             -   [ ] Faster movement
             -   [ ] More health
             -   [ ] Bigger damage
-        -   [ ] Update enemy position calculation to follow player
-        -   [ ] Update scoring system to include enemies killed
+        -   [x] Update enemy position calculation to follow player
+        -   [x] Update scoring system to include enemies killed
     -   [ ] Settings
         -   [x] Player options - color change
         -   [ ] Difficulties
@@ -162,7 +163,7 @@ Zhrnutie projektu to jednotlivých bodov
         -   [ ] Achievements
     -   [ ] Dynamic start size
     -   [ ] Dynamic window size
-    -   [ ] Players health - enemies deal damage
+    -   [ ] ? Players health - enemies deal damage
     -   [ ] Keyboard shortcuts
         -   [x] Disable default shortcuts ! at end also dev tools
         -   [ ] ESC to open pause menu

@@ -28,12 +28,14 @@ window.addEventListener("DOMContentLoaded", async () => {
     const mainMenuButton = document.querySelector("#mainMenuButton");
 
     const timer = document.querySelector("#timer");
+    const killCount = document.querySelector("#killCount");
 
     // Start the game
     startButton.addEventListener("click", async () => {
         // Hide main menu
         document.querySelector("#gameStart").classList.toggle("hidden");
         timer.classList.toggle("hidden");
+        killCount.classList.toggle("hidden");
 
         await startGame(appWindow, options, timer);
     });
