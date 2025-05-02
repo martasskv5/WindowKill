@@ -130,6 +130,7 @@ Zhrnutie projektu to jednotlivých bodov
     -   [ ] Animations
         -   [ ] Hover FX
     -   [ ] Set app icon
+    -   [x] Disable Windows header
 -   [ ] Mechanics
     -   [ ] Difficulties
         -   [ ] Faster shrinking
