@@ -132,6 +132,12 @@ async function startGame(appWindow, options, timer) {
             }
         }
     });
+
+    appWindow.onFocusChanged(({payload: focused}) => {
+        if (!focused) {
+            console.log("Window lost focus");
+        }
+    })
     
     gameUtils.animate();
     gameUtils.spawnEnemies()
