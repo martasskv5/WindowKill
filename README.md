@@ -127,9 +127,10 @@ Zhrnutie projektu to jednotlivých bodov
     -   [x] Settings menu
     -   [x] Score counter & timer
     -   [ ] Pause menu
-    -   [ ] Animations
-        -   [ ] Hover FX
-    -   [ ] Set app icon
+    -   [x] Animations
+        -   [x] Hover FX
+    -   [x] Set app icon
+    -   [x] Disable Windows header
 -   [ ] Mechanics
     -   [ ] Difficulties
         -   [ ] Faster shrinking
@@ -139,11 +140,14 @@ Zhrnutie projektu to jednotlivých bodov
         -   [ ] Player power
         -   [ ] ? Lost focus - faster shrinking
         -   [ ] Impossible mode - transparent window
-    -   [ ] Spawn enemies
+        -   [ ] Score multiplier
+    -   [x] Spawn enemies
         -   [ ] Controlled by difficulties
             -   [ ] Faster movement
             -   [ ] More health
             -   [ ] Bigger damage
+        -   [x] Update enemy position calculation to follow player
+        -   [x] Update scoring system to include enemies killed
     -   [ ] Settings
         -   [x] Player options - color change
         -   [ ] Difficulties
@@ -151,7 +155,7 @@ Zhrnutie projektu to jednotlivých bodov
             -   [ ] ? Separate settings for each game aspect
         -   [x] Save options
         -   [ ] ~~Shortcuts customization & display~~
-    -   [ ] UI buttons
+    -   [x] UI buttons
     -   [ ] Save
         -   [x] Best score
             -   [ ] ? Encrypt file
@@ -159,7 +163,7 @@ Zhrnutie projektu to jednotlivých bodov
         -   [ ] Achievements
     -   [ ] Dynamic start size
     -   [ ] Dynamic window size
-    -   [ ] Players health - enemies deal damage
+    -   [ ] ? Players health - enemies deal damage
     -   [ ] Keyboard shortcuts
         -   [x] Disable default shortcuts ! at end also dev tools
         -   [ ] ESC to open pause menu
@@ -179,6 +183,7 @@ Zhrnutie projektu to jednotlivých bodov
     -   [ ] Shrinking stops when resizing
     -   [ ] Window flickering when resizing
     -   [x] **Temporal fix:** Incorrect window position when scaling is applied on Windows: When Windows uses display scaling above 100%, it creates a mismatch between physical and logical pixel coordinates. This affects how Tauri handles window positioning
+    -   [x] !! In version 0.2.2 window is not resizing to center, but to top left corner of the screen.
 
 ## Development
 

@@ -16,8 +16,11 @@ class GameUtils {
      * @param {Array} projectiles - The array of projectiles.
      * @param {boolean} gameOver - The game over flag.
      * @param {number} score - The score of the game.
+     * @param {number} highScore - The high score of the game.
+     * @param {Array} enemies - The array of enemies.
+     * @param {number} killCount - The number of enemies killed.
      */
-    constructor(appWindow, canvas, player, playerRadius, projectiles, gameOver) {
+    constructor(appWindow, canvas, player, playerRadius, projectiles, gameOver, enemies) {
         this.appWindow = appWindow;
         this.canvas = canvas;
         this.player = player;
@@ -28,6 +31,8 @@ class GameUtils {
         this.score = 0;
         this.highScore = this.load_score();
         this.scaleFactor = this.appWindow.scaleFactor();
+        this.enemies = enemies;
+        this.killCount = 0;
     }
 
     /**
@@ -163,7 +168,7 @@ class GameUtils {
         const newY = (await this.appWindow.outerPosition()).y + decreaseAmount / 2;
 
         await this.animateWindowSize(-decreaseAmount, -decreaseAmount, 100, "shrink");
-        // await this.appWindow.setPosition(new LogicalPosition(newX, newY)).catch(console.error);
+        await this.appWindow.setPosition(new LogicalPosition(newX, newY)).catch(console.error);
 
         setTimeout(() => this.shrinkWindow(), 100);
     }
@@ -177,7 +182,9 @@ class GameUtils {
         requestAnimationFrame(() => this.animate());
         this.c.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.player.draw(this.c);
-        this.projectiles.forEach((projectile, index) => {
+
+        // Update and handle projectiles
+        this.projectiles.forEach((projectile, projectilesIndex) => {
             projectile.update(this.c);
             if (
                 projectile.x + projectile.radius < 0 ||
@@ -197,10 +204,44 @@ class GameUtils {
                 }
 
                 setTimeout(() => {
-                    this.projectiles.splice(index, 1);
+                    this.projectiles.splice(projectilesIndex, 1);
                 }, 0);
             }
         });
+
+        // Update and handle enemies
+        for (let index = this.enemies.length - 1; index >= 0; index--) {
+            const enemy = this.enemies[index];
+            enemy.update(this.c);
+
+            // Check for collision between player and enemy
+            const dist = Math.hypot(this.player.x - enemy.x, this.player.y - enemy.y);
+            if (dist - enemy.radius - this.player.radius < 1) {
+                this.gameOver = true;
+                this._gameOver();
+                return;
+            }
+
+            // Check for collision between projectiles and enemy
+            for (let projectilesIndex = this.projectiles.length - 1; projectilesIndex >= 0; projectilesIndex--) {
+                const projectile = this.projectiles[projectilesIndex];
+                const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
+
+                // When projectile hits enemy
+                if (dist - enemy.radius - projectile.radius < 1) {
+                    if (enemy.radius - 10 > 5) {
+                        enemy.radius -= 10;
+                        this.projectiles.splice(projectilesIndex, 1);
+                    } else {
+                        // Remove enemy if too small
+                        this.killCount++;
+                        document.querySelector("#killCount").innerHTML = this.killCount;
+                        this.enemies.splice(index, 1);
+                        this.projectiles.splice(projectilesIndex, 1);
+                    }
+                }
+            }
+        }
 
         // Check for collisions between player and canvas edges
         if (
@@ -224,19 +265,23 @@ class GameUtils {
         const newWidth = 600 - currentSize.width;
         const newHeight = 600 - currentSize.height;
         await _resizeWindow(this.appWindow, newWidth, newHeight, 100);
-        console.log(this.score, this.highScore);
-        this.highScore, this.score;
+        console.log(`score: ${this.score}, highScore: ${this.highScore}, killCount: ${this.killCount}`);
+        // this.highScore, this.score;
+
+        const score = this.score * Math.round(this.killCount / 2); // 0 kills = 0 score
+
         document.querySelector("#timer").classList.toggle("hidden"); // Hide the timer display
-        if (this.score > this.highScore) {
-            this.highScore = this.score;
+        document.querySelector("#killCount").classList.toggle("hidden");
+        if (score > this.highScore) {
+            this.highScore = score;
             await this.save_score(this.highScore);
-            document.querySelector("#score").innerText = `Your new high score is: ${this.score}`;
+            document.querySelector("#score").innerText = `Your new high score is: ${score}`;
             document.querySelector("#gameEnd").getElementsByTagName("h1")[0].innerText = "New High Score!";
-            const particleSystem = new C.ParticleSystem();           
+            const particleSystem = new C.ParticleSystem();
             particleSystem.explode(0, 0);
             particleSystem.explode(this.canvas.width, 0);
         } else {
-            document.querySelector("#score").innerText = `Your score is: ${this.score}`;
+            document.querySelector("#score").innerText = `Your score is: ${score}`;
             document.querySelector("#scoreBest").innerText = `Your best score is: ${this.highScore}`;
         }
         document.querySelector("#gameEnd").classList.toggle("hidden");
@@ -249,7 +294,9 @@ class GameUtils {
     async load_score() {
         try {
             if (await exists("score", { baseDir: BaseDirectory.AppLocalData })) {
-                const data = await readTextFile("score", { baseDir: BaseDirectory.AppLocalData });
+                const data = await readTextFile("score", {
+                    baseDir: BaseDirectory.AppLocalData,
+                });
                 this.highScore = parseInt(data);
             } else {
                 this.highScore = 0; // Default score if file doesn't exist
@@ -266,10 +313,58 @@ class GameUtils {
      */
     async save_score(score) {
         try {
-            await writeTextFile("score", score | this.score, { baseDir: BaseDirectory.AppLocalData });
+            await writeTextFile("score", score | this.score, {
+                baseDir: BaseDirectory.AppLocalData,
+            });
         } catch (error) {
             console.error("Error saving options:", error);
         }
+    }
+
+    /**
+     * Spawns enemies at random intervals and positions, targeting the player.
+     */
+    spawnEnemies() {
+        setInterval(() => {
+            const radius = Math.random() * (30 - 4) + 4;
+
+            let x;
+            let y;
+
+            if (Math.random() < 0.5) {
+                x = Math.random() < 0.5 ? 0 - radius : this.canvas.width + radius;
+                y = Math.random() * this.canvas.height;
+            } else {
+                x = Math.random() * this.canvas.width;
+                y = Math.random() < 0.5 ? 0 - radius : this.canvas.height + radius;
+            }
+
+            const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
+
+            // Calculate angle towards the player's current position
+            const angle = Math.atan2(this.player.y - y, this.player.x - x);
+
+            const velocity = {
+                x: Math.cos(angle),
+                y: Math.sin(angle),
+            };
+
+            this.enemies.push(new C.Player(x, y, radius, color, velocity));
+        }, 1000);
+    }
+
+    /**
+     * Updates the enemies to target the player.
+     */
+    updateEnemies() {
+        this.enemies.forEach((enemy) => {
+            const angle = Math.atan2(this.player.y - enemy.y, this.player.x - enemy.x);
+            const velocity = {
+                x: Math.cos(angle),
+                y: Math.sin(angle),
+            };
+            enemy.velocity = velocity;
+        });
     }
 }
 
