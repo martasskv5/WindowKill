@@ -129,7 +129,7 @@ Zhrnutie projektu to jednotlivých bodov
     -   [ ] Pause menu
     -   [x] Animations
         -   [x] Hover FX
-    -   [ ] Set app icon
+    -   [x] Set app icon
     -   [x] Disable Windows header
 -   [ ] Mechanics
     -   [ ] Difficulties
