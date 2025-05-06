@@ -19,8 +19,9 @@ class GameUtils {
      * @param {number} highScore - The high score of the game.
      * @param {Array} enemies - The array of enemies.
      * @param {number} killCount - The number of enemies killed.
+     * @param {Object} options - The game options object.
      */
-    constructor(appWindow, canvas, player, playerRadius, projectiles, gameOver, enemies) {
+    constructor(appWindow, canvas, player, playerRadius, projectiles, gameOver, enemies, options) {
         this.appWindow = appWindow;
         this.canvas = canvas;
         this.player = player;
@@ -33,6 +34,7 @@ class GameUtils {
         this.scaleFactor = this.appWindow.scaleFactor();
         this.enemies = enemies;
         this.killCount = 0;
+        this.options = options;
     }
 
     /**
@@ -131,7 +133,7 @@ class GameUtils {
      */
     async expandWindow(direction) {
         const currentSize = await this.appWindow.innerSize();
-        const increaseAmount = 20; // Amount to increase the window size
+        const increaseAmount = this.options.difficulty.increasePower; // Amount to increase the window size
 
         let newWidth = currentSize.width;
         let newHeight = currentSize.height;
@@ -152,7 +154,7 @@ class GameUtils {
         if (this.gameOver) return;
 
         const currentSize = await this.appWindow.innerSize();
-        const decreaseAmount = 3; // Amount to decrease the window size
+        const decreaseAmount = this.options.difficulty.decreasePower; // Amount to decrease the window size
 
         let newWidth = currentSize.width - decreaseAmount;
         let newHeight = currentSize.height - decreaseAmount;
@@ -268,7 +270,7 @@ class GameUtils {
         console.log(`score: ${this.score}, highScore: ${this.highScore}, killCount: ${this.killCount}`);
         // this.highScore, this.score;
 
-        const score = this.score * Math.round(this.killCount / 2); // 0 kills = 0 score
+        const score = this.score * Math.round(this.killCount * this.options.difficulty.scoreMultiplier); // 0 kills = 0 score
 
         document.querySelector("#timer").classList.toggle("hidden"); // Hide the timer display
         document.querySelector("#killCount").classList.toggle("hidden");
@@ -350,7 +352,7 @@ class GameUtils {
             };
 
             this.enemies.push(new C.Player(x, y, radius, color, velocity));
-        }, 1000);
+        }, 1000 * this.options.difficulty.enemySpawnSpeed);
     }
 
     /**

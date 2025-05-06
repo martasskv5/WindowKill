@@ -73,7 +73,7 @@ async function startGame(appWindow, options, timer) {
     let gameOver = false;
     const enemies = [];
 
-    const gameUtils = new GameUtils(appWindow, canvas, player, playerRadius, projectiles, gameOver, enemies);
+    const gameUtils = new GameUtils(appWindow, canvas, player, playerRadius, projectiles, gameOver, enemies, options);
 
     player.draw(c);
     gameUtils.updateCanvasSize();

@@ -20,7 +20,7 @@ const { exists, BaseDirectory, readTextFile, writeTextFile, mkdir } = window.__T
 class Options {
     constructor() {
         // Default options
-        this.difficulty = "easy";
+        this.difficulty = new Difficulties();
         this.volume = "50";
         this.playerColor = "#ffffff";
         this.config = "options.json";
@@ -51,12 +51,13 @@ class Options {
                 const data = await readTextFile(this.config, { baseDir: BaseDirectory.AppLocalData });
                 const options = JSON.parse(data);
                 console.log(options);
-                this.difficulty = options.difficulty || this.difficulty;
+                this.difficulty.difficulty = options.difficulty || this.difficulty.difficulty;
+                this.difficulty.initialize(); // Reinitialize difficulty settings
                 this.volume = options.volume || this.volume;
                 this.playerColor = options.playerColor || this.playerColor;
 
                 // Update the UI with loaded options
-                document.querySelector("#difficulty").value = this.difficulty;
+                document.querySelector("#difficulty").value = this.difficulty.difficulty;
                 document.querySelector("#volume").value = this.volume;
                 document.querySelector("#volumeValue").innerHTML = this.volume;
                 document.querySelector("#playerColor").value = this.playerColor;
@@ -77,7 +78,7 @@ class Options {
      */
     async saveOptions() {
         const options = {
-            difficulty: this.difficulty,
+            difficulty: this.difficulty.difficulty,
             volume: this.volume,
             playerColor: this.playerColor,
         };
@@ -96,7 +97,8 @@ class Options {
      * @returns {Promise<void>}
      */
     async updateOptions(newOptions) {
-        this.difficulty = newOptions.difficulty || this.difficulty;
+        this.difficulty.difficulty = newOptions.difficulty || this.difficulty.difficulty;
+        this.difficulty.initialize(); // Reinitialize difficulty settings
         this.volume = newOptions.volume || this.volume;
         this.playerColor = newOptions.playerColor || this.playerColor;
         await this.saveOptions();
@@ -114,12 +116,56 @@ class Options {
         const formPlayerColor = document.querySelector("#playerColor")?.value;
 
         // Compare with saved options
-        if (formDifficulty !== this.difficulty) return true;
+        if (formDifficulty !== this.difficulty.difficulty) return true;
         if (formVolume !== String(this.volume)) return true;
         if (formPlayerColor !== this.playerColor) return true;
 
         // No changes detected
         return false;
+    }
+}
+
+/**
+ * Difficulties class to manage game difficulty settings
+ * This class handles the initialization of difficulty settings
+ * and provides methods to increase or decrease difficulty levels.
+ */
+class Difficulties {
+    constructor() {
+        this.difficulty = "normal"; // Default difficulty
+        this.difficulties = {
+            "normal": {
+                increasePower: 20,
+                decreasePower: 3,
+                enemySpawnSpeed: 1,
+                scoreMultiplier: 0.5,
+                transparent: false,
+            },
+            "impossible": {
+                increasePower: 25,
+                decreasePower: 6,
+                enemySpawnSpeed: 0.75,
+                scoreMultiplier: 2,
+                transparent: true,
+            },
+        }
+        this.increasePower = this.difficulties[this.difficulty].increasePower;
+        this.decreasePower = this.difficulties[this.difficulty].decreasePower;
+        this.enemySpawnSpeed = this.difficulties[this.difficulty].enemySpawnSpeed;
+        this.scoreMultiplier = this.difficulties[this.difficulty].scoreMultiplier;
+        this.transparent = this.difficulties[this.difficulty].transparent;
+        this.initialize();
+    }
+
+    initialize() {
+        // Set the initial difficulty settings based on the default difficulty
+        this.increasePower = this.difficulties[this.difficulty].increasePower;
+        this.decreasePower = this.difficulties[this.difficulty].decreasePower;
+        this.enemySpawnSpeed = this.difficulties[this.difficulty].enemySpawnSpeed;
+        this.scoreMultiplier = this.difficulties[this.difficulty].scoreMultiplier;
+
+        const backgroundColor = this.difficulties[this.difficulty].transparent ? "rgba(0, 0, 0, 0)" : "#303030";
+        document.body.style.setProperty('--background-color', backgroundColor);
     }
 }
 
