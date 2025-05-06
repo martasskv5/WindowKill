@@ -132,15 +132,15 @@ Zhrnutie projektu to jednotlivých bodov
     -   [x] Set app icon
     -   [x] Disable Windows header
 -   [ ] Mechanics
-    -   [ ] Difficulties
-        -   [ ] Faster shrinking
-        -   [ ] Shrinking power
-        -   [ ] More enemies
+    -   [x] Difficulties
+        -   [ ] ~~Faster shrinking~~
+        -   [x] Shrinking power
+        -   [x] More enemies
         -   [ ] Slower fire rate
-        -   [ ] Player power
+        -   [x] Player power
         -   [ ] ? Lost focus - faster shrinking
-        -   [ ] Impossible mode - transparent window
-        -   [ ] Score multiplier
+        -   [x] Impossible mode - transparent window
+        -   [x] Score multiplier
     -   [x] Spawn enemies
         -   [ ] Controlled by difficulties
             -   [ ] Faster movement
