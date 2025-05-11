@@ -21,18 +21,18 @@ class GameUtils {
      * @param {number} killCount - The number of enemies killed.
      * @param {Object} options - The game options object.
      */
-    constructor(appWindow, canvas, player, playerRadius, projectiles, gameOver, enemies, options) {
+    constructor(appWindow, canvas, player, playerRadius, gameOver, options) {
         this.appWindow = appWindow;
         this.canvas = canvas;
         this.player = player;
         this.playerRadius = playerRadius;
-        this.projectiles = projectiles;
+        this.projectiles = [];
         this.gameOver = gameOver;
         this.c = canvas.getContext("2d");
         this.score = 0;
         this.highScore = this.load_score();
         this.scaleFactor = this.appWindow.scaleFactor();
-        this.enemies = enemies;
+        this.enemies = [];
         this.killCount = 0;
         this.options = options;
     }

@@ -136,10 +136,11 @@ class Difficulties {
         this.difficulties = {
             "normal": {
                 increasePower: 20,
-                decreasePower: 3,
+                decreasePower: 5,
                 enemySpawnSpeed: 1,
                 scoreMultiplier: 0.5,
                 transparent: false,
+                timeMultiplier: 1.5,
             },
             "impossible": {
                 increasePower: 25,
@@ -147,6 +148,7 @@ class Difficulties {
                 enemySpawnSpeed: 0.75,
                 scoreMultiplier: 2,
                 transparent: true,
+                timeMultiplier: 1.7,
             },
         }
         this.increasePower = this.difficulties[this.difficulty].increasePower;
@@ -154,6 +156,7 @@ class Difficulties {
         this.enemySpawnSpeed = this.difficulties[this.difficulty].enemySpawnSpeed;
         this.scoreMultiplier = this.difficulties[this.difficulty].scoreMultiplier;
         this.transparent = this.difficulties[this.difficulty].transparent;
+        this.timeMultiplier = this.difficulties[this.difficulty].timeMultiplier;
         this.initialize();
     }
 
@@ -163,6 +166,8 @@ class Difficulties {
         this.decreasePower = this.difficulties[this.difficulty].decreasePower;
         this.enemySpawnSpeed = this.difficulties[this.difficulty].enemySpawnSpeed;
         this.scoreMultiplier = this.difficulties[this.difficulty].scoreMultiplier;
+        this.transparent = this.difficulties[this.difficulty].transparent;
+        this.timeMultiplier = this.difficulties[this.difficulty].timeMultiplier;
 
         const backgroundColor = this.difficulties[this.difficulty].transparent ? "rgba(0, 0, 0, 0)" : "#303030";
         document.body.style.setProperty('--background-color', backgroundColor);

@@ -142,7 +142,7 @@ Zhrnutie projektu to jednotlivých bodov
         -   [x] Impossible mode - transparent window
         -   [x] Score multiplier
     -   [x] Spawn enemies
-        -   [ ] Controlled by difficulties
+        -   [x] Controlled by difficulties
             -   [ ] Faster movement
             -   [ ] More health
             -   [ ] Bigger damage
@@ -150,7 +150,7 @@ Zhrnutie projektu to jednotlivých bodov
         -   [x] Update scoring system to include enemies killed
     -   [ ] Settings
         -   [x] Player options - color change
-        -   [ ] Difficulties
+        -   [x] Difficulties
             -   [x] Predefined options
             -   [ ] ? Separate settings for each game aspect
         -   [x] Save options
