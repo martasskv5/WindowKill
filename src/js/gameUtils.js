@@ -35,6 +35,36 @@ class GameUtils {
         this.enemies = [];
         this.killCount = 0;
         this.options = options;
+        this.animationFrameId = null;
+        this.enemySpawnInterval = null;
+        this.shrinkInterval = null;
+        this.paused = false;
+
+        // Add event listener for the Escape key
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                if (this.paused) {
+                    this.resume();
+                } else {
+                    this.pause();
+                }
+            }
+        });
+    }
+
+    pause() {
+        this.paused = true;
+        cancelAnimationFrame(this.animationFrameId);
+        clearInterval(this.enemySpawnInterval);
+        clearInterval(this.shrinkInterval);
+    }
+
+    resume() {
+        if (this.gameOver) return;
+        this.paused = false;
+        this.animate();
+        this.spawnEnemies();
+        this.shrinkWindow();
     }
 
     /**
@@ -156,7 +186,7 @@ class GameUtils {
         const decreaseMultiplier = this.options.difficulty.decreaseMultiplier; // Multiplier to decrease the amount over time
 
         const shrink = async () => {
-            if (this.gameOver) return;
+            if (this.gameOver || this.paused) return;
 
             const currentSize = await this.appWindow.innerSize();
 
@@ -189,9 +219,9 @@ class GameUtils {
      * Animates the game elements.
      */
     animate() {
-        if (this.gameOver) return;
+        if (this.gameOver || this.paused) return;
 
-        requestAnimationFrame(() => this.animate());
+        this.animationFrameId = requestAnimationFrame(() => this.animate());
         this.c.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.player.draw(this.c);
 
@@ -363,7 +393,7 @@ class GameUtils {
         console.log(spawnInterval, minInterval, intervalDecrement);
 
         const spawn = () => {
-            if (this.gameOver) return; // Stop spawning if the game is over
+            if (this.gameOver || this.paused) return; // Stop spawning if the game is over or paused
 
             const radius = Math.random() * (30 - 4) + 4;
 

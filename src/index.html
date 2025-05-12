@@ -48,16 +48,23 @@
 				oninput="document.querySelector('#volumeValue').textContent = this.value" />
 			<span id="volumeValue">50</span>
 		</div>
+	
 		<label for="playerColor">Player Color:</label>
 		<input type="color" id="playerColor" name="playerColor" value="#ff0000" />
-
+	
 		<button class="button green" id="saveButton">Save</button>
 		<button class="button yellow" id="backButton">Back</button>
 	</div>
-
-    <div id="timer" class="data-display hidden">00:00:00</div>
-    <div id="killCount" class="data-display hidden">0</div>
+	
+	<div id="pauseMenu" class="uiWrapper hidden">
+		<h1>Paused</h1>
+		<button class="button green" id="resumeButton">Continue</button>
+		<button class="button yellow" id="mainMenuPauseButton">Main Menu</button>
+	</div>
+	
+	<div id="timer" class="data-display hidden">00:00:00</div>
+	<div id="killCount" class="data-display hidden">0</div>
 	<canvas></canvas>
-</body>
-
-</html>
+	</body>
+	</html>
+	
