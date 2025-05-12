@@ -51,8 +51,7 @@ class Options {
                 const data = await readTextFile(this.config, { baseDir: BaseDirectory.AppLocalData });
                 const options = JSON.parse(data);
                 console.log(options);
-                this.difficulty.difficulty = options.difficulty || this.difficulty.difficulty;
-                this.difficulty.initialize(); // Reinitialize difficulty settings
+                this.difficulty.setDifficulty(options.difficulty || this.difficulty.difficulty);
                 this.volume = options.volume || this.volume;
                 this.playerColor = options.playerColor || this.playerColor;
 
@@ -97,8 +96,7 @@ class Options {
      * @returns {Promise<void>}
      */
     async updateOptions(newOptions) {
-        this.difficulty.difficulty = newOptions.difficulty || this.difficulty.difficulty;
-        this.difficulty.initialize(); // Reinitialize difficulty settings
+        this.difficulty.setDifficulty(newOptions.difficulty || this.difficulty.difficulty);
         this.volume = newOptions.volume || this.volume;
         this.playerColor = newOptions.playerColor || this.playerColor;
         await this.saveOptions();
@@ -126,51 +124,72 @@ class Options {
 }
 
 /**
- * Difficulties class to manage game difficulty settings
- * This class handles the initialization of difficulty settings
- * and provides methods to increase or decrease difficulty levels.
+ * Class to manage game difficulty settings.
+ * Handles initialization and updates of difficulty levels.
  */
 class Difficulties {
     constructor() {
         this.difficulty = "normal"; // Default difficulty
         this.difficulties = {
-            "normal": {
+            normal: {
                 increasePower: 20,
-                decreasePower: 5,
+                decreasePower: 2,
+                decreaseMax: 6,
+                decreaseMultiplier: 1.1,
                 enemySpawnSpeed: 1,
+                enemyMinSpawn: 750,
+                enemySpawnDecrease: 10,
                 scoreMultiplier: 0.5,
                 transparent: false,
                 timeMultiplier: 1.5,
             },
-            "impossible": {
-                increasePower: 25,
-                decreasePower: 6,
+            impossible: {
+                increasePower: 30,
+                decreasePower: 3,
+                decreaseMax: 10,
+                decreaseMultiplier: 1.3,
                 enemySpawnSpeed: 0.75,
+                enemyMinSpawn: 500,
+                enemySpawnDecrease: 30,
                 scoreMultiplier: 2,
                 transparent: true,
                 timeMultiplier: 1.7,
             },
-        }
-        this.increasePower = this.difficulties[this.difficulty].increasePower;
-        this.decreasePower = this.difficulties[this.difficulty].decreasePower;
-        this.enemySpawnSpeed = this.difficulties[this.difficulty].enemySpawnSpeed;
-        this.scoreMultiplier = this.difficulties[this.difficulty].scoreMultiplier;
-        this.transparent = this.difficulties[this.difficulty].transparent;
-        this.timeMultiplier = this.difficulties[this.difficulty].timeMultiplier;
-        this.initialize();
+        };
+        this.updateDifficulty(); // Initialize with default difficulty
     }
 
-    initialize() {
-        // Set the initial difficulty settings based on the default difficulty
-        this.increasePower = this.difficulties[this.difficulty].increasePower;
-        this.decreasePower = this.difficulties[this.difficulty].decreasePower;
-        this.enemySpawnSpeed = this.difficulties[this.difficulty].enemySpawnSpeed;
-        this.scoreMultiplier = this.difficulties[this.difficulty].scoreMultiplier;
-        this.transparent = this.difficulties[this.difficulty].transparent;
-        this.timeMultiplier = this.difficulties[this.difficulty].timeMultiplier;
+    /**
+     * Updates the current difficulty settings based on the selected difficulty.
+     */
+    updateDifficulty() {
+        const currentSettings = this.difficulties[this.difficulty];
+        Object.assign(this, currentSettings); // Dynamically copy properties
 
-        const backgroundColor = this.difficulties[this.difficulty].transparent ? "rgba(0, 0, 0, 0)" : "#303030";
-        document.body.style.setProperty('--background-color', backgroundColor);
+        // Update the background color based on transparency
+        const backgroundColor = currentSettings.transparent ? "rgba(0, 0, 0, 0)" : "#303030";
+        document.body.style.setProperty("--background-color", backgroundColor);
+    }
+
+    /**
+     * Sets a new difficulty level and updates settings.
+     * @param {string} newDifficulty - The new difficulty level to set.
+     */
+    setDifficulty(newDifficulty) {
+        if (this.difficulties[newDifficulty]) {
+            this.difficulty = newDifficulty;
+            this.updateDifficulty();
+        } else {
+            console.error(`Invalid difficulty: ${newDifficulty}`);
+        }
+    }
+
+    /**
+     * Gets the current difficulty settings.
+     * @returns {Object} The current difficulty settings.
+     */
+    getCurrentSettings() {
+        return this.difficulties[this.difficulty];
     }
 }
 

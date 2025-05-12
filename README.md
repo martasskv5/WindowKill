@@ -133,7 +133,6 @@ Zhrnutie projektu to jednotlivých bodov
     -   [x] Disable Windows header
 -   [ ] Mechanics
     -   [x] Difficulties
-        -   [ ] ~~Faster shrinking~~
         -   [x] Shrinking power
         -   [x] More enemies
         -   [ ] Slower fire rate
@@ -141,11 +140,13 @@ Zhrnutie projektu to jednotlivých bodov
         -   [ ] ? Lost focus - faster shrinking
         -   [x] Impossible mode - transparent window
         -   [x] Score multiplier
+        -   [x] Faster shrinking
     -   [x] Spawn enemies
         -   [x] Controlled by difficulties
             -   [ ] Faster movement
             -   [ ] More health
             -   [ ] Bigger damage
+            -   [x] Faster spawn rate
         -   [x] Update enemy position calculation to follow player
         -   [x] Update scoring system to include enemies killed
     -   [ ] Settings
@@ -178,7 +179,7 @@ Zhrnutie projektu to jednotlivých bodov
 -   [ ] Other
     -   [ ] ? Good Soundtrack
 -   [ ] ! Fix
-    -   [ ] !! Correctly set window size on restart
+    -   [x] !! Correctly set window size on restart
     -   [ ] Fix glitches on resize
     -   [ ] Shrinking stops when resizing
     -   [ ] Window flickering when resizing
