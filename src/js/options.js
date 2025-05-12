@@ -20,7 +20,7 @@ const { exists, BaseDirectory, readTextFile, writeTextFile, mkdir } = window.__T
 class Options {
     constructor() {
         // Default options
-        this.difficulty = "easy";
+        this.difficulty = new Difficulties();
         this.volume = "50";
         this.playerColor = "#ffffff";
         this.config = "options.json";
@@ -51,12 +51,12 @@ class Options {
                 const data = await readTextFile(this.config, { baseDir: BaseDirectory.AppLocalData });
                 const options = JSON.parse(data);
                 console.log(options);
-                this.difficulty = options.difficulty || this.difficulty;
+                this.difficulty.setDifficulty(options.difficulty || this.difficulty.difficulty);
                 this.volume = options.volume || this.volume;
                 this.playerColor = options.playerColor || this.playerColor;
 
                 // Update the UI with loaded options
-                document.querySelector("#difficulty").value = this.difficulty;
+                document.querySelector("#difficulty").value = this.difficulty.difficulty;
                 document.querySelector("#volume").value = this.volume;
                 document.querySelector("#volumeValue").innerHTML = this.volume;
                 document.querySelector("#playerColor").value = this.playerColor;
@@ -77,7 +77,7 @@ class Options {
      */
     async saveOptions() {
         const options = {
-            difficulty: this.difficulty,
+            difficulty: this.difficulty.difficulty,
             volume: this.volume,
             playerColor: this.playerColor,
         };
@@ -96,7 +96,7 @@ class Options {
      * @returns {Promise<void>}
      */
     async updateOptions(newOptions) {
-        this.difficulty = newOptions.difficulty || this.difficulty;
+        this.difficulty.setDifficulty(newOptions.difficulty || this.difficulty.difficulty);
         this.volume = newOptions.volume || this.volume;
         this.playerColor = newOptions.playerColor || this.playerColor;
         await this.saveOptions();
@@ -114,12 +114,82 @@ class Options {
         const formPlayerColor = document.querySelector("#playerColor")?.value;
 
         // Compare with saved options
-        if (formDifficulty !== this.difficulty) return true;
+        if (formDifficulty !== this.difficulty.difficulty) return true;
         if (formVolume !== String(this.volume)) return true;
         if (formPlayerColor !== this.playerColor) return true;
 
         // No changes detected
         return false;
+    }
+}
+
+/**
+ * Class to manage game difficulty settings.
+ * Handles initialization and updates of difficulty levels.
+ */
+class Difficulties {
+    constructor() {
+        this.difficulty = "normal"; // Default difficulty
+        this.difficulties = {
+            normal: {
+                increasePower: 20,
+                decreasePower: 2,
+                decreaseMax: 6,
+                decreaseMultiplier: 1.1,
+                enemySpawnSpeed: 1,
+                enemyMinSpawn: 750,
+                enemySpawnDecrease: 10,
+                scoreMultiplier: 0.5,
+                transparent: false,
+                timeMultiplier: 1.5,
+            },
+            impossible: {
+                increasePower: 30,
+                decreasePower: 3,
+                decreaseMax: 10,
+                decreaseMultiplier: 1.3,
+                enemySpawnSpeed: 0.75,
+                enemyMinSpawn: 500,
+                enemySpawnDecrease: 30,
+                scoreMultiplier: 2,
+                transparent: true,
+                timeMultiplier: 1.7,
+            },
+        };
+        this.updateDifficulty(); // Initialize with default difficulty
+    }
+
+    /**
+     * Updates the current difficulty settings based on the selected difficulty.
+     */
+    updateDifficulty() {
+        const currentSettings = this.difficulties[this.difficulty];
+        Object.assign(this, currentSettings); // Dynamically copy properties
+
+        // Update the background color based on transparency
+        const backgroundColor = currentSettings.transparent ? "rgba(0, 0, 0, 0)" : "#303030";
+        document.body.style.setProperty("--background-color", backgroundColor);
+    }
+
+    /**
+     * Sets a new difficulty level and updates settings.
+     * @param {string} newDifficulty - The new difficulty level to set.
+     */
+    setDifficulty(newDifficulty) {
+        if (this.difficulties[newDifficulty]) {
+            this.difficulty = newDifficulty;
+            this.updateDifficulty();
+        } else {
+            console.error(`Invalid difficulty: ${newDifficulty}`);
+        }
+    }
+
+    /**
+     * Gets the current difficulty settings.
+     * @returns {Object} The current difficulty settings.
+     */
+    getCurrentSettings() {
+        return this.difficulties[this.difficulty];
     }
 }
 

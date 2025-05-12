@@ -19,20 +19,22 @@ class GameUtils {
      * @param {number} highScore - The high score of the game.
      * @param {Array} enemies - The array of enemies.
      * @param {number} killCount - The number of enemies killed.
+     * @param {Object} options - The game options object.
      */
-    constructor(appWindow, canvas, player, playerRadius, projectiles, gameOver, enemies) {
+    constructor(appWindow, canvas, player, playerRadius, gameOver, options) {
         this.appWindow = appWindow;
         this.canvas = canvas;
         this.player = player;
         this.playerRadius = playerRadius;
-        this.projectiles = projectiles;
+        this.projectiles = [];
         this.gameOver = gameOver;
         this.c = canvas.getContext("2d");
         this.score = 0;
-        this.highScore = this.load_score();
+        this.highScore = this.loadScore();
         this.scaleFactor = this.appWindow.scaleFactor();
-        this.enemies = enemies;
+        this.enemies = [];
         this.killCount = 0;
+        this.options = options;
     }
 
     /**
@@ -131,7 +133,7 @@ class GameUtils {
      */
     async expandWindow(direction) {
         const currentSize = await this.appWindow.innerSize();
-        const increaseAmount = 20; // Amount to increase the window size
+        const increaseAmount = this.options.difficulty.increasePower; // Amount to increase the window size
 
         let newWidth = currentSize.width;
         let newHeight = currentSize.height;
@@ -142,35 +144,45 @@ class GameUtils {
             newHeight += increaseAmount;
         }
 
-        await this.animateWindowSize(newWidth - currentSize.width, newHeight - currentSize.height, 500, direction);
+        await this.animateWindowSize(newWidth - currentSize.width, newHeight - currentSize.height, 250, direction);
     }
 
     /**
      * Shrinks the window continuously.
      */
     async shrinkWindow() {
-        if (this.gameOver) return;
+        let decreaseAmount = this.options.difficulty.decreasePower; // Amount to decrease the window size
+        const decreaseMax = this.options.difficulty.decreaseMax; // Maximum decrease amount to prevent excessive shrinking
+        const decreaseMultiplier = this.options.difficulty.decreaseMultiplier; // Multiplier to decrease the amount over time
 
-        const currentSize = await this.appWindow.innerSize();
-        const decreaseAmount = 3; // Amount to decrease the window size
+        const shrink = async () => {
+            if (this.gameOver) return;
 
-        let newWidth = currentSize.width - decreaseAmount;
-        let newHeight = currentSize.height - decreaseAmount;
+            const currentSize = await this.appWindow.innerSize();
 
-        if (newWidth <= this.playerRadius * 2 || newHeight <= this.playerRadius * 2) {
-            this.gameOver = true;
-            this._gameOver();
-            return;
+            let newWidth = currentSize.width - decreaseAmount;
+            let newHeight = currentSize.height - decreaseAmount;
+
+            if (newWidth <= this.playerRadius * 2 || newHeight <= this.playerRadius * 2) {
+                this.gameOver = true;
+                this._gameOver();
+                return;
+            }
+
+            // Calculate new position to shrink from all sides
+            const newX = (await this.appWindow.outerPosition()).x + decreaseAmount / 2;
+            const newY = (await this.appWindow.outerPosition()).y + decreaseAmount / 2;
+
+            await this.animateWindowSize(-decreaseAmount, -decreaseAmount, 50, "shrink");
+            await this.appWindow.setPosition(new LogicalPosition(newX, newY)).catch(console.error);
+
+            decreaseAmount = Math.min(decreaseAmount * decreaseMultiplier, decreaseMax); // Decrease the amount for the next iteration
+            console.log("Decrease amount:", decreaseAmount);
+
+            setTimeout(shrink, 50);
         }
 
-        // Calculate new position to shrink from all sides
-        const newX = (await this.appWindow.outerPosition()).x + decreaseAmount / 2;
-        const newY = (await this.appWindow.outerPosition()).y + decreaseAmount / 2;
-
-        await this.animateWindowSize(-decreaseAmount, -decreaseAmount, 100, "shrink");
-        await this.appWindow.setPosition(new LogicalPosition(newX, newY)).catch(console.error);
-
-        setTimeout(() => this.shrinkWindow(), 100);
+        shrink();
     }
 
     /**
@@ -261,20 +273,39 @@ class GameUtils {
     async _gameOver() {
         // Get current window size and position
         const currentSize = await this.appWindow.innerSize();
-        // Calculate the new size and position
-        const newWidth = 600 - currentSize.width;
-        const newHeight = 600 - currentSize.height;
-        await _resizeWindow(this.appWindow, newWidth, newHeight, 100);
+        // Define the original size (e.g., 600x600)
+        const originalWidth = 600;
+        const originalHeight = 600;
+
+        // Get the current monitor and calculate the center position
+        const monitor = await currentMonitor();
+        if (monitor) {
+            const monitorWidth = monitor.size.width;
+            const monitorHeight = monitor.size.height;
+
+            // Calculate the new position to center the window
+            const newX = (monitorWidth - originalWidth) / 2;
+            const newY = (monitorHeight - originalHeight) / 2;
+
+            // Smoothly resize and center the window
+            await this.animateWindowSize(
+                originalWidth - (await this.appWindow.innerSize()).width,
+                originalHeight - (await this.appWindow.innerSize()).height,
+                250,
+                "center"
+            );
+            await this.appWindow.setPosition(new LogicalPosition(newX, newY)).catch(console.error);
+        }
         console.log(`score: ${this.score}, highScore: ${this.highScore}, killCount: ${this.killCount}`);
         // this.highScore, this.score;
 
-        const score = this.score * Math.round(this.killCount / 2); // 0 kills = 0 score
+        const score = this.score * Math.round(this.killCount * this.options.difficulty.scoreMultiplier); // 0 kills = 0 score
 
         document.querySelector("#timer").classList.toggle("hidden"); // Hide the timer display
         document.querySelector("#killCount").classList.toggle("hidden");
         if (score > this.highScore) {
             this.highScore = score;
-            await this.save_score(this.highScore);
+            await this.saveScore(this.highScore);
             document.querySelector("#score").innerText = `Your new high score is: ${score}`;
             document.querySelector("#gameEnd").getElementsByTagName("h1")[0].innerText = "New High Score!";
             const particleSystem = new C.ParticleSystem();
@@ -291,7 +322,7 @@ class GameUtils {
      * Saves the score to a file.
      * @param {number} score - The score to save.
      */
-    async load_score() {
+    async loadScore() {
         try {
             if (await exists("score", { baseDir: BaseDirectory.AppLocalData })) {
                 const data = await readTextFile("score", {
@@ -311,7 +342,7 @@ class GameUtils {
      * Saves the score to a file.
      * * @param {number} score - The score to save.
      */
-    async save_score(score) {
+    async saveScore(score) {
         try {
             await writeTextFile("score", score | this.score, {
                 baseDir: BaseDirectory.AppLocalData,
@@ -323,14 +354,23 @@ class GameUtils {
 
     /**
      * Spawns enemies at random intervals and positions, targeting the player.
+     * The spawn interval decreases over time to increase difficulty.
      */
     spawnEnemies() {
-        setInterval(() => {
+        let spawnInterval = 1000 * this.options.difficulty.enemySpawnSpeed; // Initial spawn interval
+        const minInterval = this.options.difficulty.enemyMinSpawn; // Minimum spawn interval to prevent excessive spawns
+        const intervalDecrement = this.options.difficulty.enemySpawnDecrease; // Amount to decrease the interval over time
+        console.log(spawnInterval, minInterval, intervalDecrement);
+
+        const spawn = () => {
+            if (this.gameOver) return; // Stop spawning if the game is over
+
             const radius = Math.random() * (30 - 4) + 4;
 
             let x;
             let y;
 
+            // Randomly determine spawn position (left/right or top/bottom)
             if (Math.random() < 0.5) {
                 x = Math.random() < 0.5 ? 0 - radius : this.canvas.width + radius;
                 y = Math.random() * this.canvas.height;
@@ -339,18 +379,34 @@ class GameUtils {
                 y = Math.random() < 0.5 ? 0 - radius : this.canvas.height + radius;
             }
 
-            const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
+            // Generate a random hex color that is not the player's color
+            let color;
+            do {
+                color = this.generateRandomHexColor();
+            } while (color === this.player.color); // Regenerate if it matches the player's color
 
             // Calculate angle towards the player's current position
             const angle = Math.atan2(this.player.y - y, this.player.x - x);
 
+            // Set velocity based on the angle
             const velocity = {
                 x: Math.cos(angle),
                 y: Math.sin(angle),
             };
 
+            // Spawn the enemy targeting the player
             this.enemies.push(new C.Player(x, y, radius, color, velocity));
-        }, 1000);
+
+            // Decrease the spawn interval over time
+            spawnInterval = Math.max(spawnInterval - intervalDecrement, minInterval);
+            console.log("Spawn interval:", spawnInterval);
+
+            // Schedule the next spawn
+            setTimeout(spawn, spawnInterval);
+        };
+
+        // Start the first spawn
+        spawn();
     }
 
     /**
@@ -365,6 +421,15 @@ class GameUtils {
             };
             enemy.velocity = velocity;
         });
+    }
+
+    /**
+     * Generates a random hex color string.
+     * @returns {string} The generated hex color (e.g., "#ff5733").
+     */
+    generateRandomHexColor() {
+        const randomColor = Math.floor(Math.random() * 16777215).toString(16); // Generate a random number and convert to hex
+        return `#${randomColor.padStart(6, "0")}`; // Ensure the hex color is 6 characters long
     }
 }
 

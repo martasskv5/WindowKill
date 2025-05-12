@@ -69,11 +69,9 @@ async function startGame(appWindow, options, timer) {
     let playerY = canvas.height / 2;
 
     const player = new C.Player(playerX, playerY, playerRadius, options.playerColor);
-    const projectiles = [];
     let gameOver = false;
-    const enemies = [];
 
-    const gameUtils = new GameUtils(appWindow, canvas, player, playerRadius, projectiles, gameOver, enemies);
+    const gameUtils = new GameUtils(appWindow, canvas, player, playerRadius, gameOver, options);
 
     player.draw(c);
     gameUtils.updateCanvasSize();
@@ -117,7 +115,7 @@ async function startGame(appWindow, options, timer) {
             x: Math.cos(angle) * 5,
             y: Math.sin(angle) * 5,
         };
-        projectiles.push(new C.Projectile(player.x, player.y, 5, options.playerColor, velocity));
+        gameUtils.projectiles.push(new C.Projectile(player.x, player.y, 5, options.playerColor, velocity));
     });
     gameUtils.animate();
     gameUtils.spawnEnemies()
