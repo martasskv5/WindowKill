@@ -24,6 +24,9 @@ class Options {
         this.volume = "50";
         this.playerColor = "#ffffff";
         this.config = "options.json";
+        this.defaultWidth = 600;
+        this.screenMultiplier = 1;
+        this.newWidth = 600;
     }
 
     /**

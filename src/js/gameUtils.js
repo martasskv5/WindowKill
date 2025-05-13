@@ -151,9 +151,9 @@ class GameUtils {
      * Shrinks the window continuously.
      */
     async shrinkWindow() {
-        let decreaseAmount = this.options.difficulty.decreasePower; // Amount to decrease the window size
-        const decreaseMax = this.options.difficulty.decreaseMax; // Maximum decrease amount to prevent excessive shrinking
-        const decreaseMultiplier = this.options.difficulty.decreaseMultiplier; // Multiplier to decrease the amount over time
+        let decreaseAmount = this.options.difficulty.decreasePower / this.options.screenMultiplier; // Amount to decrease the window size
+        const decreaseMax = this.options.difficulty.decreaseMax / this.options.screenMultiplier; // Maximum decrease amount to prevent excessive shrinking
+        const decreaseMultiplier = this.options.difficulty.decreaseMultiplier / this.options.screenMultiplier; // Multiplier to decrease the amount over time
 
         const shrink = async () => {
             if (this.gameOver) return;
@@ -271,11 +271,8 @@ class GameUtils {
      * Displays the game over message.
      */
     async _gameOver() {
-        // Get current window size and position
-        const currentSize = await this.appWindow.innerSize();
         // Define the original size (e.g., 600x600)
-        const originalWidth = 600;
-        const originalHeight = 600;
+        const originalWidth = this.options.newWidth;
 
         // Get the current monitor and calculate the center position
         const monitor = await currentMonitor();
@@ -285,12 +282,12 @@ class GameUtils {
 
             // Calculate the new position to center the window
             const newX = (monitorWidth - originalWidth) / 2;
-            const newY = (monitorHeight - originalHeight) / 2;
+            const newY = (monitorHeight - originalWidth) / 2;
 
             // Smoothly resize and center the window
             await this.animateWindowSize(
                 originalWidth - (await this.appWindow.innerSize()).width,
-                originalHeight - (await this.appWindow.innerSize()).height,
+                originalWidth - (await this.appWindow.innerSize()).height,
                 250,
                 "center"
             );
@@ -365,7 +362,7 @@ class GameUtils {
         const spawn = () => {
             if (this.gameOver) return; // Stop spawning if the game is over
 
-            const radius = Math.random() * (30 - 4) + 4;
+            const radius = (Math.random() * 30 / this.options.screenMultiplier)
 
             let x;
             let y;

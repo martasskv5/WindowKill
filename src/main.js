@@ -1,14 +1,27 @@
 import { startGame } from "./js/functions.js";
 import { Options } from "./js/options.js";
-const { getCurrentWindow } = window.__TAURI__.window;
+const { getCurrentWindow, currentMonitor, LogicalSize, LogicalPosition } = window.__TAURI__.window;
 const { invoke } = window.__TAURI__.core;
 
 window.addEventListener("DOMContentLoaded", async () => {
     let appWindow = await getCurrentWindow();
-
+    const monitor = await currentMonitor();
+    const screenWidth = monitor.size.width;
+    const screenHeight = monitor.size.height;
+    
     // Load options
     const options = new Options();
     await options.initialize();
+    options.screenMultiplier = 1920 / screenWidth;
+    console.log(options.screenMultiplier);
+    
+    // Adjust the window size to fit the screen
+    const windowWidth = options.defaultWidth / options.screenMultiplier;
+    options.newWidth = windowWidth;
+    console.log(`Window width: ${windowWidth}`);
+    
+    await appWindow.setSize(new LogicalSize(windowWidth, windowWidth));
+    await appWindow.setPosition(new LogicalPosition((screenWidth - windowWidth) / 2, (screenHeight - windowWidth) / 2));
 
     if (await appWindow.scaleFactor() > 1) {
         alert(

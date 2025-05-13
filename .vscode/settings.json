@@ -3,5 +3,8 @@
         {
             "file": ".github/copilot-commit-message-instructions.md"
         }
+    ],
+    "cSpell.words": [
+        "tauri"
     ]
 }
