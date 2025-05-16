@@ -165,9 +165,9 @@ Zhrnutie projektu to jednotlivých bodov
     -   [x] Dynamic start size
     -   [x] Dynamic window size
     -   [ ] ? Players health - enemies deal damage
-    -   [ ] Keyboard shortcuts
+    -   [x] Keyboard shortcuts
         -   [x] Disable default shortcuts ! at end also dev tools
-        -   [ ] ESC to open pause menu
+        -   [x] ESC to open pause menu
     -   [ ] Achievements (pravdepodobne zo Steamu)
         -   [ ] get 37 monitors and unlock the Open World 
     -   [x] Game restart
