@@ -120,13 +120,13 @@ WindowKill je strieľačka pre jedného hráča, hrá sa v okne so začiatočnou
 
 Zhrnutie projektu to jednotlivých bodov
 
--  [ ] UI
+-  [x] UI
     -   [x] Game start
     -   [x] Game end
         -   [x] Different for new best score
     -   [x] Settings menu
     -   [x] Score counter & timer
-    -   [ ] Pause menu
+    -   [x] Pause menu
     -   [x] Animations
         -   [x] Hover FX
     -   [x] Set app icon

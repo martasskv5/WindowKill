@@ -63,7 +63,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     backButton.addEventListener("click", () => {
         if (options.unsavedChanges()) {
             const confirmLeave = confirm(
-                "You have unsaved changes. These changes will be usend only in this session. Are you sure you want to leave?"
+                "You have unsaved changes. These changes will be used only in this session. Are you sure you want to leave?"
             );
             if (!confirmLeave) {
                 return;
@@ -105,6 +105,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         // Hide game end menu
         document.querySelector("#gameEnd").classList.toggle("hidden");
         timer.classList.toggle("hidden");
+        killCount.classList.toggle("hidden");
 
         await startGame(appWindow, options, timer);
     });
