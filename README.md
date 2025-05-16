@@ -162,8 +162,8 @@ Zhrnutie projektu to jednotlivých bodov
             -   [ ] ? Encrypt file
         -   [x] Settings
         -   [ ] Achievements
-    -   [ ] Dynamic start size
-    -   [ ] Dynamic window size
+    -   [x] Dynamic start size
+    -   [x] Dynamic window size
     -   [ ] ? Players health - enemies deal damage
     -   [ ] Keyboard shortcuts
         -   [x] Disable default shortcuts ! at end also dev tools
@@ -185,6 +185,7 @@ Zhrnutie projektu to jednotlivých bodov
     -   [ ] Window flickering when resizing
     -   [x] **Temporal fix:** Incorrect window position when scaling is applied on Windows: When Windows uses display scaling above 100%, it creates a mismatch between physical and logical pixel coordinates. This affects how Tauri handles window positioning
     -   [x] !! In version 0.2.2 window is not resizing to center, but to top left corner of the screen.
+    -   [ ] ! Exclude some colors for enemy
 
 ## Development
 

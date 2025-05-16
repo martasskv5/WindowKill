@@ -175,11 +175,11 @@ class GameUtils {
     async shrinkWindow() {
         // Only initialize decreaseAmount if not already set (so it doesn't reset on resume)
         if (typeof this.decreaseAmount !== 'number') {
-            this.decreaseAmount = this.options.difficulty.decreasePower
+            this.decreaseAmount = this.options.difficulty.decreasePower / this.options.screenMultiplier
         }
-        const decreaseMax = this.options.difficulty.decreaseMax
-        const decreaseMultiplier = this.options.difficulty.decreaseMultiplier
-    
+        const decreaseMax = this.options.difficulty.decreaseMax / this.options.screenMultiplier
+        const decreaseMultiplier = this.options.difficulty.decreaseMultiplier / this.options.screenMultiplier
+
         const shrink = async () => {
             if (this.gameOver || this.paused) return
     
@@ -301,10 +301,8 @@ class GameUtils {
         this.enemySpawnTimeout = null;
         this.shrinkInterval = null;
         this.paused = false;
-
         // Define the original size (e.g., 600x600)
-        const originalWidth = 600;
-        const originalHeight = 600;
+        const originalWidth = this.options.newWidth;
 
         // Get the current monitor and calculate the center position
         const monitor = await currentMonitor();
@@ -314,12 +312,12 @@ class GameUtils {
 
             // Calculate the new position to center the window
             const newX = (monitorWidth - originalWidth) / 2;
-            const newY = (monitorHeight - originalHeight) / 2;
+            const newY = (monitorHeight - originalWidth) / 2;
 
             // Smoothly resize and center the window
             await this.animateWindowSize(
                 originalWidth - (await this.appWindow.innerSize()).width,
-                originalHeight - (await this.appWindow.innerSize()).height,
+                originalWidth - (await this.appWindow.innerSize()).height,
                 250,
                 "center"
             );
@@ -399,7 +397,7 @@ class GameUtils {
         const spawn = () => {
             if (this.gameOver || this.paused) return // Stop spawning if the game is over or paused
 
-            const radius = Math.random() * (30 - 4) + 4
+            const radius = ((Math.random() * (30 - 4) + 4) / this.options.screenMultiplier)
 
             let x, y
 
