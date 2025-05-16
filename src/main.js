@@ -50,7 +50,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     backButton.addEventListener("click", () => {
         if (options.unsavedChanges()) {
             const confirmLeave = confirm(
-                "You have unsaved changes. These changes will be usend only in this session. Are you sure you want to leave?"
+                "You have unsaved changes. These changes will be used only in this session. Are you sure you want to leave?"
             );
             if (!confirmLeave) {
                 return;
@@ -92,6 +92,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         // Hide game end menu
         document.querySelector("#gameEnd").classList.toggle("hidden");
         timer.classList.toggle("hidden");
+        killCount.classList.toggle("hidden");
 
         await startGame(appWindow, options, timer);
     });
@@ -102,38 +103,4 @@ window.addEventListener("DOMContentLoaded", async () => {
         // Show main menu
         document.querySelector("#gameStart").classList.toggle("hidden");
     });
-
-    // Pause menu logic
-    let isPaused = false;
-    const pauseMenu = document.querySelector("#pauseMenu");
-
-    window.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
-            // Toggle pause menu
-            isPaused = !isPaused;
-            pauseMenu.classList.toggle("hidden");
-
-            // TODO: Optional pause/resume hooks (like stopping animation or timers)
-        }
-    });
-
-    document.querySelector("#resumeButton").addEventListener("click", () => {
-        isPaused = false;
-        pauseMenu.classList.add("hidden");
-
-        // TODO: resume game logic if needed
-    });
-
-    document.querySelector("#mainMenuPauseButton").addEventListener("click", () => {
-        isPaused = false;
-        pauseMenu.classList.add("hidden");
-
-        // Reset UI state
-        document.querySelector("#timer").classList.add("hidden");
-        document.querySelector("#killCount").classList.add("hidden");
-        document.querySelector("#gameStart").classList.remove("hidden");
-
-        // TODO: stop or reset the game if needed
-    });
 });
-
