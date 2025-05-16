@@ -162,8 +162,8 @@ Zhrnutie projektu to jednotlivých bodov
             -   [ ] ? Encrypt file
         -   [x] Settings
         -   [ ] Achievements
-    -   [ ] Dynamic start size
-    -   [ ] Dynamic window size
+    -   [x] Dynamic start size
+    -   [x] Dynamic window size
     -   [ ] ? Players health - enemies deal damage
     -   [ ] Keyboard shortcuts
         -   [x] Disable default shortcuts ! at end also dev tools

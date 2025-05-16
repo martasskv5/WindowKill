@@ -362,7 +362,7 @@ class GameUtils {
         const spawn = () => {
             if (this.gameOver) return; // Stop spawning if the game is over
 
-            const radius = (Math.random() * 30 / this.options.screenMultiplier)
+            const radius = ((Math.random() * (30 - 4) + 4) / this.options.screenMultiplier)
 
             let x;
             let y;
