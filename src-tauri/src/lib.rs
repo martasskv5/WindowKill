@@ -1,5 +1,8 @@
 use tauri_plugin_prevent_default::Flags;
 // use tauri_plugin_shell::ShellExt;
+// use tauri_plugin_fs;
+use std::fs::{self, File};
+use std::io::{Read, Write};
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
@@ -10,6 +13,29 @@ fn greet(name: &str) -> String {
 #[tauri::command]
 fn quit() {
     std::process::exit(0x0);
+}
+
+/// Encrypts a file using XOR encryption.
+/// 
+/// # Arguments
+/// * `file_path` - The path to the file to encrypt.
+/// * `key` - The encryption key.
+#[tauri::command]
+fn encrypt_file(file_path: &str, key: u8) -> Result<(), String> {
+    let mut file = File::open(file_path).map_err(|e| format!("Failed to open file: {}", e))?;
+    let mut data = Vec::new();
+    file.read_to_end(&mut data).map_err(|e| format!("Failed to read file: {}", e))?;
+
+    // XOR encryption
+    let encrypted_data: Vec<u8> = data.iter().map(|byte| byte ^ key).collect();
+
+    let mut encrypted_file = File::create(format!("{}.enc", file_path))
+        .map_err(|e| format!("Failed to create encrypted file: {}", e))?;
+    encrypted_file
+        .write_all(&encrypted_data)
+        .map_err(|e| format!("Failed to write encrypted file: {}", e))?;
+
+    Ok(())
 }
 
 fn create_prevent_plugin() -> tauri::plugin::TauriPlugin<tauri::Wry> {
@@ -51,7 +77,7 @@ pub fn run() {
         //         .build();
         //     Ok(())
         // })
-        .invoke_handler(tauri::generate_handler![greet, quit])
+        .invoke_handler(tauri::generate_handler![greet, quit, encrypt_file])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
