@@ -20,6 +20,7 @@ async fn create_window(
     y: f64,
     w: f64,
     h: f64,
+    title: &str,
     handle: tauri::AppHandle
 ) -> Result<(), String> {
     if let Some(window) = handle.get_webview_window(id) {
@@ -35,6 +36,7 @@ async fn create_window(
         )
         .position(x, y)
         .inner_size(w, h)
+        .title(title)
         .resizable(false)
         .maximizable(false)
         .build()

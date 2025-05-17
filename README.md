@@ -182,8 +182,8 @@ Zhrnutie projektu to jednotlivých bodov
         -   [x] Score 1000 points
         -   [x] Score 5000 points
         -   [x] Score 10000 points
-        -   [ ] Separate window to show achievements
-        -   [ ] Show notification when achievement is unlocked
+        -   [x] Separate window to show achievements
+        -   [x] Show notification when achievement is unlocked
     -   [x] Game restart
     -   [x] Score counter
     -   [ ] ? Multiple windows - [little help here](https://www.youtube.com/watch?v=3Hye_47c0Pc)

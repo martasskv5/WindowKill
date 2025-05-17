@@ -41,6 +41,13 @@ body {
           user-select: none;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  max-height: 80vh;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.uiWrapper::-webkit-scrollbar {
+  display: none;
 }
 .uiWrapper:hover {
   background-color: rgba(0, 0, 0, 0.9);

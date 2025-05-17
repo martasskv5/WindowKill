@@ -20,6 +20,19 @@ const { exists, BaseDirectory, readTextFile, writeTextFile, mkdir } = window.__T
  * The class is exported for use in other modules.
  */
 class Options {
+    /**
+     * Constructor for the Options class.
+     * Initializes default options and sets up the config file path.
+     * @constructor
+     * @param {string} config - The path to the config file.
+     * @param {number} defaultWidth - The default width of the game window.
+     * @param {number} screenMultiplier - The multiplier for the screen size.
+     * @param {number} newWidth - The new width of the game window.
+     * @param {Difficulties} difficulty - The difficulty settings for the game.
+     * @param {Achievements} achievements - The achievements settings for the game.
+     * @param {string} volume - The volume level for the game.
+     * @param {string} playerColor - The color of the player.
+     */
     constructor() {
         // Default options
         this.difficulty = new Difficulties();
@@ -134,6 +147,22 @@ class Options {
  * Handles initialization and updates of difficulty levels.
  */
 class Difficulties {
+    /**
+     * Constructor for the Difficulties class.
+     * Initializes default difficulty settings and sets up the difficulty levels.
+     * @constructor
+     * @param {string} difficulty - The current difficulty level.
+     * @param {Object} difficulties - The available difficulty levels and their settings.
+     * @param {number} increasePower - The power increase for the current difficulty.
+     * @param {number} decreasePower - The power decrease for the current difficulty.
+     * @param {number} decreaseMax - The maximum power decrease for the current difficulty.
+     * @param {number} decreaseMultiplier - The multiplier for the power decrease.
+     * @param {number} enemySpawnSpeed - The speed of enemy spawn for the current difficulty.
+     * @param {number} enemyMinSpawn - The minimum spawn time for enemies.
+     * @param {number} enemySpawnDecrease - The amount to decrease the spawn time.
+     * @param {number} scoreMultiplier - The score multiplier for the current difficulty.
+     * @param {boolean} transparent - Whether the background is transparent for the current difficulty.
+     */
     constructor() {
         this.difficulty = "normal"; // Default difficulty
         this.difficulties = {
@@ -204,6 +233,13 @@ class Difficulties {
  * Handles loading, saving, updating, and unlocking achievements.
  */
 class Achievements {
+    /**
+     * Constructor for the Achievements class.
+     * Initializes default achievements and sets up the achievements file path.
+     * @constructor
+     * @param {string} file - The path to the achievements file.
+     * @param {string} schema - The URL of the achievements schema.
+     */
     constructor() {
         this.file = 'achievements.json'
         this.schema = "https://raw.githubusercontent.com/Openlab-2-2023/WindowKill/refs/heads/achievements/achievements_schema.json"
@@ -220,7 +256,7 @@ class Achievements {
             const data = await readTextFile(this.file, { baseDir: BaseDirectory.AppLocalData })
             this.achievements = JSON.parse(data)
             console.log(this.achievements);
-            
+
         } else {
             // Download the schema file from the URL
             const response = await fetch(this.schema)
@@ -348,6 +384,8 @@ class Achievements {
                 this.update(key, this.achievements[key].current); // Update the achievement progress
             }
         })
+
+        localStorage.setItem("achievements", JSON.stringify(this.achievements)); // Save achievements to local storage
     }
 }
 

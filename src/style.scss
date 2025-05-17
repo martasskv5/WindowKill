@@ -43,6 +43,19 @@ body {
     user-select: none;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
+    max-height: 80vh;
+
+    // Hide scrollbar for Chrome, Edge, Safari
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    // Hide scrollbar for Firefox
+    scrollbar-width: none;
+
+    // Hide scrollbar for IE, Edge (legacy)
+    -ms-overflow-style: none;
 
     &:hover {
         background-color: rgba(0, 0, 0, 0.9);

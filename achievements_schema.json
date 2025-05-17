@@ -40,63 +40,63 @@
     "current": []
   },
   "kill100e": {
-    "name": "Kill 100 enemies",
+    "name": "Destroyer",
     "description": "Kill 100 enemies.",
     "unlocked": false,
     "required": 100,
     "current": 0
   },
   "kill1000e": {
-    "name": "Kill 1000 enemies",
+    "name": "Domain Expansion",
     "description": "Kill 1000 enemies.",
     "unlocked": false,
     "required": 1000,
     "current": 0
   },
   "survive1m": {
-    "name": "Survive 1 minute",
+    "name": "Time is Money",
     "description": "Survive for 1 minute.",
     "unlocked": false,
     "required": 60,
     "current": 0
   },
   "survive5m": {
-    "name": "Survive 5 minutes",
+    "name": "Tick Tock, Tick Tock",
     "description": "Survive for 5 minutes.",
     "unlocked": false,
     "required": 300,
     "current": 0
   },
   "survive10m": {
-    "name": "Survive 10 minutes",
+    "name": "Time is Relative",
     "description": "Survive for 10 minutes.",
     "unlocked": false,
     "required": 600,
     "current": 0
   },
   "survive20m": {
-    "name": "Survive 20 minutes",
+    "name": "Go touch some grass!",
     "description": "Survive for 20 minutes.",
     "unlocked": false,
     "required": 1200,
     "current": 0
   },
   "score1000": {
-    "name": "Score 1000 points",
+    "name": "Get me some points!",
     "description": "Score 1000 points.",
     "unlocked": false,
     "required": 1000,
     "current": 0
   },
   "score5000": {
-    "name": "Score 5000 points",
+    "name": "MORE POINTS!",
     "description": "Score 5000 points.",
     "unlocked": false,
-    "required": 10000,
+    "required": 5000,
     "current": 0
   },
   "score10000": {
-    "name": "Score 10000 points",
+    "name": "Are we there yet?",
     "description": "Score 10000 points.",
     "unlocked": false,
     "required": 10000,

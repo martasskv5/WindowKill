@@ -1,6 +1,6 @@
 import { startGame } from "./js/functions.js";
 import { Options } from "./js/options.js";
-const { getCurrentWindow, currentMonitor, LogicalSize, LogicalPosition, Window } = window.__TAURI__.window;
+const { getCurrentWindow, currentMonitor, LogicalSize, LogicalPosition } = window.__TAURI__.window;
 const { invoke } = window.__TAURI__.core;
 
 window.addEventListener("DOMContentLoaded", async () => {
@@ -12,6 +12,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     // Load options
     const options = new Options();
     await options.initialize();
+    localStorage.setItem("achievements", JSON.stringify(options.achievements.achievements));
     options.screenMultiplier = 1920 / screenWidth;
     console.log(options.screenMultiplier);
 
@@ -33,7 +34,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     const startButton = document.querySelector("#startButton");
     const optionsButton = document.querySelector("#optionsButton");
     const quitButton = document.querySelector("#quitButton");
-    const achievements = document.querySelector("#achievements");
+    const achievementsButton = document.querySelector("#achievements");
     // Buttons in options menu
     const backButton = document.querySelector("#backButton");
     const saveButton = document.querySelector("#saveButton");
@@ -122,8 +123,8 @@ window.addEventListener("DOMContentLoaded", async () => {
         achievements.classList.toggle("hidden");
     });
 
-    achievements.addEventListener("click", async () => {
+    achievementsButton.addEventListener("click", async () => {
         const width = (options.defaultWidth + 200) / options.screenMultiplier
-        await invoke("create_window", { id: "achievements", url: "html/achievements.html", x: (screenWidth - width) / 2, y: (screenHeight - width) / 2, w: width, h: width });
+        await invoke("create_window", { id: "achievements", url: "html/achievements.html", x: (screenWidth - width) / 2, y: (screenHeight - width) / 2, w: width, h: width, title: "Achievements" });
     });
 });

@@ -35,6 +35,7 @@
     },
     "prevent-default:default",
     "notification:default",
-    "core:window:allow-create"
+    "core:window:allow-create",
+    "core:webview:allow-internal-toggle-devtools"
   ]
 }
