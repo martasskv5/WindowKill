@@ -240,4 +240,11 @@ body {
   height: 10px;
   border-radius: 50%;
   pointer-events: none;
+}
+
+#achievements {
+  --position: -13.5rem; /* Adjust this value to move the element */
+  top: var(--position);
+  right: var(--position);
+  scale: 0.15;
 }/*# sourceMappingURL=style.css.map */
