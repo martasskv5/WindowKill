@@ -205,7 +205,7 @@ class Difficulties {
 class Achievements {
     constructor() {
         this.file = 'achievements.json'
-        this.schema = ""
+        this.schema = "https://raw.githubusercontent.com/Openlab-2-2023/WindowKill/refs/heads/achievements/achievements_schema.json"
         this.achievements = {}
         this.load()
     }
@@ -221,7 +221,15 @@ class Achievements {
             console.log(this.achievements);
             
         } else {
-            await this.save()
+            // Download the schema file from the URL
+            const response = await fetch(this.schema)
+            if (!response.ok) {
+                throw new Error(`Failed to fetch schema: ${response.statusText}`);
+            }
+            const data = await response.json()
+            this.achievements = data
+            // Save the downloaded schema to the local file
+            await writeTextFile(this.file, JSON.stringify(data, null, 4), { baseDir: BaseDirectory.AppLocalData })
         }
     }
 
