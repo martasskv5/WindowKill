@@ -1,7 +1,7 @@
 use tauri_plugin_prevent_default::Flags;
 // use tauri_plugin_shell::ShellExt;
 // use tauri_plugin_fs;
-use std::fs::{self, File};
+use std::fs::{File};
 use std::io::{Read, Write};
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
@@ -16,7 +16,7 @@ fn quit() {
 }
 
 /// Encrypts a file using XOR encryption.
-/// 
+///
 /// # Arguments
 /// * `file_path` - The path to the file to encrypt.
 /// * `key` - The encryption key.
@@ -24,7 +24,8 @@ fn quit() {
 fn encrypt_file(file_path: &str, key: u8) -> Result<(), String> {
     let mut file = File::open(file_path).map_err(|e| format!("Failed to open file: {}", e))?;
     let mut data = Vec::new();
-    file.read_to_end(&mut data).map_err(|e| format!("Failed to read file: {}", e))?;
+    file.read_to_end(&mut data)
+        .map_err(|e| format!("Failed to read file: {}", e))?;
 
     // XOR encryption
     let encrypted_data: Vec<u8> = data.iter().map(|byte| byte ^ key).collect();
@@ -67,6 +68,7 @@ fn create_prevent_plugin() -> tauri::plugin::TauriPlugin<tauri::Wry> {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_notification::init())
         .plugin(create_prevent_plugin())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_opener::init())

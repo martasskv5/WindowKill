@@ -1,3 +1,4 @@
+import { _sendNotification } from "./functions.js";
 const { availableMonitors } = window.__TAURI__.window
 const { exists, BaseDirectory, readTextFile, writeTextFile, mkdir } = window.__TAURI__.fs;
 
@@ -263,6 +264,7 @@ class Achievements {
     async unlock(key) {
         if (!this.achievements[key]) return
         this.achievements[key].unlocked = true
+        _sendNotification("Achievement Unlocked", this.achievements[key].name)
         await this.save()
     }
 

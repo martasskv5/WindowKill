@@ -34,21 +34,6 @@
       ]
     },
     "prevent-default:default",
-    {
-      "identifier": "shell:allow-execute",
-      "allow": [
-        {
-          "name": "exec-sh",
-          "cmd": "cmd",
-          "args": [
-            "-c",
-            {
-              "validator": "\\S+"
-            }
-          ]
-        }
-      ]
-    },
-    "shell:default"
+    "notification:default"
   ]
 }
