@@ -157,19 +157,33 @@ Zhrnutie projektu to jednotlivých bodov
         -   [x] Save options
         -   [ ] ~~Shortcuts customization & display~~
     -   [x] UI buttons
-    -   [ ] Save
+    -   [x] Save
         -   [x] Best score
             -   [ ] ? Encrypt file
         -   [x] Settings
-        -   [ ] Achievements
+        -   [x] Achievements
     -   [x] Dynamic start size
     -   [x] Dynamic window size
     -   [ ] ? Players health - enemies deal damage
     -   [ ] Keyboard shortcuts
         -   [x] Disable default shortcuts ! at end also dev tools
-        -   [ ] ESC to open pause menu
-    -   [ ] Achievements (pravdepodobne zo Steamu)
-        -   [ ] get 37 monitors and unlock the Open World 
+        -   [x] ESC to open pause menu
+    -   [x] Achievements (pravdepodobne zo Steamu)
+        -   [x] Open World - get 37 monitors
+        -   [x] No space left - get killed by window
+        -   [x] Colorful World - play as every basic color
+        -   [x] God of Colors - play as every hex color (16 777 216 unique combinations)
+        -   [x] Kill 100 enemies
+        -   [x] Kill 1000 enemies
+        -   [x] Survive 1 minute
+        -   [x] Survive 5 minutes
+        -   [x] Survive 10 minutes
+        -   [x] Survive 20 minutes
+        -   [x] Score 1000 points
+        -   [x] Score 5000 points
+        -   [x] Score 10000 points
+        -   [ ] Separate window to show achievements
+        -   [ ] Show notification when achievement is unlocked
     -   [x] Game restart
     -   [x] Score counter
     -   [ ] ? Multiple windows - [little help here](https://www.youtube.com/watch?v=3Hye_47c0Pc)

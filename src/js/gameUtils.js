@@ -189,7 +189,7 @@ class GameUtils {
     
             if (newWidth <= this.playerRadius * 2 || newHeight <= this.playerRadius * 2) {
                 this.gameOver = true
-                this._gameOver()
+                this._gameOver(true)
                 return
             }
     
@@ -256,7 +256,7 @@ class GameUtils {
             const dist = Math.hypot(this.player.x - enemy.x, this.player.y - enemy.y);
             if (dist - enemy.radius - this.player.radius < 1) {
                 this.gameOver = true;
-                this._gameOver();
+                this._gameOver(false);
                 return;
             }
 
@@ -289,14 +289,15 @@ class GameUtils {
             this.player.y + this.player.radius >= this.canvas.height
         ) {
             this.gameOver = true;
-            this._gameOver();
+            this._gameOver(true);
         }
     }
 
     /**
      * Displays the game over message.
+     * @param {boolean} canvasCollision - Indicates if the game ended due to a canvas collision.
      */
-    async _gameOver() {
+    async _gameOver(canvasCollision) {
         this.animationFrameId = null;
         this.enemySpawnTimeout = null;
         this.shrinkInterval = null;
@@ -343,6 +344,7 @@ class GameUtils {
             document.querySelector("#scoreBest").innerText = `Your best score is: ${this.highScore}`;
         }
         document.querySelector("#gameEnd").classList.toggle("hidden");
+        this.options.achievements.handle(canvasCollision, this.player.color, this.killCount, this.score / 60, score);
     }
 
     /**

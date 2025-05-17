@@ -1,0 +1,105 @@
+{
+  "openWorld": {
+    "name": "Open World",
+    "description": "Get 37 monitors to unlock the open world.",
+    "unlocked": false,
+    "required": 37,
+    "current": 0
+  },
+  "noSpace": {
+    "name": "No Space Left",
+    "description": "Get killed by a window border.",
+    "unlocked": false,
+    "required": null,
+    "current": null
+  },
+  "colorful": {
+    "name": "Colorful World",
+    "description": "Play as every basic color.",
+    "unlocked": false,
+    "required": [
+      "#FFFFFF",
+      "#808080",
+      "#000000",
+      "#FF0000",
+      "#00FF00",
+      "#0000FF",
+      "#FFFF00",
+      "#00FFFF",
+      "#008080",
+      "#FF00FF",
+      "#800080"
+    ],
+    "current": []
+  },
+  "godOfColors": {
+    "name": "God of Colors",
+    "description": "Play as every hex color (16 777 216 unique combinations).",
+    "unlocked": false,
+    "required": 16777216,
+    "current": []
+  },
+  "kill100e": {
+    "name": "Kill 100 enemies",
+    "description": "Kill 100 enemies.",
+    "unlocked": false,
+    "required": 100,
+    "current": 0
+  },
+  "kill1000e": {
+    "name": "Kill 1000 enemies",
+    "description": "Kill 1000 enemies.",
+    "unlocked": false,
+    "required": 1000,
+    "current": 0
+  },
+  "survive1m": {
+    "name": "Survive 1 minute",
+    "description": "Survive for 1 minute.",
+    "unlocked": false,
+    "required": 60,
+    "current": 0
+  },
+  "survive5m": {
+    "name": "Survive 5 minutes",
+    "description": "Survive for 5 minutes.",
+    "unlocked": false,
+    "required": 300,
+    "current": 0
+  },
+  "survive10m": {
+    "name": "Survive 10 minutes",
+    "description": "Survive for 10 minutes.",
+    "unlocked": false,
+    "required": 600,
+    "current": 0
+  },
+  "survive20m": {
+    "name": "Survive 20 minutes",
+    "description": "Survive for 20 minutes.",
+    "unlocked": false,
+    "required": 1200,
+    "current": 0
+  },
+  "score1000": {
+    "name": "Score 1000 points",
+    "description": "Score 1000 points.",
+    "unlocked": false,
+    "required": 1000,
+    "current": 0
+  },
+  "score5000": {
+    "name": "Score 5000 points",
+    "description": "Score 5000 points.",
+    "unlocked": false,
+    "required": 10000,
+    "current": 0
+  },
+  "score10000": {
+    "name": "Score 10000 points",
+    "description": "Score 10000 points.",
+    "unlocked": false,
+    "required": 10000,
+    "current": 0
+  }
+}

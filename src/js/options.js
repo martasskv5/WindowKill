@@ -1,3 +1,4 @@
+const { availableMonitors } = window.__TAURI__.window
 const { exists, BaseDirectory, readTextFile, writeTextFile, mkdir } = window.__TAURI__.fs;
 
 /**
@@ -21,6 +22,7 @@ class Options {
     constructor() {
         // Default options
         this.difficulty = new Difficulties();
+        this.achievements = new Achievements();
         this.volume = "50";
         this.playerColor = "#ffffff";
         this.config = "options.json";
@@ -195,5 +197,149 @@ class Difficulties {
         return this.difficulties[this.difficulty];
     }
 }
+
+/**
+ * Class to manage achievements.
+ * Handles loading, saving, updating, and unlocking achievements.
+ */
+class Achievements {
+    constructor() {
+        this.file = 'achievements.json'
+        this.schema = ""
+        this.achievements = {}
+        this.load()
+    }
+
+    /**
+     * Loads achievements from file.
+     * @returns {Promise<void>}
+     */
+    async load() {
+        if (await exists(this.file, { baseDir: BaseDirectory.AppLocalData })) {
+            const data = await readTextFile(this.file, { baseDir: BaseDirectory.AppLocalData })
+            this.achievements = JSON.parse(data)
+            console.log(this.achievements);
+            
+        } else {
+            await this.save()
+        }
+    }
+
+    /**
+     * Saves achievements to file.
+     * @returns {Promise<void>}
+     */
+    async save() {
+        const data = JSON.stringify(this.achievements, null, 4)
+        await writeTextFile(this.file, data, { baseDir: BaseDirectory.AppLocalData })
+    }
+
+    /**
+     * Updates progress for an achievement.
+     * @param {string} key - Achievement key
+     * @param {any} value - New progress value
+     */
+    async update(key, value) {
+        if (!this.achievements[key]) return
+        this.achievements[key].current = value
+        if (this.achievements[key].required !== null && value >= this.achievements[key].required) {
+            this.achievements[key].unlocked = true
+        }
+        await this.save()
+    }
+
+    /**
+     * Unlocks an achievement directly.
+     * @param {string} key - Achievement key
+     */
+    async unlock(key) {
+        if (!this.achievements[key]) return
+        this.achievements[key].unlocked = true
+        await this.save()
+    }
+
+    /**
+     * Handles achievement progress based on game events.
+     * @param {boolean} noSpace - Indicates if there is no space
+     * @param {string} playerColor - Player color
+     * @param {number} kills - Number of kills
+     * @param {number} time - Time survived
+     * @param {number} score - Score achieved
+     * @returns {Promise<void>}
+     */
+    async handle(noSpace, playerColor, kills, time, score) {
+        // openWorld
+        const monitors = await availableMonitors();
+        if (
+            monitors.length > this.achievements["openWorld"].current
+            && !this.achievements["openWorld"].unlocked
+        ) {
+            this.update("openWorld", monitors.length);
+        }
+
+        // noSpace
+        noSpace ? this.unlock("noSpace") : null;
+
+        // colorful
+        if (
+            this.achievements["colorful"].required.includes(playerColor) // Check if the player color is in the required colors
+            && !this.achievements["colorful"].current.includes(playerColor) // Check if the player color is not already in the current colors
+            && !this.achievements["colorful"].unlocked // Check if the achievement is not already unlocked
+        ) {
+            this.achievements["colorful"].current.push(playerColor);
+            this.update("colorful", playerColor);
+        }
+
+        // godOfColors
+        if (
+            !this.achievements["godOfColors"].current.includes(playerColor) // Check if the player color is not already in the current colors
+            && !this.achievements["godOfColors"].current.length == this.achievements["godOfColors"].required // Check if the current colors length is not equal to the required colors length
+            && !this.achievements["godOfColors"].unlocked // Check if the achievement is not already unlocked
+        ) {
+            this.achievements["godOfColors"].current.push(playerColor);
+            this.update("godOfColors", playerColor);
+        }
+
+        // killE
+        const killE = ["kill100e", "kill1000e"]
+        killE.forEach((key) => {
+            if (
+                this.achievements[key].required > this.achievements[key].current // Check if the required kills are greater than the current kills
+                && kills > this.achievements[key].current // Check if the kills are greater than or equal to the required kills
+                && !this.achievements[key].unlocked // Check if the achievement is not already unlocked
+            ) {
+                this.achievements[key].current = kills; // Increment the current kills
+                this.update(key, this.achievements[key].current); // Update the achievement progress
+            }
+        })
+
+        // surviveM
+        const surviveM = ["survive1m", "survive5m", "survive10m", "survive20m"]
+        surviveM.forEach((key) => {
+            if (
+                this.achievements[key].required > this.achievements[key].current // Check if the required time is greater than the current time
+                && time > this.achievements[key].current // Check if the time is greater than or equal to the required time
+                && !this.achievements[key].unlocked // Check if the achievement is not already unlocked
+            ) {
+                this.achievements[key].current = time; // Increment the current time
+                this.update(key, this.achievements[key].current); // Update the achievement progress
+            }
+        })
+
+        // scoreP
+        const scoreP = ["score1000", "score5000", "score10000"]
+        scoreP.forEach((key) => {
+            if (
+                this.achievements[key].required > this.achievements[key].current // Check if the required score is greater than the current score
+                && score > this.achievements[key].current // Check if the score is greater than or equal to the required score
+                && !this.achievements[key].unlocked // Check if the achievement is not already unlocked
+            ) {
+                this.achievements[key].current = score; // Increment the current score
+                this.update(key, this.achievements[key].current); // Update the achievement progress
+            }
+        })
+    }
+}
+
 
 export { Options };
