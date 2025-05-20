@@ -1,7 +1,7 @@
 {
   "name": "windowkill",
   "private": true,
-  "version": "0.4.2",
+  "version": "0.5.0",
   "type": "module",
   "scripts": {
     "tauri": "tauri"
@@ -12,7 +12,7 @@
   "dependencies": {
     "@tauri-apps/api": "^2.3.0",
     "@tauri-apps/plugin-fs": "^2.2.0",
-    "@tauri-apps/plugin-shell": "^2.2.1",
+    "@tauri-apps/plugin-notification": "^2.2.2",
     "@tauri-apps/plugin-window-state": "^2.2.1"
   }
 }

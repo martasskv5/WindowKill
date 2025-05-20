@@ -41,6 +41,12 @@ body {
           user-select: none;
   display: flex;
   flex-direction: column;
+  max-height: 80vh;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.uiWrapper::-webkit-scrollbar {
+  display: none;
 }
 .uiWrapper:hover {
   background-color: rgba(0, 0, 0, 0.9);
@@ -48,6 +54,7 @@ body {
 .uiWrapper h1 {
   font-family: "Jersey 20", sans-serif;
   font-size: 4rem;
+  line-height: normal;
 }
 .uiWrapper label {
   font-size: 1.2rem;
@@ -211,6 +218,19 @@ body {
   background-color: darkgray;
   border-color: dimgray;
 }
+.button .progress-bar {
+  width: 90%;
+  height: 10px;
+  background: #444;
+  border-radius: 5px;
+  margin: 10px auto;
+  overflow: hidden;
+}
+.button .progress-fill {
+  height: 100%;
+  background: #4caf50;
+  transition: width 0.3s;
+}
 
 .data-display {
   position: absolute;
@@ -240,4 +260,11 @@ body {
   height: 10px;
   border-radius: 50%;
   pointer-events: none;
+}
+
+#achievements {
+  --position: -13.5rem; /* Adjust this value to move the element */
+  top: var(--position);
+  right: var(--position);
+  scale: 0.15;
 }/*# sourceMappingURL=style.css.map */

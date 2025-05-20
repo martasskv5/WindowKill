@@ -8,18 +8,19 @@ window.addEventListener("DOMContentLoaded", async () => {
     const monitor = await currentMonitor();
     const screenWidth = monitor.size.width;
     const screenHeight = monitor.size.height;
-    
+
     // Load options
     const options = new Options();
     await options.initialize();
+    localStorage.setItem("achievements", JSON.stringify(options.achievements.achievements));
     options.screenMultiplier = 1920 / screenWidth;
     console.log(options.screenMultiplier);
-    
+
     // Adjust the window size to fit the screen
     const windowWidth = options.defaultWidth / options.screenMultiplier;
     options.newWidth = windowWidth;
     console.log(`Window width: ${windowWidth}`);
-    
+
     await appWindow.setSize(new LogicalSize(windowWidth, windowWidth));
     await appWindow.setPosition(new LogicalPosition((screenWidth - windowWidth) / 2, (screenHeight - windowWidth) / 2));
 
@@ -33,6 +34,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     const startButton = document.querySelector("#startButton");
     const optionsButton = document.querySelector("#optionsButton");
     const quitButton = document.querySelector("#quitButton");
+    const achievementsButton = document.querySelector("#achievements");
     // Buttons in options menu
     const backButton = document.querySelector("#backButton");
     const saveButton = document.querySelector("#saveButton");
@@ -47,6 +49,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     startButton.addEventListener("click", async () => {
         // Hide main menu
         document.querySelector("#gameStart").classList.toggle("hidden");
+        achievements.classList.toggle("hidden");
         timer.classList.toggle("hidden");
         killCount.classList.toggle("hidden");
 
@@ -56,6 +59,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     optionsButton.addEventListener("click", () => {
         // Hide main menu
         document.querySelector("#gameStart").classList.toggle("hidden");
+        achievements.classList.toggle("hidden");
         // Show options menu
         document.querySelector("#settings").classList.toggle("hidden");
     });
@@ -78,6 +82,7 @@ window.addEventListener("DOMContentLoaded", async () => {
             document.querySelector("#settings").classList.toggle("hidden");
             // Show main menu
             document.querySelector("#gameStart").classList.toggle("hidden");
+            achievements.classList.toggle("hidden");
         }
     });
 
@@ -115,5 +120,11 @@ window.addEventListener("DOMContentLoaded", async () => {
         document.querySelector("#gameEnd").classList.toggle("hidden");
         // Show main menu
         document.querySelector("#gameStart").classList.toggle("hidden");
+        achievements.classList.toggle("hidden");
+    });
+
+    achievementsButton.addEventListener("click", async () => {
+        const width = (options.defaultWidth + 200) / options.screenMultiplier
+        await invoke("create_window", { id: "achievements", url: "html/achievements.html", x: (screenWidth - width) / 2, y: (screenHeight - width) / 2, w: width, h: width, title: "Achievements" });
     });
 });

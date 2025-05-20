@@ -1,6 +1,7 @@
 import * as C from "./classes.js";
 import { GameUtils } from "./gameUtils.js";
 const { LogicalSize, LogicalPosition } = window.__TAURI__.window;
+const { isPermissionGranted, requestPermission, sendNotification, } = window.__TAURI__.notification;
 
 /**
  * Helper function for resizing the window. Can shrink or expand the window while keeping it centered.
@@ -49,6 +50,29 @@ async function _resizeWindow(appWindow, targetWidth, targetHeight, durationMs) {
 }
 
 /**
+ * Sends a notification with the given title and body.
+ * @param {string} title - The title of the notification.
+ * @param {string} body - The body of the notification.
+ * @return {Promise<void>}
+ * @throws {Error} If the notification fails to send.
+ */
+async function _sendNotification(title, body) {
+    // Do you have permission to send a notification?
+    let permissionGranted = await isPermissionGranted();
+
+    // If not we need to request it
+    if (!permissionGranted) {
+        const permission = await requestPermission();
+        permissionGranted = permission === 'granted';
+    }
+
+    // Once permission has been granted we can send the notification
+    if (permissionGranted) {
+        sendNotification({ title: title, body: body });
+    }
+}
+
+/**
  * Starts the game.
  * @param {Object} appWindow - The Tauri app window object.
  * @param {Object} options - The game options object.
@@ -76,11 +100,11 @@ async function startGame(appWindow, options, timer) {
     gameUtils.updateCanvasSize();
     gameUtils.centerPlayer();
 
-       // Timer logic
+    // Timer logic
     let startTime = Date.now() // Record the start time
     let pausedTime = 0 // Total time spent paused
     let pauseStart = null // When pause started
-    
+
     const timerInterval = setInterval(() => {
         if (gameUtils.gameOver) {
             clearInterval(timerInterval) // Stop the timer when the game is over
@@ -140,4 +164,4 @@ async function startGame(appWindow, options, timer) {
     gameUtils.shrinkWindow();
 }
 
-export { startGame, _resizeWindow };
+export { startGame, _resizeWindow, _sendNotification };

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Jersey+20&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Jersey+20&display=swap");
 
 :root {
     font-size: 16px;
@@ -17,7 +17,7 @@
 }
 
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: "Roboto", sans-serif;
     font-size: 1rem;
     line-height: 1.5;
     font-weight: 400;
@@ -43,6 +43,18 @@ body {
     user-select: none;
     display: flex;
     flex-direction: column;
+    max-height: 80vh;
+
+    // Hide scrollbar for Chrome, Edge, Safari
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    // Hide scrollbar for Firefox
+    scrollbar-width: none;
+
+    // Hide scrollbar for IE, Edge (legacy)
+    -ms-overflow-style: none;
 
     &:hover {
         background-color: rgba(0, 0, 0, 0.9);
@@ -51,6 +63,7 @@ body {
     h1 {
         font-family: "Jersey 20", sans-serif;
         font-size: 4rem;
+        line-height: normal;
     }
 
     label {
@@ -138,7 +151,7 @@ body {
             cursor: pointer;
             padding: 0px !important;
         }
-        
+
         &::-moz-color-swatch {
             border: 2px solid #4d4d4d;
             border-radius: 5px;
@@ -244,6 +257,20 @@ body {
             border-color: dimgray;
         }
     }
+
+    .progress-bar {
+        width: 90%;
+        height: 10px;
+        background: #444;
+        border-radius: 5px;
+        margin: 10px auto;
+        overflow: hidden;
+    }
+    .progress-fill {
+        height: 100%;
+        background: #4caf50;
+        transition: width 0.3s;
+    }
 }
 
 .data-display {
@@ -272,4 +299,11 @@ body {
     height: 10px;
     border-radius: 50%;
     pointer-events: none;
+}
+
+#achievements {
+    --position: -13.5rem; /* Adjust this value to move the element */
+    top: var(--position);
+    right: var(--position);
+    scale: 0.15;
 }
