@@ -298,7 +298,7 @@ class Achievements {
         if (!this.achievements[key]) return
         this.achievements[key].current = value
         if (this.achievements[key].required !== null && value >= this.achievements[key].required) {
-            this.achievements[key].unlocked = true
+            await this.unlock(key)
         }
         await this.save()
     }
@@ -310,7 +310,7 @@ class Achievements {
     async unlock(key) {
         if (!this.achievements[key]) return
         this.achievements[key].unlocked = true
-        _sendNotification("Achievement Unlocked", this.achievements[key].name)
+        await _sendNotification("Achievement Unlocked", this.achievements[key].name)
         await this.save()
     }
 
