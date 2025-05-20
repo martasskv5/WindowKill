@@ -255,7 +255,16 @@ class Achievements {
         if (await exists(this.file, { baseDir: BaseDirectory.AppLocalData })) {
             const data = await readTextFile(this.file, { baseDir: BaseDirectory.AppLocalData })
             this.achievements = JSON.parse(data)
+
+            // Normalize: ensure all .current fields that should be arrays are arrays
+            for (const key in this.achievements) {
+                const ach = this.achievements[key]
+                if (Array.isArray(ach.required)) {
+                    if (!Array.isArray(ach.current)) ach.current = ach.current ? [ach.current] : []
+                }
+            }
             console.log(this.achievements);
+            
 
         } else {
             // Download the schema file from the URL
@@ -276,6 +285,7 @@ class Achievements {
      */
     async save() {
         const data = JSON.stringify(this.achievements, null, 4)
+        // console.log('Saving achievements:', data)
         await writeTextFile(this.file, data, { baseDir: BaseDirectory.AppLocalData })
     }
 
@@ -314,6 +324,9 @@ class Achievements {
      * @returns {Promise<void>}
      */
     async handle(noSpace, playerColor, kills, time, score) {
+        console.log("Saving achievements:", this.achievements);
+        console.log("Player color:", playerColor);
+
         // openWorld
         const monitors = await availableMonitors();
         if (
@@ -333,17 +346,19 @@ class Achievements {
             && !this.achievements["colorful"].unlocked // Check if the achievement is not already unlocked
         ) {
             this.achievements["colorful"].current.push(playerColor);
-            this.update("colorful", playerColor);
+            this.update("colorful", this.achievements["colorful"].current); // Update the achievement progress
         }
 
         // godOfColors
+        console.log(this.achievements["godOfColors"].current.includes(playerColor));
+
         if (
             !this.achievements["godOfColors"].current.includes(playerColor) // Check if the player color is not already in the current colors
-            && !this.achievements["godOfColors"].current.length == this.achievements["godOfColors"].required // Check if the current colors length is not equal to the required colors length
+            && this.achievements["godOfColors"].current.length != this.achievements["godOfColors"].required // Check if the current colors length is not equal to the required colors length
             && !this.achievements["godOfColors"].unlocked // Check if the achievement is not already unlocked
         ) {
             this.achievements["godOfColors"].current.push(playerColor);
-            this.update("godOfColors", playerColor);
+            this.update("godOfColors", this.achievements["godOfColors"].current); // Update the achievement progress
         }
 
         // killE

@@ -165,7 +165,7 @@ Zhrnutie projektu to jednotlivých bodov
     -   [x] Dynamic start size
     -   [x] Dynamic window size
     -   [ ] ? Players health - enemies deal damage
-    -   [ ] Keyboard shortcuts
+    -   [x] Keyboard shortcuts
         -   [x] Disable default shortcuts ! at end also dev tools
         -   [x] ESC to open pause menu
     -   [x] Achievements (pravdepodobne zo Steamu)
@@ -184,6 +184,7 @@ Zhrnutie projektu to jednotlivých bodov
         -   [x] Score 10000 points
         -   [x] Separate window to show achievements
         -   [x] Show notification when achievement is unlocked
+        -   [x] Achievement progress bar
     -   [x] Game restart
     -   [x] Score counter
     -   [ ] ? Multiple windows - [little help here](https://www.youtube.com/watch?v=3Hye_47c0Pc)

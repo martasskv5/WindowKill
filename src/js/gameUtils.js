@@ -344,7 +344,8 @@ class GameUtils {
             document.querySelector("#scoreBest").innerText = `Your best score is: ${this.highScore}`;
         }
         document.querySelector("#gameEnd").classList.toggle("hidden");
-        this.options.achievements.handle(canvasCollision, this.player.color, this.killCount, this.score / 60, score);
+        console.log(this.options.achievements.achievements.colorful.current);        
+        this.options.achievements.handle(canvasCollision, this.player.color, this.killCount, this.score, score);
     }
 
     /**

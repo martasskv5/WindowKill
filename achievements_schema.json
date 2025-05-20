@@ -18,16 +18,16 @@
     "description": "Play as every basic color.",
     "unlocked": false,
     "required": [
-      "#FFFFFF",
+      "#ffffff",
       "#808080",
       "#000000",
-      "#FF0000",
-      "#00FF00",
-      "#0000FF",
-      "#FFFF00",
-      "#00FFFF",
+      "#ff0000",
+      "#00ff00",
+      "#0000ff",
+      "#ffff00",
+      "#00ffff",
       "#008080",
-      "#FF00FF",
+      "#ff00ff",
       "#800080"
     ],
     "current": []
