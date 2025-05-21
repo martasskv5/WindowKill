@@ -39,6 +39,7 @@ async fn create_window(
         .title(title)
         .resizable(false)
         .maximizable(false)
+        .transparent(true)
         .build()
         .map(|_| ())
         .map_err(|e| e.to_string())

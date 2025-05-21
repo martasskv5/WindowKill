@@ -1,4 +1,4 @@
-import { _sendNotification } from "./functions.js";
+import { _sendNotification, scaleDownBgGradient, scaleUpBgGradient } from "./functions.js";
 const { availableMonitors } = window.__TAURI__.window
 const { exists, BaseDirectory, readTextFile, writeTextFile, mkdir } = window.__TAURI__.fs;
 
@@ -202,8 +202,14 @@ class Difficulties {
         Object.assign(this, currentSettings); // Dynamically copy properties
 
         // Update the background color based on transparency
-        const backgroundColor = currentSettings.transparent ? "rgba(0, 0, 0, 0)" : "#303030";
-        document.body.style.setProperty("--background-color", backgroundColor);
+        // const backgroundColor = currentSettings.transparent ? "rgba(0, 0, 0, 0)" : "#303030";
+        // document.body.style.setProperty("--background-color", backgroundColor);
+        // const bgGradient = document.documentElement.style.getPropertyValue("--bg-gradient");
+        if (currentSettings.transparent) {
+            scaleDownBgGradient();
+        } else {
+            scaleUpBgGradient();
+        }
     }
 
     /**
