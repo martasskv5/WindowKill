@@ -10,40 +10,40 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-    let achievementsData = JSON.parse(localStorage.getItem('achievements')) || {}
-    const main = document.querySelector('.uiWrapper')
+        let achievementsData = JSON.parse(localStorage.getItem('achievements')) || {}
+        const main = document.querySelector('.uiWrapper')
 
-    Object.values(achievementsData).forEach(achievement => {
-        const achievementDiv = document.createElement('div')
-        achievementDiv.className = 'achievement button'
-        achievementDiv.style.padding = '0'
-        achievementDiv.innerHTML = `
+        Object.values(achievementsData).forEach(achievement => {
+            const achievementDiv = document.createElement('div')
+            achievementDiv.className = 'achievement button'
+            achievementDiv.style.padding = '0'
+            achievementDiv.innerHTML = `
             <h2>${achievement.name}</h2>
             <p>${achievement.description}</p>
         `
 
-        // Calculate progress
-        let progress = 0
-        if (Array.isArray(achievement.required) && Array.isArray(achievement.current)) {
-            progress = achievement.required.length > 0 ? achievement.current.length / achievement.required.length : 0
-        } else if (typeof achievement.required === 'number' && typeof achievement.current === 'number') {
-            progress = achievement.required > 0 ? achievement.current / achievement.required : 0
-        }
-        progress = Math.max(0, Math.min(progress, 1)) // Clamp between 0 and 1
+            // Calculate progress
+            let progress = 0
+            if (Array.isArray(achievement.required) && Array.isArray(achievement.current)) {
+                progress = achievement.required.length > 0 ? achievement.current.length / achievement.required.length : 0
+            } else if (typeof achievement.required === 'number' && typeof achievement.current === 'number') {
+                progress = achievement.required > 0 ? achievement.current / achievement.required : 0
+            }
+            progress = Math.max(0, Math.min(progress, 1)) // Clamp between 0 and 1
 
-        // Add progress bar if required is present
-        if (achievement.required) {
-            achievementDiv.innerHTML += `
+            // Add progress bar if required is present
+            if (achievement.required) {
+                achievementDiv.innerHTML += `
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: ${progress * 100}%"></div>
                 </div>
             `
-        }
+            }
 
-        if (achievement.unlocked) achievementDiv.classList.add('green')
-        main.appendChild(achievementDiv)
+            if (achievement.unlocked) achievementDiv.classList.add('green')
+            main.appendChild(achievementDiv)
+        })
     })
-})
 </script>
 
 <body>

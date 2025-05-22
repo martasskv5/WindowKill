@@ -166,6 +166,18 @@ class Difficulties {
     constructor() {
         this.difficulty = "normal"; // Default difficulty
         this.difficulties = {
+            easy: {
+                increasePower: 10,
+                decreasePower: 1,
+                decreaseMax: 3,
+                decreaseMultiplier: 1.05,
+                enemySpawnSpeed: 1.5,
+                enemyMinSpawn: 1000,
+                enemySpawnDecrease: 5,
+                scoreMultiplier: 0.25,
+                transparent: false,
+                timeMultiplier: 1.2,
+            },
             normal: {
                 increasePower: 20,
                 decreasePower: 2,
@@ -175,6 +187,18 @@ class Difficulties {
                 enemyMinSpawn: 750,
                 enemySpawnDecrease: 10,
                 scoreMultiplier: 0.5,
+                transparent: false,
+                timeMultiplier: 1.5,
+            },
+            hard: {
+                increasePower: 25,
+                decreasePower: 2.5,
+                decreaseMax: 8,
+                decreaseMultiplier: 1.2,
+                enemySpawnSpeed: 0.85,
+                enemyMinSpawn: 600,
+                enemySpawnDecrease: 15,
+                scoreMultiplier: 1,
                 transparent: false,
                 timeMultiplier: 1.5,
             },
