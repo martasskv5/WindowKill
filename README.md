@@ -131,6 +131,7 @@ Zhrnutie projektu to jednotlivých bodov
         -   [x] Hover FX
     -   [x] Set app icon
     -   [x] Disable Windows header
+    -   [x] Custom cursor [source](https://aspecsgaming.itch.io/pixel-art-cursors)
 -   [ ] Mechanics
     -   [x] Difficulties
         -   [x] Shrinking power
