@@ -48,20 +48,28 @@ class GameUtils {
         this.windows = [];
     }
 
-    pause() {
+    /**
+     * Pauses the game, stops animations, and clears intervals.
+     */
+    async pause() {
         this.paused = true;
         cancelAnimationFrame(this.animationFrameId);
         clearInterval(this.enemySpawnTimeout);
         clearInterval(this.shrinkInterval);
+        await invoke("send_sync_message", { msg: JSON.stringify({ type: "paused", value: true }) })
         document.querySelector("#pauseMenu").classList.toggle("hidden");
     }
-
-    resume() {
+    
+    /**
+     * Resumes the game, restarts animations, and spawns enemies.
+     */
+    async resume() {
         if (this.gameOver) return;
         this.paused = false;
         this.animate();
         this.spawnEnemies();
         this.shrinkWindow();
+        await invoke("send_sync_message", { msg: JSON.stringify({ type: "paused", value: false }) })
         document.querySelector("#pauseMenu").classList.toggle("hidden");
     }
 

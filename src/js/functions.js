@@ -1,4 +1,4 @@
-import * as C from "./classes.js";
+import { Entity } from "./classes.js";
 import { GameUtils } from "./gameUtils.js";
 const { listen } = window.__TAURI__.event;
 const { LogicalSize, LogicalPosition } = window.__TAURI__.window;
@@ -137,7 +137,8 @@ function scaleUpBgGradient(start = 0, duration = 1000) {
  */
 async function startGame(appWindow, options, timer) {
     // Resize the window to 400x400px
-    await _resizeWindow(appWindow, -200, -200, 200);
+    const resizeW = -200 / options.screenMultiplier;
+    await _resizeWindow(appWindow, resizeW, resizeW, 200);
 
     const canvas = document.querySelector("canvas");
     const c = canvas.getContext("2d");
@@ -149,7 +150,7 @@ async function startGame(appWindow, options, timer) {
     let playerX = canvas.width / 2;
     let playerY = canvas.height / 2;
 
-    const player = new C.Entity(playerX, playerY, playerRadius, options.playerColor);
+    const player = new Entity(playerX, playerY, playerRadius, options.playerColor);
 
     const gameUtils = new GameUtils(appWindow, canvas, player, playerRadius, options);
 
@@ -201,19 +202,19 @@ async function startGame(appWindow, options, timer) {
                 x: Math.cos(angle) * 5,
                 y: Math.sin(angle) * 5,
             };
-            gameUtils.projectiles.push(new C.Entity(player.x, player.y, 5, options.playerColor, velocity));
+            gameUtils.projectiles.push(new Entity(player.x, player.y, 5, options.playerColor, velocity));
         }
     });
 
     // Add event listener for the Escape key
-    document.addEventListener("keydown", (event) => {
+    document.addEventListener("keydown", async event => {
         if (event.key === "Escape" && !gameUtils.gameOver) {
-            gameUtils.paused ? gameUtils.resume() : gameUtils.pause();
+            gameUtils.paused ? await gameUtils.resume() : await gameUtils.pause();
         }
     });
 
-    appWindow.onFocusChanged(({ payload: focused }) => {
-        !focused && !gameUtils.paused && !gameUtils.gameOver ? gameUtils.pause() : null;
+    appWindow.onFocusChanged(async ({ payload: focused }) => {
+        !focused && !gameUtils.paused && !gameUtils.gameOver ? await gameUtils.pause() : null;
     });
 
     listen('sync-message', event => {
@@ -227,7 +228,7 @@ async function startGame(appWindow, options, timer) {
             }
         } catch { }
     })
-    
+
     gameUtils.animate();
     gameUtils.spawnEnemies();
     gameUtils.shrinkWindow();
