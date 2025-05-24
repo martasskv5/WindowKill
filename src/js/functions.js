@@ -73,6 +73,62 @@ async function _sendNotification(title, body) {
 }
 
 /**
+ * Slowly scales down the radial gradient in the --bg-gradient CSS variable.
+ * The gradient will scale from `start` to 0, and the second color stop will be double the first percentage or 100%, whichever is smaller.
+ * @param {number} [start=100] - Initial gradient size percentage.
+ * @param {number} [duration=5000] - Duration of the animation in ms.
+ */
+function scaleDownBgGradient(start = 100, duration = 1000) {
+    const root = document.documentElement
+    const steps = 60
+    const stepTime = duration / steps
+    let current = start
+    const step = start / steps
+
+    const animate = () => {
+        current -= step
+        if (current < 0) current = 0
+        // Second color stop is double the first, but max 100%
+        const secondStop = Math.min(current * 2, 100)
+        root.style.setProperty(
+            '--bg-gradient',
+            `radial-gradient(circle at 50% 50%, rgb(24, 24, 24) ${current}%, rgba(255,255,255,0) ${secondStop}%)`
+        )
+        if (current > 0) setTimeout(animate, stepTime)
+    }
+
+    animate()
+}
+
+/**
+ * Slowly scales up the radial gradient in the --bg-gradient CSS variable.
+ * The gradient will scale from `start` to 100%, and the second color stop will be double the first percentage or 100%, whichever is smaller.
+ * @param {number} [start=0] - Initial gradient size percentage.
+ * @param {number} [duration=5000] - Duration of the animation in ms.
+ */
+function scaleUpBgGradient(start = 0, duration = 1000) {
+    const root = document.documentElement
+    const steps = 60
+    const stepTime = duration / steps
+    let current = start
+    const step = (100 - start) / steps
+
+    const animate = () => {
+        current += step
+        if (current > 100) current = 100
+        // Second color stop is double the first, but max 100%
+        const secondStop = Math.min(current * 2, 100)
+        root.style.setProperty(
+            '--bg-gradient',
+            `radial-gradient(circle at 50% 50%, rgb(24, 24, 24) ${current}%, rgba(255,255,255,0) ${secondStop}%)`
+        )
+        if (current < 100) setTimeout(animate, stepTime)
+    }
+
+    animate()
+}
+
+/**
  * Starts the game.
  * @param {Object} appWindow - The Tauri app window object.
  * @param {Object} options - The game options object.
@@ -164,4 +220,4 @@ async function startGame(appWindow, options, timer) {
     gameUtils.shrinkWindow();
 }
 
-export { startGame, _resizeWindow, _sendNotification };
+export { startGame, _resizeWindow, _sendNotification, scaleDownBgGradient, scaleUpBgGradient };
