@@ -148,7 +148,7 @@ async function startGame(appWindow, options, timer) {
     let playerX = canvas.width / 2;
     let playerY = canvas.height / 2;
 
-    const player = new C.Player(playerX, playerY, playerRadius, options.playerColor);
+    const player = new C.Entity(playerX, playerY, playerRadius, options.playerColor);
 
     const gameUtils = new GameUtils(appWindow, canvas, player, playerRadius, options);
 
@@ -200,7 +200,7 @@ async function startGame(appWindow, options, timer) {
                 x: Math.cos(angle) * 5,
                 y: Math.sin(angle) * 5,
             };
-            gameUtils.projectiles.push(new C.Projectile(player.x, player.y, 5, options.playerColor, velocity));
+            gameUtils.projectiles.push(new C.Entity(player.x, player.y, 5, options.playerColor, velocity));
         }
     });
 

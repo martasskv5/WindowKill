@@ -429,7 +429,7 @@ class GameUtils {
             }
 
             // Spawn the enemy targeting the player
-            this.enemies.push(new C.Player(x, y, radius, color, velocity))
+            this.enemies.push(new C.Entity(x, y, radius, color, velocity))
 
             // Decrease the spawn interval over time, but don't go below minInterval
             this.spawnInterval = Math.max(this.spawnInterval - intervalDecrement, minInterval)
