@@ -1,5 +1,6 @@
 import * as C from "./classes.js";
 import { GameUtils } from "./gameUtils.js";
+const { listen } = window.__TAURI__.event;
 const { LogicalSize, LogicalPosition } = window.__TAURI__.window;
 const { isPermissionGranted, requestPermission, sendNotification, } = window.__TAURI__.notification;
 
@@ -215,9 +216,22 @@ async function startGame(appWindow, options, timer) {
         !focused && !gameUtils.paused && !gameUtils.gameOver ? gameUtils.pause() : null;
     });
 
+    listen('sync-message', event => {
+        try {
+            const data = JSON.parse(event.payload)
+            
+            if (data.type === 'window_closed') {
+                const idx = gameUtils.windows.indexOf(data.id)
+                if (idx !== -1) gameUtils.windows.splice(idx, 1)
+                    // console.log(`Window ${data.id} closed, remaining windows: ${windows.length}`);
+            }
+        } catch { }
+    })
+    
     gameUtils.animate();
-    gameUtils.spawnEnemies()
+    gameUtils.spawnEnemies();
     gameUtils.shrinkWindow();
+    gameUtils.spawnRandomWindow();
 }
 
 export { startGame, _resizeWindow, _sendNotification, scaleDownBgGradient, scaleUpBgGradient };

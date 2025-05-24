@@ -30,6 +30,9 @@ window.addEventListener("DOMContentLoaded", async () => {
         );
     }
 
+    await invoke("start_sync_server");
+    await invoke('subscribe_sync');
+
     // Buttons in main menu
     const startButton = document.querySelector("#startButton");
     const optionsButton = document.querySelector("#optionsButton");

@@ -10,6 +10,9 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+        const backgroundColor = localStorage.getItem("transparent") ? "rgba(0, 0, 0, 0)" : "rgb(24, 24, 24)";
+        document.body.style.setProperty("--background", backgroundColor);
+
         let achievementsData = JSON.parse(localStorage.getItem('achievements')) || {}
         const main = document.querySelector('.uiWrapper')
 

@@ -231,8 +231,10 @@ class Difficulties {
         // const bgGradient = document.documentElement.style.getPropertyValue("--bg-gradient");
         if (currentSettings.transparent) {
             scaleDownBgGradient();
+            localStorage.setItem("transparent", "true");
         } else {
             scaleUpBgGradient();
+            localStorage.setItem("transparent", "");
         }
     }
 
