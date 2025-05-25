@@ -69,11 +69,11 @@ class Options {
             if (await exists(this.config, { baseDir: BaseDirectory.AppLocalData })) {
                 const data = await readTextFile(this.config, { baseDir: BaseDirectory.AppLocalData });
                 const options = JSON.parse(data);
-                console.log(options);
+                // console.log(options);
                 this.difficulty.setDifficulty(options.difficulty || this.difficulty.difficulty);
                 this.volume = options.volume || this.volume;
                 this.playerColor = options.playerColor || this.playerColor;
-
+                localStorage.setItem("playerColor", this.playerColor);
                 // Update the UI with loaded options
                 document.querySelector("#difficulty").value = this.difficulty.difficulty;
                 document.querySelector("#volume").value = this.volume;
@@ -369,7 +369,12 @@ class Achievements {
         }
 
         // noSpace
-        noSpace ? this.unlock("noSpace") : null;
+        if (
+            noSpace // Check if there is no space
+            && !this.achievements["noSpace"].unlocked // Check if the achievement is not already unlocked
+        ) {
+            this.unlock("noSpace"); // Unlock the achievement
+        }
 
         // colorful
         if (

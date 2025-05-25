@@ -1,5 +1,5 @@
 import { Entity, ParticleSystem } from "./classes.js";
-import { _resizeWindow } from "./functions.js";
+import { _resizeWindow, generateRandomHexColor } from "./functions.js";
 const { invoke } = window.__TAURI__.core;
 const { currentMonitor, getAllWindows, LogicalSize, LogicalPosition } = window.__TAURI__.window;
 const { exists, BaseDirectory, readTextFile, writeTextFile } = window.__TAURI__.fs;
@@ -59,7 +59,7 @@ class GameUtils {
         await invoke("send_sync_message", { msg: JSON.stringify({ type: "paused", value: true }) })
         document.querySelector("#pauseMenu").classList.toggle("hidden");
     }
-    
+
     /**
      * Resumes the game, restarts animations, and spawns enemies.
      */
@@ -320,12 +320,16 @@ class GameUtils {
         // Define the original size (e.g., 600x600)
         const originalWidth = this.options.newWidth;
 
-        this.windows.forEach(async (id) => {
-            // Notify all windows to remove this window from their list
-            // await invoke("send_sync_message", { msg: JSON.stringify({ type: "window_closed", id: id }) });
-            await invoke("close_window", { id: id });
-            this.windows.slice(this.windows.indexOf(id), 1);
-        });
+        try {
+            this.windows.forEach(async (id) => {
+                // Notify all windows to remove this window from their list
+                // await invoke("send_sync_message", { msg: JSON.stringify({ type: "window_closed", id: id }) });
+                await invoke("close_window", { id: id });
+                this.windows.slice(this.windows.indexOf(id), 1);
+            });
+        } catch (error) {
+            console.error("Error closing windows:", error);
+        }
 
         // Get the current monitor and calculate the center position
         const monitor = await currentMonitor();
@@ -353,6 +357,7 @@ class GameUtils {
 
         document.querySelector("#timer").classList.toggle("hidden"); // Hide the timer display
         document.querySelector("#killCount").classList.toggle("hidden");
+        document.querySelector("#killCount").innerHTML = 0; // Reset kill count display
         if (score > this.highScore) {
             this.highScore = score;
             await this.saveScore(this.highScore);
@@ -438,7 +443,7 @@ class GameUtils {
             // Generate a random hex color that is not the player's color
             let color
             do {
-                color = this.generateRandomHexColor()
+                color = generateRandomHexColor()
             } while (color === this.player.color)
 
             // Calculate angle towards the player's current position
@@ -478,22 +483,13 @@ class GameUtils {
     }
 
     /**
-     * Generates a random hex color string.
-     * @returns {string} The generated hex color (e.g., "#ff5733").
-     */
-    generateRandomHexColor() {
-        const randomColor = Math.floor(Math.random() * 16777215).toString(16); // Generate a random number and convert to hex
-        return `#${randomColor.padStart(6, "0")}`; // Ensure the hex color is 6 characters long
-    }
-
-    /**
      * Spawns a new window at a random position and size, adds its ID to the list,
      * waits 10 seconds, closes the window, and sends a sync message to remove it from the list.
      * Ensures the new window does not overlap with the main window.
      */
     spawnRandomWindow() {
         setInterval(async () => {
-            // if (this.windows.length >= 6 || this.gameOver || this.paused) return
+            if (this.windows.length >= 6 || this.gameOver || this.paused) return
 
             // Calculate overlapping with all existing windows
             const allWindows = await getAllWindows()

@@ -130,6 +130,48 @@ function scaleUpBgGradient(start = 0, duration = 1000) {
 }
 
 /**
+ * Generates a random hex color string that is not too dark for visibility on a dark background.
+ * Ensures the color's brightness is above a threshold.
+ * @returns {string} The generated hex color (e.g., "#ff5733").
+ */
+function generateRandomHexColor() {
+    let color, r, g, b, brightness
+    do {
+        color = Math.floor(Math.random() * 0xffffff)
+        r = (color >> 16) & 0xff
+        g = (color >> 8) & 0xff
+        b = color & 0xff
+        // Calculate brightness using the luminance formula
+        brightness = 0.299 * r + 0.587 * g + 0.114 * b
+    } while (brightness < 120) // Adjust threshold as needed for your background
+    return `#${color.toString(16).padStart(6, '0')}`
+}
+
+/**
+ * Converts canvas coordinates to monitor (screen) coordinates.
+ * @param {number} canvasX - X position on the canvas.
+ * @param {number} canvasY - Y position on the canvas.
+ * @param {Object} windowPos - The window's position on the monitor ({ x, y }).
+ * @returns {{x: number, y: number}} The position on the monitor.
+ */
+const canvasToMonitor = (canvasX, canvasY, windowPos) => ({
+    x: canvasX + windowPos.x,
+    y: canvasY + windowPos.y
+})
+
+/**
+ * Converts monitor (screen) coordinates to canvas coordinates.
+ * @param {number} monitorX - X position on the monitor.
+ * @param {number} monitorY - Y position on the monitor.
+ * @param {Object} windowPos - The window's position on the monitor ({ x, y }).
+ * @returns {{x: number, y: number}} The position on the canvas.
+ */
+const monitorToCanvas = (monitorX, monitorY, windowPos) => ({
+    x: monitorX - windowPos.x,
+    y: monitorY - windowPos.y
+})
+
+/**
  * Starts the game.
  * @param {Object} appWindow - The Tauri app window object.
  * @param {Object} options - The game options object.
@@ -217,15 +259,32 @@ async function startGame(appWindow, options, timer) {
         !focused && !gameUtils.paused && !gameUtils.gameOver ? await gameUtils.pause() : null;
     });
 
-    listen('sync-message', event => {
+    let messages = []
+
+    await listen('sync-message', async event => {
         try {
             const data = JSON.parse(event.payload)
-            
+
+            if (messages.includes(data.messageId)) return; // If the message ID already exists, ignore it
+            // console.log(`Received messageId: ${JSON.stringify(data.messageId)}`);  
+            // console.log(messages);
+                      
+            messages = []
+            messages.push(data.messageId); // Add the message ID to the list
             if (data.type === 'window_closed') {
                 const idx = gameUtils.windows.indexOf(data.id)
                 if (idx !== -1) gameUtils.windows.splice(idx, 1)
-                    // console.log(`Window ${data.id} closed, remaining windows: ${windows.length}`);
+                console.log(`Window ${data.id} closed, remaining windows: ${windows.length}`);
             }
+            else if (data.type === 'enemy_transfer') {
+                const enemyData = data.enemy;
+                console.log(`Received enemy data: ${JSON.stringify(enemyData)}`);
+                const pos = await appWindow.outerPosition()
+                const { x, y } = monitorToCanvas(enemyData.x, enemyData.y, pos);
+                const enemy = new Entity(x, y, enemyData.radius, enemyData.color, enemyData.velocity);
+                gameUtils.enemies.push(enemy);
+            } 
+            
         } catch { }
     })
 
@@ -235,4 +294,4 @@ async function startGame(appWindow, options, timer) {
     gameUtils.spawnRandomWindow();
 }
 
-export { startGame, _resizeWindow, _sendNotification, scaleDownBgGradient, scaleUpBgGradient };
+export { startGame, _resizeWindow, _sendNotification, scaleDownBgGradient, scaleUpBgGradient, generateRandomHexColor, canvasToMonitor, monitorToCanvas };

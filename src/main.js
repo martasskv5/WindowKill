@@ -14,7 +14,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     await options.initialize();
     localStorage.setItem("achievements", JSON.stringify(options.achievements.achievements));
     options.screenMultiplier = 1920 / screenWidth;
-    console.log(options.screenMultiplier);
+    localStorage.setItem("screenMultiplier", options.screenMultiplier);
 
     // Adjust the window size to fit the screen
     const windowWidth = options.defaultWidth / options.screenMultiplier;
