@@ -3,65 +3,65 @@
  * @classdesc Represents a generic entity in the game (player, projectile, enemy, etc.).
  */
 class Entity {
-    /**
-     * Creates a new entity.
-     * @param {number} x - The x-coordinate of the entity.
-     * @param {number} y - The y-coordinate of the entity.
-     * @param {number} radius - The radius of the entity.
-     * @param {string} color - The color of the entity.
-     * @param {Object} velocity - The velocity of the entity.
-     * @param {number} velocity.x - The x-component of the velocity.
-     * @param {number} velocity.y - The y-component of the velocity.
-     * @param {number} velocityMultiplier - The multiplier for the velocity.
-     * @param {boolean} multiWindow - Flag to indicate if the entity is multi-window.
-     */
-    constructor(x, y, radius, color, velocity = { x: 0, y: 0 }, velocityMultiplier = 1, multiWindow = false) {
-        this.x = x
-        this.y = y
-        this.radius = radius
-        this.color = color
-        this.velocity = velocity
-        this.velocityMultiplier = velocityMultiplier
-        this.multiWindow = multiWindow; // Flag to indicate if the entity is multi-window
-    }
+	/**
+	 * Creates a new entity.
+	 * @param {number} x - The x-coordinate of the entity.
+	 * @param {number} y - The y-coordinate of the entity.
+	 * @param {number} radius - The radius of the entity.
+	 * @param {string} color - The color of the entity.
+	 * @param {Object} velocity - The velocity of the entity.
+	 * @param {number} velocity.x - The x-component of the velocity.
+	 * @param {number} velocity.y - The y-component of the velocity.
+	 * @param {number} velocityMultiplier - The multiplier for the velocity.
+	 * @param {boolean} multiWindow - If true, entity can be transferred between windows (used for projectiles).
+	 */
+	constructor(x, y, radius, color, velocity = { x: 0, y: 0 }, velocityMultiplier = 1, multiWindow = false) {
+		this.x = x
+		this.y = y
+		this.radius = radius
+		this.color = color
+		this.velocity = velocity
+		this.velocityMultiplier = velocityMultiplier
+		this.multiWindow = multiWindow // If true, entity can be transferred between windows
+	}
 
-    /**
-     * Draws the entity on the canvas.
-     * @param {CanvasRenderingContext2D} c - The canvas rendering context.
-     */
-    draw(c) {
-        c.beginPath()
-        c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
-        c.fillStyle = this.color
-        c.fill()
-    }
+	/**
+	 * Draws the entity as a circle on the canvas.
+	 * @param {CanvasRenderingContext2D} c - The canvas rendering context.
+	 */
+	draw(c) {
+		c.beginPath()
+		c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
+		c.fillStyle = this.color
+		c.fill()
+	}
 
-    /**
-     * Moves the entity to a new position and redraws it.
-     * @param {number} x - The new x-coordinate of the entity.
-     * @param {number} y - The new y-coordinate of the entity.
-     * @param {CanvasRenderingContext2D} c - The canvas rendering context.
-     */
-    move(x, y, c) {
-        this.x = x
-        this.y = y
-        this.draw(c)
-    }
+	/**
+	 * Moves the entity to a new position and redraws it.
+	 * @param {number} x - The new x-coordinate of the entity.
+	 * @param {number} y - The new y-coordinate of the entity.
+	 * @param {CanvasRenderingContext2D} c - The canvas rendering context.
+	 */
+	move(x, y, c) {
+		this.x = x
+		this.y = y
+		this.draw(c)
+	}
 
-    /**
-     * Updates the entity's position based on its velocity and redraws it.
-     * @param {CanvasRenderingContext2D} c - The canvas rendering context.
-     */
-    update(c) {
-        this.draw(c)
-        this.x += this.velocity.x * this.velocityMultiplier
-        this.y += this.velocity.y * this.velocityMultiplier
-    }
+	/**
+	 * Updates the entity's position based on its velocity and redraws it.
+	 * @param {CanvasRenderingContext2D} c - The canvas rendering context.
+	 */
+	update(c) {
+		this.draw(c)
+		this.x += this.velocity.x * this.velocityMultiplier
+		this.y += this.velocity.y * this.velocityMultiplier
+	}
 }
 
 /**
  * @class
- * @classdesc Represents a regular N-sided polygon entity.
+ * @classdesc Represents a regular N-sided polygon entity (used for bosses).
  * @extends Entity
  */
 class NGon extends Entity {
@@ -75,8 +75,8 @@ class NGon extends Entity {
 	 * @param {Object} velocity - The velocity of the NGon.
 	 * @param {number} velocity.x - The x-component of the velocity.
 	 * @param {number} velocity.y - The y-component of the velocity.
-     * @param {number} velocityMultiplier - The multiplier for the velocity.
-     * @param {boolean} multiWindow - Flag to indicate if the NGon is multi-window.
+	 * @param {number} velocityMultiplier - The multiplier for the velocity.
+	 * @param {boolean} multiWindow - If true, NGon can be transferred between windows.
 	 */
 	constructor(x, y, radius, color, sides, velocity = { x: 0, y: 0 }, velocityMultiplier = 1, multiWindow = false) {
 		super(x, y, radius, color, velocity, velocityMultiplier, multiWindow)
@@ -105,103 +105,103 @@ class NGon extends Entity {
 }
 
 /**
- * This class is used to create a confetti-like effect on the screen.
- * It uses the Anime.js library for animation.
+ * @class
+ * @classdesc Particle system for confetti-like effects using Anime.js.
  */
 class ParticleSystem {
-    constructor() {
-        this.container = document.getElementsByTagName("body")[0];
-        this.particles = [];
-        this.colors = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff"];
-    }
+	constructor() {
+		this.container = document.getElementsByTagName("body")[0];
+		this.particles = [];
+		this.colors = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff"];
+	}
 
-    /**
-     * Creates a particle element and adds it to the container.
-     * @param {number} x - The x-coordinate of the particle.
-     * @param {number} y - The y-coordinate of the particle.
-     * @return {HTMLElement} The created particle element.
-     */
-    createParticle(x, y) {
-        const particle = document.createElement("div");
-        particle.className = "particle";
+	/**
+	 * Creates a particle element and adds it to the container.
+	 * @param {number} x - The x-coordinate of the particle.
+	 * @param {number} y - The y-coordinate of the particle.
+	 * @return {HTMLElement} The created particle element.
+	 */
+	createParticle(x, y) {
+		const particle = document.createElement("div");
+		particle.className = "particle";
 
-        // Random color and size
-        particle.style.backgroundColor =
-            this.colors[Math.floor(Math.random() * this.colors.length)];
-        particle.style.width = `${Math.random() * 10 + 10}px`; // Wider rectangles
-        particle.style.height = `${Math.random() * 5 + 5}px`; // Taller than wide
+		// Random color and size
+		particle.style.backgroundColor =
+			this.colors[Math.floor(Math.random() * this.colors.length)];
+		particle.style.width = `${Math.random() * 10 + 10}px`; // Wider rectangles
+		particle.style.height = `${Math.random() * 5 + 5}px`; // Taller than wide
 
-        // Make particles rectangular
-        particle.style.borderRadius = "0%";
+		// Make particles rectangular
+		particle.style.borderRadius = "0%";
 
-        particle.style.left = `${x}px`;
-        particle.style.top = `${y}px`;
+		particle.style.left = `${x}px`;
+		particle.style.top = `${y}px`;
 
-        this.container.appendChild(particle);
-        this.particles.push(particle);
+		this.container.appendChild(particle);
+		this.particles.push(particle);
 
-        return particle;
-    }
+		return particle;
+	}
 
-    /**
-     * Explodes particles from a given point on the screen.
-     * @param {number} x - The x-coordinate of the explosion.
-     * @param {number} y - The y-coordinate of the explosion.
-     * @param {number} count - The number of particles to create.
-     * @return {void}
-     */
-    explode(x, y, count = 50) {
-        // Create particles
-        for (let i = 0; i < count; i++) {
-            const particle = this.createParticle(x, y);
+	/**
+	 * Explodes particles from a given point on the screen.
+	 * @param {number} x - The x-coordinate of the explosion.
+	 * @param {number} y - The y-coordinate of the explosion.
+	 * @param {number} count - The number of particles to create.
+	 * @return {void}
+	 */
+	explode(x, y, count = 50) {
+		// Create particles
+		for (let i = 0; i < count; i++) {
+			const particle = this.createParticle(x, y);
 
-            // Physics parameters
-            const angle = Math.random() * 45 - 22.5; // Narrower angle for downward motion
-            const speed = Math.random() * 3 + 2;
+			// Physics parameters
+			const angle = Math.random() * 45 - 22.5; // Narrower angle for downward motion
+			const speed = Math.random() * 3 + 2;
 
-            // Initial velocity
-            const velocityX = Math.cos(angle) * speed;
-            const velocityY = Math.sin(angle) * speed + 5; // Extra downward force
+			// Initial velocity
+			const velocityX = Math.cos(angle) * speed;
+			const velocityY = Math.sin(angle) * speed + 5; // Extra downward force
 
-            anime({
-                targets: particle,
-                translateX: [
-                    {
-                        value: velocityX * 200,
-                        duration: 1500,
-                        easing: "easeInOutQuad",
-                    },
-                ],
-                translateY: [
-                    {
-                        value: velocityY * 200,
-                        duration: 1500,
-                        easing: "easeInQuad", // Accelerates downward
-                    },
-                ],
-                rotate: {
-                    value: Math.random() * 360,
-                    duration: 1500,
-                    easing: "linear",
-                    delay: Math.random() * 300, // Random rotation start
-                },
-                opacity: [
-                    { value: 1 },
-                    { value: 0, duration: 500, delay: 1200 },
-                ],
-                complete: () => particle.remove(),
-            });
-        }
-    }
+			anime({
+				targets: particle,
+				translateX: [
+					{
+						value: velocityX * 200,
+						duration: 1500,
+						easing: "easeInOutQuad",
+					},
+				],
+				translateY: [
+					{
+						value: velocityY * 200,
+						duration: 1500,
+						easing: "easeInQuad", // Accelerates downward
+					},
+				],
+				rotate: {
+					value: Math.random() * 360,
+					duration: 1500,
+					easing: "linear",
+					delay: Math.random() * 300, // Random rotation start
+				},
+				opacity: [
+					{ value: 1 },
+					{ value: 0, duration: 500, delay: 1200 },
+				],
+				complete: () => particle.remove(),
+			});
+		}
+	}
 
-    /**
-     * Cleans up the particles by removing them from the DOM.
-     * @return {void}
-     */
-    cleanup() {
-        this.particles.forEach((particle) => particle.remove());
-        this.particles = [];
-    }
+	/**
+	 * Cleans up the particles by removing them from the DOM.
+	 * @return {void}
+	 */
+	cleanup() {
+		this.particles.forEach((particle) => particle.remove());
+		this.particles = [];
+	}
 }
 
 export { Entity, ParticleSystem, NGon };

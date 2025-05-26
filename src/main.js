@@ -31,7 +31,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
 
     await invoke("start_sync_server");
-    await invoke('subscribe_sync');
+    await invoke("subscribe_sync");
 
     // Buttons in main menu
     const startButton = document.querySelector("#startButton");
@@ -48,9 +48,9 @@ window.addEventListener("DOMContentLoaded", async () => {
     const timer = document.querySelector("#timer");
     const killCount = document.querySelector("#killCount");
 
-    // Start the game
+    // Start the game when the start button is clicked
     startButton.addEventListener("click", async () => {
-        // Hide main menu
+        // Hide main menu and show game UI
         document.querySelector("#gameStart").classList.toggle("hidden");
         achievements.classList.toggle("hidden");
         timer.classList.toggle("hidden");
@@ -59,36 +59,33 @@ window.addEventListener("DOMContentLoaded", async () => {
         await startGame(appWindow, options, timer);
     });
 
+    // Show options menu from main menu
     optionsButton.addEventListener("click", () => {
-        // Hide main menu
+        // Hide main menu and show options
         document.querySelector("#gameStart").classList.toggle("hidden");
         achievements.classList.toggle("hidden");
-        // Show options menu
         document.querySelector("#settings").classList.toggle("hidden");
     });
-    // Options menu buttons
+
+    // Options menu: handle back button and unsaved changes
     backButton.addEventListener("click", () => {
         if (options.unsavedChanges()) {
             const confirmLeave = confirm(
                 "You have unsaved changes. These changes will be used only in this session. Are you sure you want to leave?"
             );
-            if (!confirmLeave) {
-                return;
-            } else {
-                // Hide options menu
-                document.querySelector("#settings").classList.toggle("hidden");
-                // Show main menu
-                document.querySelector("#gameStart").classList.toggle("hidden");
-            }
-        } else {
-            // Hide options menu
+            if (!confirmLeave) return;
+            // Hide options and show main menu
             document.querySelector("#settings").classList.toggle("hidden");
-            // Show main menu
+            document.querySelector("#gameStart").classList.toggle("hidden");
+        } else {
+            // Hide options and show main menu
+            document.querySelector("#settings").classList.toggle("hidden");
             document.querySelector("#gameStart").classList.toggle("hidden");
             achievements.classList.toggle("hidden");
         }
     });
 
+    // Save options from options menu
     saveButton.addEventListener("click", () => {
         const difficulty = document.querySelector("#difficulty").value;
         const volume = document.querySelector("#volume").value;
@@ -100,17 +97,18 @@ window.addEventListener("DOMContentLoaded", async () => {
             playerColor: playerColor,
         };
         console.log(newOptions);
-        // Update options
+        // Update options (saved for next session)
         options.updateOptions(newOptions);
     });
 
+    // Quit the app
     quitButton.addEventListener("click", () => {
         invoke("quit");
     });
 
-    // Game end menu buttons
+    // Game end menu: restart the game
     restartButton.addEventListener("click", async () => {
-        // Hide game end menu
+        // Hide game end menu and show game UI
         document.querySelector("#gameEnd").classList.toggle("hidden");
         timer.classList.toggle("hidden");
         killCount.classList.toggle("hidden");
@@ -118,16 +116,17 @@ window.addEventListener("DOMContentLoaded", async () => {
         await startGame(appWindow, options, timer);
     });
 
+    // Game end menu: return to main menu
     mainMenuButton.addEventListener("click", () => {
-        // Hide game end menu
+        // Hide game end menu and show main menu
         document.querySelector("#gameEnd").classList.toggle("hidden");
-        // Show main menu
         document.querySelector("#gameStart").classList.toggle("hidden");
         achievements.classList.toggle("hidden");
     });
 
+    // Open achievements window
     achievementsButton.addEventListener("click", async () => {
-        const width = (options.defaultWidth + 200) / options.screenMultiplier
+        const width = (options.defaultWidth + 200) / options.screenMultiplier;
         await invoke("create_window", { id: "achievements", url: "html/achievements.html", x: (screenWidth - width) / 2, y: (screenHeight - width) / 2, w: width, h: width, title: "Achievements" });
     });
 });

@@ -3,35 +3,22 @@ const { availableMonitors } = window.__TAURI__.window
 const { exists, BaseDirectory, readTextFile, writeTextFile, mkdir } = window.__TAURI__.fs;
 
 /**
- * Options class to manage game settings
- * such as difficulty, volume, and player color.
- * This class handles loading, saving, and updating options from a JSON file.
- * It uses the Tauri API to read and write files in the local data directory.
- * The options are stored in a JSON file named "options.json" in the local data directory.
- * The default options are:
+ * Options class to manage game settings such as difficulty, volume, and player color.
+ * Handles loading, saving, and updating options from a JSON file using the Tauri API.
+ * Options are stored in a JSON file named "options.json" in the local data directory.
+ * Default options:
  * - difficulty: "normal"
- * - volume: 0.5
- * - playerColor: "ffffff"
- * The options can be loaded from the file, saved to the file, and updated with new values.
- * The options are loaded when the game starts and saved when the user changes them.
- * The options can be accessed and modified through the class methods.
- * The class uses the Tauri API to read and write files in the local data directory.
- * The class is designed to be used in a Tauri application.
- * The class is exported for use in other modules.
+ * - volume: "50"
+ * - playerColor: "#ffffff"
+ *
+ * Options are loaded at game start and saved when changed. Access and modify via class methods.
+ *
+ * @class
  */
 class Options {
     /**
-     * Constructor for the Options class.
-     * Initializes default options and sets up the config file path.
+     * Constructor for the Options class. Initializes default options and config file path.
      * @constructor
-     * @param {string} config - The path to the config file.
-     * @param {number} defaultWidth - The default width of the game window.
-     * @param {number} screenMultiplier - The multiplier for the screen size.
-     * @param {number} newWidth - The new width of the game window.
-     * @param {Difficulties} difficulty - The difficulty settings for the game.
-     * @param {Achievements} achievements - The achievements settings for the game.
-     * @param {string} volume - The volume level for the game.
-     * @param {string} playerColor - The color of the player.
      */
     constructor() {
         // Default options
@@ -46,8 +33,8 @@ class Options {
     }
 
     /**
-     * Initialize the options by setting up the config file path
-     * Must be called before any other methods
+     * Initializes the options by setting up the config file path and loading options from file.
+     * Must be called before any other methods.
      * @returns {Promise<void>}
      */
     async initialize() {
@@ -55,13 +42,12 @@ class Options {
         if (!(await exists("", { baseDir: BaseDirectory.AppLocalData }))) {
             await mkdir("", { baseDir: BaseDirectory.AppLocalData, recursive: true });
         }
-        // await mkdir("WindowKill", { baseDir: BaseDirectory.AppLocalData, recursive: true });
-
         await this.loadOptions();
     }
 
     /**
-     * Load options from the config file
+     * Loads options from the config file, or creates defaults if not present.
+     * Updates UI with loaded options.
      * @returns {Promise<void>}
      */
     async loadOptions() {
@@ -69,7 +55,6 @@ class Options {
             if (await exists(this.config, { baseDir: BaseDirectory.AppLocalData })) {
                 const data = await readTextFile(this.config, { baseDir: BaseDirectory.AppLocalData });
                 const options = JSON.parse(data);
-                // console.log(options);
                 this.difficulty.setDifficulty(options.difficulty || this.difficulty.difficulty);
                 this.volume = options.volume || this.volume;
                 this.playerColor = options.playerColor || this.playerColor;
@@ -91,7 +76,7 @@ class Options {
     }
 
     /**
-     * Save options to the config file
+     * Saves current options to the config file.
      * @returns {Promise<void>}
      */
     async saveOptions() {
@@ -110,8 +95,8 @@ class Options {
     }
 
     /**
-     * Update options with new values
-     * @param {Object} newOptions - New options to apply
+     * Updates options with new values and saves them.
+     * @param {Object} newOptions - New options to apply.
      * @returns {Promise<void>}
      */
     async updateOptions(newOptions) {
@@ -122,9 +107,8 @@ class Options {
     }
 
     /**
-     * Check if there are unsaved changes in the options
-     * Compares current form values with saved options
-     * @returns {boolean} True if there are unsaved changes, false otherwise
+     * Checks if there are unsaved changes in the options form compared to saved options.
+     * @returns {boolean} True if there are unsaved changes, false otherwise.
      */
     unsavedChanges() {
         // Get current form values
@@ -143,25 +127,13 @@ class Options {
 }
 
 /**
- * Class to manage game difficulty settings.
- * Handles initialization and updates of difficulty levels.
+ * Class to manage game difficulty settings. Handles initialization and updates of difficulty levels.
+ * @class
  */
 class Difficulties {
     /**
-     * Constructor for the Difficulties class.
-     * Initializes default difficulty settings and sets up the difficulty levels.
+     * Constructor for the Difficulties class. Initializes default difficulty settings.
      * @constructor
-     * @param {string} difficulty - The current difficulty level.
-     * @param {Object} difficulties - The available difficulty levels and their settings.
-     * @param {number} increasePower - The power increase for the current difficulty.
-     * @param {number} decreasePower - The power decrease for the current difficulty.
-     * @param {number} decreaseMax - The maximum power decrease for the current difficulty.
-     * @param {number} decreaseMultiplier - The multiplier for the power decrease.
-     * @param {number} enemySpawnSpeed - The speed of enemy spawn for the current difficulty.
-     * @param {number} enemyMinSpawn - The minimum spawn time for enemies.
-     * @param {number} enemySpawnDecrease - The amount to decrease the spawn time.
-     * @param {number} scoreMultiplier - The score multiplier for the current difficulty.
-     * @param {boolean} transparent - Whether the background is transparent for the current difficulty.
      */
     constructor() {
         this.difficulty = "normal"; // Default difficulty
@@ -226,9 +198,6 @@ class Difficulties {
         Object.assign(this, currentSettings); // Dynamically copy properties
 
         // Update the background color based on transparency
-        // const backgroundColor = currentSettings.transparent ? "rgba(0, 0, 0, 0)" : "#303030";
-        // document.body.style.setProperty("--background-color", backgroundColor);
-        // const bgGradient = document.documentElement.style.getPropertyValue("--bg-gradient");
         if (currentSettings.transparent) {
             scaleDownBgGradient();
             localStorage.setItem("transparent", "true");
@@ -261,53 +230,49 @@ class Difficulties {
 }
 
 /**
- * Class to manage achievements.
- * Handles loading, saving, updating, and unlocking achievements.
+ * Class to manage achievements. Handles loading, saving, updating, and unlocking achievements.
+ * @class
  */
 class Achievements {
     /**
-     * Constructor for the Achievements class.
-     * Initializes default achievements and sets up the achievements file path.
+     * Constructor for the Achievements class. Initializes default achievements and sets up the achievements file path.
      * @constructor
-     * @param {string} file - The path to the achievements file.
-     * @param {string} schema - The URL of the achievements schema.
      */
     constructor() {
-        this.file = 'achievements.json'
-        this.schema = "https://raw.githubusercontent.com/Openlab-2-2023/WindowKill/refs/heads/achievements/achievements_schema.json"
-        this.achievements = {}
-        this.load()
+        this.file = "achievements.json";
+        this.schema = "https://raw.githubusercontent.com/Openlab-2-2023/WindowKill/refs/heads/main/achievements_schema.json";
+        this.achievements = {};
+        this.load();
     }
 
     /**
-     * Loads achievements from file.
+     * Loads achievements from file, or downloads schema if not present.
+     * Normalizes .current fields to arrays if required.
      * @returns {Promise<void>}
      */
     async load() {
         if (await exists(this.file, { baseDir: BaseDirectory.AppLocalData })) {
-            const data = await readTextFile(this.file, { baseDir: BaseDirectory.AppLocalData })
-            this.achievements = JSON.parse(data)
+            const data = await readTextFile(this.file, { baseDir: BaseDirectory.AppLocalData });
+            this.achievements = JSON.parse(data);
 
             // Normalize: ensure all .current fields that should be arrays are arrays
             for (const key in this.achievements) {
-                const ach = this.achievements[key]
+                const ach = this.achievements[key];
                 if (Array.isArray(ach.required)) {
-                    if (!Array.isArray(ach.current)) ach.current = ach.current ? [ach.current] : []
+                    if (!Array.isArray(ach.current)) ach.current = ach.current ? [ach.current] : [];
                 }
             }
             console.log(this.achievements);
-            
-
         } else {
             // Download the schema file from the URL
-            const response = await fetch(this.schema)
+            const response = await fetch(this.schema);
             if (!response.ok) {
                 throw new Error(`Failed to fetch schema: ${response.statusText}`);
             }
-            const data = await response.json()
-            this.achievements = data
+            const data = await response.json();
+            this.achievements = data;
             // Save the downloaded schema to the local file
-            await writeTextFile(this.file, JSON.stringify(data, null, 4), { baseDir: BaseDirectory.AppLocalData })
+            await writeTextFile(this.file, JSON.stringify(data, null, 4), { baseDir: BaseDirectory.AppLocalData });
         }
     }
 
@@ -316,43 +281,43 @@ class Achievements {
      * @returns {Promise<void>}
      */
     async save() {
-        const data = JSON.stringify(this.achievements, null, 4)
-        // console.log('Saving achievements:', data)
-        await writeTextFile(this.file, data, { baseDir: BaseDirectory.AppLocalData })
+        const data = JSON.stringify(this.achievements, null, 4);
+        await writeTextFile(this.file, data, { baseDir: BaseDirectory.AppLocalData });
     }
 
     /**
-     * Updates progress for an achievement.
-     * @param {string} key - Achievement key
-     * @param {any} value - New progress value
+     * Updates progress for an achievement and unlocks if requirements are met.
+     * @param {string} key - Achievement key.
+     * @param {any} value - New progress value.
      */
     async update(key, value) {
-        if (!this.achievements[key]) return
-        this.achievements[key].current = value
+        if (!this.achievements[key]) return;
+        this.achievements[key].current = value;
         if (this.achievements[key].required !== null && value >= this.achievements[key].required) {
-            await this.unlock(key)
+            await this.unlock(key);
         }
-        await this.save()
+        await this.save();
     }
 
     /**
-     * Unlocks an achievement directly.
-     * @param {string} key - Achievement key
+     * Unlocks an achievement directly and sends a notification.
+     * @param {string} key - Achievement key.
      */
     async unlock(key) {
-        if (!this.achievements[key]) return
-        this.achievements[key].unlocked = true
-        await _sendNotification("Achievement Unlocked", this.achievements[key].name)
-        await this.save()
+        if (!this.achievements[key]) return;
+        this.achievements[key].unlocked = true;
+        await _sendNotification("Achievement Unlocked", this.achievements[key].name);
+        await this.save();
     }
 
     /**
      * Handles achievement progress based on game events.
-     * @param {boolean} noSpace - Indicates if there is no space
-     * @param {string} playerColor - Player color
-     * @param {number} kills - Number of kills
-     * @param {number} time - Time survived
-     * @param {number} score - Score achieved
+     * Updates achievements for openWorld, noSpace, colorful, godOfColors, killE, surviveM, and scoreP.
+     * @param {boolean} noSpace - Indicates if there is no space.
+     * @param {string} playerColor - Player color.
+     * @param {number} kills - Number of kills.
+     * @param {number} time - Time survived.
+     * @param {number} score - Score achieved.
      * @returns {Promise<void>}
      */
     async handle(noSpace, playerColor, kills, time, score) {
@@ -387,8 +352,6 @@ class Achievements {
         }
 
         // godOfColors
-        console.log(this.achievements["godOfColors"].current.includes(playerColor));
-
         if (
             !this.achievements["godOfColors"].current.includes(playerColor) // Check if the player color is not already in the current colors
             && this.achievements["godOfColors"].current.length != this.achievements["godOfColors"].required // Check if the current colors length is not equal to the required colors length
@@ -399,7 +362,7 @@ class Achievements {
         }
 
         // killE
-        const killE = ["kill100e", "kill1000e"]
+        const killE = ["kill100e", "kill1000e"];
         killE.forEach((key) => {
             if (
                 this.achievements[key].required > this.achievements[key].current // Check if the required kills are greater than the current kills
@@ -409,10 +372,10 @@ class Achievements {
                 this.achievements[key].current = kills; // Increment the current kills
                 this.update(key, this.achievements[key].current); // Update the achievement progress
             }
-        })
+        });
 
         // surviveM
-        const surviveM = ["survive1m", "survive5m", "survive10m", "survive20m"]
+        const surviveM = ["survive1m", "survive5m", "survive10m", "survive20m"];
         surviveM.forEach((key) => {
             if (
                 this.achievements[key].required > this.achievements[key].current // Check if the required time is greater than the current time
@@ -422,10 +385,10 @@ class Achievements {
                 this.achievements[key].current = time; // Increment the current time
                 this.update(key, this.achievements[key].current); // Update the achievement progress
             }
-        })
+        });
 
         // scoreP
-        const scoreP = ["score1000", "score5000", "score10000"]
+        const scoreP = ["score1000", "score5000", "score10000"];
         scoreP.forEach((key) => {
             if (
                 this.achievements[key].required > this.achievements[key].current // Check if the required score is greater than the current score
@@ -435,11 +398,10 @@ class Achievements {
                 this.achievements[key].current = score; // Increment the current score
                 this.update(key, this.achievements[key].current); // Update the achievement progress
             }
-        })
+        });
 
         localStorage.setItem("achievements", JSON.stringify(this.achievements)); // Save achievements to local storage
     }
 }
-
 
 export { Options };

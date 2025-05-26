@@ -6,7 +6,7 @@ const { invoke } = window.__TAURI__.core;
 const { listen } = window.__TAURI__.event;
 const { currentMonitor, getCurrentWindow } = window.__TAURI__.window;
 
-await invoke('subscribe_sync');
+await invoke("subscribe_sync");
 const backgroundColor = localStorage.getItem("transparent") ? "rgba(0, 0, 0, 0)" : "rgb(24, 24, 24)";
 document.body.style.setProperty("--background", backgroundColor);
 
@@ -33,20 +33,25 @@ let globalBossCount = 0 // Track total bosses globally
 let bossShootInterval = null
 
 let messages = []
-listen('sync-message', event => {
+/**
+ * Handles incoming sync messages for window state, boss, and projectile transfers.
+ * - Updates pause state, boss count, and removes boss if needed.
+ * - Handles incoming transferred projectiles and reconstructs them in this window.
+ */
+listen("sync-message", event => {
     try {
         const data = JSON.parse(event.payload)
         // console.log(data);        
         if (messages.includes(data.messageId)) return; // If the message ID already exists, ignore it
         messages = []
         messages.push(data.messageId); // Add the message ID to the list
-        if (data.type === 'paused') {
+        if (data.type === "paused") {
             paused = data.paused;
         }
-        if (data.type === 'boss_spawned') {
+        if (data.type === "boss_spawned") {
             globalBossCount = data.count
         }
-        if (data.type === 'boss_removed') {
+        if (data.type === "boss_removed") {
             globalBossCount = data.count
             if (boss) removeBoss()
         }
@@ -55,19 +60,19 @@ listen('sync-message', event => {
             console.log(`Transferring projectile: ${JSON.stringify(projectileData)}`);            
             const { x, y } = monitorToCanvas(projectileData.x, projectileData.y, outerPos);
             projectiles.push(new Entity(x, y, projectileData.radius, projectileData.color, projectileData.velocity, projectileData.velocityMultiplier));
-            console.log(projectiles);
-            
+            // console.log(projectiles);            
         }
     } catch { }
 })
 
-// setTimeout(async () => {
-//     // Notify all windows to remove this window from their list
-//     await invoke("send_sync_message", { msg: JSON.stringify({ type: "window_closed", id: id }) })
-//     await invoke("close_window", { id: id })
-// }, 5000)
-
-
+/**
+ * Spawns a new enemy at a random position inside the canvas, targeting the center.
+ * @param {number} [radius] - The radius of the enemy.
+ * @param {number|null} [x] - The x-coordinate (optional, random if null).
+ * @param {number|null} [y] - The y-coordinate (optional, random if null).
+ * @param {string} [color] - The color of the enemy.
+ * @param {number} [velocityMultiplier] - The velocity multiplier for the enemy.
+ */
 function spawnEnemy(radius = ((Math.random() * (30 - 10) + 4) / screenMultiplier), x = null, y = null, color = getColor(), velocityMultiplier = 0.75) {
     // Randomly determine spawn position, always fully inside the canvas
     if (!x || !y) {
@@ -102,7 +107,7 @@ function spawnEnemy(radius = ((Math.random() * (30 - 10) + 4) / screenMultiplier
 }
 
 /**
- * Generates a random hex color string.
+ * Generates a random hex color string that is not the player's color.
  * @returns {string} A random hex color string in the format "#RRGGBB".
  */
 function getColor() {
@@ -115,7 +120,8 @@ function getColor() {
 }
 
 /**
- * Animates the game loop, updating and rendering enemies.
+ * Main animation for `random` window loop. Updates and draws all projectiles and enemies.
+ * Handles enemy transfer and collision with projectiles.
  * @returns {Promise<void>}
  */
 async function animate() {
@@ -177,7 +183,7 @@ async function animate() {
         }
     }
 }
-// enemies.push(new NGon(canvas.width / 2, canvas.height / 2, 50, playerColor, 5));
+
 /* Spawns a boss enemy if conditions are met.
     * Conditions:
     * - No boss currently exists in this window.
@@ -202,9 +208,7 @@ function trySpawnBoss() {
 }
 
 /**
- * Removes the boss from the enemies array, clears its shooting interval,
- * and decrements the global boss count.
- * It also sends a sync message to notify other windows that the boss has been removed.
+ * Removes the boss from this window, clears its shooting interval, and notifies other windows.
  */
 function removeBoss() {
     if (bossShootInterval) clearInterval(bossShootInterval)
@@ -220,8 +224,8 @@ function removeBoss() {
 
 /**
  * Starts the boss shooting interval, where the boss shoots projectiles towards the center of the screen.
- * The projectiles are created with a velocity that is faster than normal enemies.
-*/
+ * Projectiles are created with a random velocity multiplier.
+ */
 function startBossShooting() {
     if (!boss) return
     bossShootInterval = setInterval(() => {

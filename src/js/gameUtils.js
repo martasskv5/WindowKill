@@ -191,7 +191,7 @@ class GameUtils {
      */
     async shrinkWindow() {
         // Only initialize decreaseAmount if not already set (so it doesn't reset on resume)
-        if (typeof this.decreaseAmount !== 'number') {
+        if (typeof this.decreaseAmount !== "number") {
             this.decreaseAmount = this.options.difficulty.decreasePower / this.options.screenMultiplier
         }
         const decreaseMax = this.options.difficulty.decreaseMax / this.options.screenMultiplier
@@ -229,7 +229,9 @@ class GameUtils {
     }
 
     /**
-     * Animates the game elements.
+     * Animates the game elements: player, projectiles, and enemies.
+     * Handles projectile transfer between windows, window expansion, and removal of out-of-bounds projectiles.
+     * Handles enemy updates, collisions with player and projectiles, and triggers game over if needed.
      */
     animate() {
         if (this.gameOver || this.paused) return;
@@ -247,18 +249,18 @@ class GameUtils {
                 projectile.y + projectile.radius < 0 ||
                 projectile.y - projectile.radius > this.canvas.height
             ) {
+                // If projectile is multiWindow, transfer to another window, else expand window in direction of collision
                 if (projectile.multiWindow) {
                     const outerPos = await this.appWindow.outerPosition()
                     const { x, y } = canvasToMonitor(projectile.x, projectile.y, outerPos);
                     let newProjectile = projectile;
                     newProjectile.x = x;
                     newProjectile.y = y;
-                    console.log(`Sending projectile to other windows`);                    
+                    console.log("Sending projectile to other windows");
                     await invoke("send_sync_message", {
                         msg: JSON.stringify({ type: "transfer_projectile", messageId: `p_${Math.floor(Math.random() * 1e8)}`, projectile: newProjectile }),
                     });
-                }
-                else {
+                } else {
                     // Expand window in the direction of the collision
                     if (projectile.x + projectile.radius < 0) {
                         this.expandWindow("left");
@@ -270,7 +272,7 @@ class GameUtils {
                         this.expandWindow("bottom");
                     }
                 }
-
+                // Remove projectile after handling
                 setTimeout(() => {
                     this.projectiles.splice(projectilesIndex, 1);
                 }, 0);
@@ -548,12 +550,12 @@ class GameUtils {
 
             await invoke('create_window', {
                 id,
-                url: 'html/canvas.html',
+                url: "html/canvas.html",
                 x,
                 y,
                 w,
                 h,
-                title: 'Canvas',
+                title: "Canvas",
                 decorations: false,
                 focused: false
             })

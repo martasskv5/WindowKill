@@ -64,7 +64,7 @@ async function _sendNotification(title, body) {
     // If not we need to request it
     if (!permissionGranted) {
         const permission = await requestPermission();
-        permissionGranted = permission === 'granted';
+        permissionGranted = permission === "granted";
     }
 
     // Once permission has been granted we can send the notification
@@ -92,7 +92,7 @@ function scaleDownBgGradient(start = 100, duration = 1000) {
         // Second color stop is double the first, but max 100%
         const secondStop = Math.min(current * 2, 100)
         root.style.setProperty(
-            '--bg-gradient',
+            "--bg-gradient",
             `radial-gradient(circle at 50% 50%, rgb(24, 24, 24) ${current}%, rgba(255,255,255,0) ${secondStop}%)`
         )
         if (current > 0) setTimeout(animate, stepTime)
@@ -120,7 +120,7 @@ function scaleUpBgGradient(start = 0, duration = 1000) {
         // Second color stop is double the first, but max 100%
         const secondStop = Math.min(current * 2, 100)
         root.style.setProperty(
-            '--bg-gradient',
+            "--bg-gradient",
             `radial-gradient(circle at 50% 50%, rgb(24, 24, 24) ${current}%, rgba(255,255,255,0) ${secondStop}%)`
         )
         if (current < 100) setTimeout(animate, stepTime)
@@ -144,7 +144,7 @@ function generateRandomHexColor() {
         // Calculate brightness using the luminance formula
         brightness = 0.299 * r + 0.587 * g + 0.114 * b
     } while (brightness < 120) // Adjust threshold as needed for your background
-    return `#${color.toString(16).padStart(6, '0')}`
+    return `#${color.toString(16).padStart(6, "0")}`
 }
 
 /**
@@ -172,7 +172,9 @@ const monitorToCanvas = (monitorX, monitorY, windowPos) => ({
 })
 
 /**
- * Starts the game.
+ * Starts the game: sets up the player, canvas, timer, event listeners, and game loop.
+ * Handles window resizing, pausing, projectile firing (left/right click),
+ * and synchronizes state with other windows via Tauri sync messages.
  * @param {Object} appWindow - The Tauri app window object.
  * @param {Object} options - The game options object.
  * @param {HTMLElement} timer - The timer element.
@@ -250,6 +252,7 @@ async function startGame(appWindow, options, timer) {
 
     /**
      * Adds a projectile with multiWindow property when right-click is used.
+     * Right-click projectiles can be transferred between windows.
      */
     document.addEventListener("contextmenu", event => {
         event.preventDefault() // Prevent the default context menu
@@ -279,7 +282,7 @@ async function startGame(appWindow, options, timer) {
 
     let messages = []
 
-    await listen('sync-message', async event => {
+    await listen("sync-message", async event => {
         try {
             const data = JSON.parse(event.payload)
 
@@ -289,12 +292,12 @@ async function startGame(appWindow, options, timer) {
 
             messages = []
             messages.push(data.messageId); // Add the message ID to the list
-            if (data.type === 'window_closed') {
+            if (data.type === "window_closed") {
                 const idx = gameUtils.windows.indexOf(data.id)
                 if (idx !== -1) gameUtils.windows.splice(idx, 1)
                 console.log(`Window ${data.id} closed, remaining windows: ${windows.length}`);
             }
-            if (data.type === 'enemy_transfer') {
+            if (data.type === "enemy_transfer") {
                 const enemyData = data.enemy;
                 console.log(`Received enemy data: ${JSON.stringify(enemyData)}`);
                 const pos = await appWindow.outerPosition()
@@ -302,7 +305,7 @@ async function startGame(appWindow, options, timer) {
                 const enemy = new Entity(x, y, enemyData.radius, enemyData.color, enemyData.velocity, enemyData.velocityMultiplier);
                 gameUtils.enemies.push(enemy);
             }
-            if (data.type === 'boss_spawned' || data.type === 'boss_removed') {
+            if (data.type === "boss_spawned" || data.type === "boss_removed") {
                 gameUtils.bosses = data.count;
             }
             if (data.type === "killcount_increase") {
