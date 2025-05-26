@@ -56,6 +56,49 @@ class Entity {
 }
 
 /**
+ * @class
+ * @classdesc Represents a regular N-sided polygon entity.
+ * @extends Entity
+ */
+class NGon extends Entity {
+	/**
+	 * Creates a new NGon entity.
+	 * @param {number} x - The x-coordinate of the NGon.
+	 * @param {number} y - The y-coordinate of the NGon.
+	 * @param {number} radius - The radius of the NGon (distance from center to vertex).
+	 * @param {string} color - The color of the NGon.
+	 * @param {number} sides - The number of sides of the NGon (minimum 3).
+	 * @param {Object} velocity - The velocity of the NGon.
+	 * @param {number} velocity.x - The x-component of the velocity.
+	 * @param {number} velocity.y - The y-component of the velocity.
+	 */
+	constructor(x, y, radius, color, sides, velocity = { x: 0, y: 0 }) {
+		super(x, y, radius, color, velocity)
+		this.sides = Math.max(3, Math.floor(sides))
+		this.rotation = Math.random() * 2 * Math.PI // Random rotation in radians
+	}
+
+	/**
+	 * Draws the NGon on the canvas, applying its random rotation.
+	 * @param {CanvasRenderingContext2D} c - The canvas rendering context.
+	 */
+	draw(c) {
+		const angleStep = (2 * Math.PI) / this.sides
+		c.beginPath()
+		for (let i = 0; i < this.sides; i++) {
+			const angle = i * angleStep - Math.PI / 2 + this.rotation // Start at top, add rotation
+			const px = this.x + this.radius * Math.cos(angle)
+			const py = this.y + this.radius * Math.sin(angle)
+			if (i === 0) c.moveTo(px, py)
+			else c.lineTo(px, py)
+		}
+		c.closePath()
+		c.fillStyle = this.color
+		c.fill()
+	}
+}
+
+/**
  * This class is used to create a confetti-like effect on the screen.
  * It uses the Anime.js library for animation.
  */
@@ -155,4 +198,4 @@ class ParticleSystem {
     }
 }
 
-export { Entity, ParticleSystem };
+export { Entity, ParticleSystem, NGon };

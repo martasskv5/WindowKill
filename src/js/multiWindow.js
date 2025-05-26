@@ -1,10 +1,14 @@
 // Logic for handling multiple windows aka "Random Windows"
 
-import { Entity } from "./classes.js";
+import { Entity, NGon } from "./classes.js";
 import { generateRandomHexColor, canvasToMonitor, monitorToCanvas } from "./functions.js";
 const { invoke } = window.__TAURI__.core;
 const { listen } = window.__TAURI__.event;
 const { currentMonitor, getCurrentWindow } = window.__TAURI__.window;
+
+await invoke('subscribe_sync');
+const backgroundColor = localStorage.getItem("transparent") ? "rgba(0, 0, 0, 0)" : "rgb(24, 24, 24)";
+document.body.style.setProperty("--background", backgroundColor);
 
 const id = await invoke("get_current_window_id")
 const monitor = await currentMonitor();
@@ -15,15 +19,10 @@ let appWindow = await getCurrentWindow();
 const outerPos = await appWindow.outerPosition()
 // console.log(`Outer position: (${outerPos.x}, ${outerPos.y})`);
 
-await invoke('subscribe_sync');
-
 const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
 canvas.width = innerWidth;
 canvas.height = innerHeight;
-
-const backgroundColor = localStorage.getItem("transparent") ? "rgba(0, 0, 0, 0)" : "rgb(24, 24, 24)";
-document.body.style.setProperty("--background", backgroundColor);
 
 let enemies = [];
 let paused = false;
@@ -48,48 +47,50 @@ listen('sync-message', event => {
 // }, 5000)
 
 
-function spawnEnemy() {
-    const radius = ((Math.random() * (30 - 10) + 4) / screenMultiplier)
-
-    let x, y
-    // let x = 0;
-    // let y = 0;
-
+function spawnEnemy(radius = ((Math.random() * (30 - 10) + 4) / screenMultiplier), x = null, y = null, color = getColor(), velocityMultiplier = 0.25) {
     // Randomly determine spawn position, always fully inside the canvas
-    if (Math.random() < 0.5) {
-        // Spawn along left or right, but not at the edge
-        x = Math.random() * (canvas.width - 2 * radius) + radius
-        y = Math.random() * (canvas.height - 2 * radius) + radius
-    } else {
-        // Spawn along top or bottom, but not at the edge
-        x = Math.random() * (canvas.width - 2 * radius) + radius
-        y = Math.random() * (canvas.height - 2 * radius) + radius
+    if (!x || !y) {
+        if (Math.random() < 0.5) {
+            // Spawn along left or right, but not at the edge
+            x = Math.random() * (canvas.width - 2 * radius) + radius
+            y = Math.random() * (canvas.height - 2 * radius) + radius
+        } else {
+            // Spawn along top or bottom, but not at the edge
+            x = Math.random() * (canvas.width - 2 * radius) + radius
+            y = Math.random() * (canvas.height - 2 * radius) + radius
+        }
     }
 
-    // Generate a random hex color that is not the player's color
-    let color
-    do {
-        color = generateRandomHexColor()
-    } while (color === playerColor)
-
     const dest = monitorToCanvas(screenWidth / 2, screenHeight / 2, outerPos);
-    console.log(`Destination position: (${dest.x}, ${dest.y})`);
+    // console.log(`Destination position: (${dest.x}, ${dest.y})`);
 
     // Calculate angle towards the player's current position
     const angle = Math.atan2(dest.y - y, dest.x - x)
-    // const angle = Math.atan2(canvas.height / 2 - y, canvas.width / 2 - x)
 
     // Set velocity based on the angle
     const velocity = {
-        x: Math.cos(angle) / 1.25,
-        y: Math.sin(angle) / 1.25,
+        x: Math.cos(angle) * velocityMultiplier,
+        y: Math.sin(angle) * velocityMultiplier,
     }
     console.log(`Spawning enemy at (${x}, ${y}) with angle ${angle} and color ${color} and velocity (${velocity.x}, ${velocity.y})`);
 
     // Spawn the enemy targeting the player
     const enemy = new Entity(x, y, radius, color, velocity)
-    enemy.draw(c);
+    // enemy.draw(c);
     enemies.push(enemy);
+}
+
+/**
+ * Generates a random hex color string.
+ * @returns {string} A random hex color string in the format "#RRGGBB".
+ */
+function getColor() {
+    let color;
+    do {
+        color = generateRandomHexColor()
+    } while (color === playerColor)
+
+    return color;
 }
 
 async function animate() {
@@ -150,8 +151,10 @@ async function animate() {
 }
 
 animate();
-spawnEnemy();
-setInterval(() => {
-    if (paused) return;
-    spawnEnemy();
-}, 1000 * Math.random() * 5 + 5000);
+// spawnEnemy();
+// setInterval(() => {
+//     if (paused) return;
+//     spawnEnemy();
+// }, 1000 * Math.random() * 5 + 5000);
+
+enemies.push(new NGon(canvas.width / 2, canvas.height / 2, 50, playerColor, 5));

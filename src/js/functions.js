@@ -289,8 +289,8 @@ async function startGame(appWindow, options, timer) {
     })
 
     gameUtils.animate();
-    gameUtils.spawnEnemies();
-    gameUtils.shrinkWindow();
+    // gameUtils.spawnEnemies();
+    // gameUtils.shrinkWindow();
     gameUtils.spawnRandomWindow();
 }
 
