@@ -136,7 +136,7 @@ Zhrnutie projektu to jednotlivých bodov
     -   [x] Difficulties
         -   [x] Shrinking power
         -   [x] More enemies
-        -   [ ] Slower fire rate
+        -   [ ] ~~Slower fire rate~~
         -   [x] Player power
         -   [ ] ? Lost focus - faster shrinking
         -   [x] Impossible mode - transparent window
@@ -146,7 +146,7 @@ Zhrnutie projektu to jednotlivých bodov
         -   [x] Controlled by difficulties
             -   [x] Faster movement
             -   [x] More health - technically not implemented, but enemies health is calculated randomly
-            -   [ ] Bigger damage
+            -   [ ] ~~Bigger damage~~
             -   [x] Faster spawn rate
         -   [x] Update enemy position calculation to follow player
         -   [x] Update scoring system to include enemies killed
@@ -208,7 +208,7 @@ Zhrnutie projektu to jednotlivých bodov
     -   [ ] Window flickering when resizing
     -   [x] **Temporal fix:** Incorrect window position when scaling is applied on Windows: When Windows uses display scaling above 100%, it creates a mismatch between physical and logical pixel coordinates. This affects how Tauri handles window positioning
     -   [x] !! In version 0.2.2 window is not resizing to center, but to top left corner of the screen.
-    -   [ ] ! Exclude some colors for enemy
+    -   [x] ! Exclude some colors for enemy
 
 ## Development
 
