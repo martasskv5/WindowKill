@@ -13,12 +13,13 @@ class Entity {
      * @param {number} velocity.x - The x-component of the velocity.
      * @param {number} velocity.y - The y-component of the velocity.
      */
-    constructor(x, y, radius, color, velocity = { x: 0, y: 0 }) {
+    constructor(x, y, radius, color, velocity = { x: 0, y: 0 }, velocityMultiplier = 1) {
         this.x = x
         this.y = y
         this.radius = radius
         this.color = color
         this.velocity = velocity
+        this.velocityMultiplier = velocityMultiplier
     }
 
     /**
@@ -50,8 +51,8 @@ class Entity {
      */
     update(c) {
         this.draw(c)
-        this.x += this.velocity.x
-        this.y += this.velocity.y
+        this.x += this.velocity.x * this.velocityMultiplier
+        this.y += this.velocity.y * this.velocityMultiplier
     }
 }
 
@@ -72,8 +73,8 @@ class NGon extends Entity {
 	 * @param {number} velocity.x - The x-component of the velocity.
 	 * @param {number} velocity.y - The y-component of the velocity.
 	 */
-	constructor(x, y, radius, color, sides, velocity = { x: 0, y: 0 }) {
-		super(x, y, radius, color, velocity)
+	constructor(x, y, radius, color, sides, velocity = { x: 0, y: 0 }, velocityMultiplier = 1) {
+		super(x, y, radius, color, velocity, velocityMultiplier)
 		this.sides = Math.max(3, Math.floor(sides))
 		this.rotation = Math.random() * 2 * Math.PI // Random rotation in radians
 	}

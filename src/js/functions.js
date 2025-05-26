@@ -281,16 +281,19 @@ async function startGame(appWindow, options, timer) {
                 console.log(`Received enemy data: ${JSON.stringify(enemyData)}`);
                 const pos = await appWindow.outerPosition()
                 const { x, y } = monitorToCanvas(enemyData.x, enemyData.y, pos);
-                const enemy = new Entity(x, y, enemyData.radius, enemyData.color, enemyData.velocity);
+                const enemy = new Entity(x, y, enemyData.radius, enemyData.color, enemyData.velocity, enemyData.velocityMultiplier);
                 gameUtils.enemies.push(enemy);
-            } 
+            }
+            else if (data.type === 'boss_spawned' || data.type === 'boss_removed') { 
+                gameUtils.bosses = data.count;
+            }
             
         } catch { }
     })
 
     gameUtils.animate();
-    // gameUtils.spawnEnemies();
-    // gameUtils.shrinkWindow();
+    gameUtils.spawnEnemies();
+    gameUtils.shrinkWindow();
     gameUtils.spawnRandomWindow();
 }
 

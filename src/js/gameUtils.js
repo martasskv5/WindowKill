@@ -26,6 +26,7 @@ class GameUtils {
      * @param {number} shrinkInterval - The interval ID for shrinking the window.
      * @param {boolean} paused - The paused state of the game.
      * @param {Array} windows - The array of windows in the game.
+     * @param {number} bosses - The number of bosses spawned in the game.
      */
     constructor(appWindow, canvas, player, playerRadius, options) {
         this.appWindow = appWindow;
@@ -46,6 +47,7 @@ class GameUtils {
         this.shrinkInterval = null;
         this.paused = false;
         this.windows = [];
+        this.bosses = 0;
     }
 
     /**
@@ -425,7 +427,7 @@ class GameUtils {
         const intervalDecrement = this.options.difficulty.enemySpawnDecrease
 
         const spawn = () => {
-            if (this.gameOver || this.paused) return // Stop spawning if the game is over or paused
+            if ( this.bosses > 0 || this.gameOver || this.paused) return // Stop spawning if the game is over or paused or if a boss is active
 
             const radius = ((Math.random() * (30 - 4) + 4) / this.options.screenMultiplier)
 

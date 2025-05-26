@@ -144,8 +144,8 @@ Zhrnutie projektu to jednotlivých bodov
         -   [x] Faster shrinking
     -   [x] Spawn enemies
         -   [x] Controlled by difficulties
-            -   [ ] Faster movement
-            -   [ ] More health
+            -   [x] Faster movement
+            -   [x] More health - technically not implemented, but enemies health is calculated randomly
             -   [ ] Bigger damage
             -   [x] Faster spawn rate
         -   [x] Update enemy position calculation to follow player
@@ -193,7 +193,8 @@ Zhrnutie projektu to jednotlivých bodov
         -   [x] No overlapping
         -   [x] Successfully spawn enemies in `random` windows
         -   [x] Correctly transfer enemies between windows
-        -   [ ] Spawn bosses in `random` windows
+        -   [x] Spawn bosses in `random` windows
+        -   [ ] Successfully transfer projectiles between windows
     -   [ ] ? Game modes
 	       - [ ] Player stays in center of screen (default - currently working on)
 		   - [ ] Player movement allowed

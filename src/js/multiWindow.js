@@ -29,6 +29,10 @@ let paused = false;
 let screenMultiplier = localStorage.getItem("screenMultiplier") ? parseFloat(localStorage.getItem("screenMultiplier")) : 1;
 let playerColor = localStorage.getItem("playerColor") || "#00ff00"; // Default player color
 let animateId;
+let boss = null // Track the boss in this window
+let globalBossCount = 0 // Track total bosses globally
+let bossShootInterval = null
+
 listen('sync-message', event => {
     try {
         const data = JSON.parse(event.payload)
@@ -36,6 +40,13 @@ listen('sync-message', event => {
 
         if (data.type === 'paused') {
             paused = data.paused;
+        }
+        if (data.type === 'boss_spawned') {
+            globalBossCount = data.count
+        }
+        if (data.type === 'boss_removed') {
+            globalBossCount = data.count
+            if (boss) removeBoss()
         }
     } catch { }
 })
@@ -47,7 +58,7 @@ listen('sync-message', event => {
 // }, 5000)
 
 
-function spawnEnemy(radius = ((Math.random() * (30 - 10) + 4) / screenMultiplier), x = null, y = null, color = getColor(), velocityMultiplier = 0.25) {
+function spawnEnemy(radius = ((Math.random() * (30 - 10) + 4) / screenMultiplier), x = null, y = null, color = getColor(), velocityMultiplier = 0.75) {
     // Randomly determine spawn position, always fully inside the canvas
     if (!x || !y) {
         if (Math.random() < 0.5) {
@@ -72,10 +83,10 @@ function spawnEnemy(radius = ((Math.random() * (30 - 10) + 4) / screenMultiplier
         x: Math.cos(angle) * velocityMultiplier,
         y: Math.sin(angle) * velocityMultiplier,
     }
-    console.log(`Spawning enemy at (${x}, ${y}) with angle ${angle} and color ${color} and velocity (${velocity.x}, ${velocity.y})`);
+    // console.log(`Spawning enemy at (${x}, ${y}) with angle ${angle} and color ${color} and velocity (${velocity.x}, ${velocity.y})`);
 
     // Spawn the enemy targeting the player
-    const enemy = new Entity(x, y, radius, color, velocity)
+    const enemy = new Entity(x, y, radius, color, velocity, velocityMultiplier);
     // enemy.draw(c);
     enemies.push(enemy);
 }
@@ -93,6 +104,10 @@ function getColor() {
     return color;
 }
 
+/**
+ * Animates the game loop, updating and rendering enemies.
+ * @returns {Promise<void>}
+ */
 async function animate() {
     if (paused) return;
     animateId = requestAnimationFrame(() => animate());
@@ -120,13 +135,7 @@ async function animate() {
             });
 
             enemies.splice(index, 1); // Remove off-screen enemy
-
-            if (enemies.length == 0) {
-                await invoke("send_sync_message", { msg: JSON.stringify({ type: "window_closed", id: id, messageId: `m_${Math.floor(Math.random() * 1e8)}` }) })
-                await invoke("close_window", { id: id })
-            }
         }
-
 
         // Check for collision between projectiles and enemy
         // for (let projectilesIndex = projectiles.length - 1; projectilesIndex >= 0; projectilesIndex--) {
@@ -149,12 +158,79 @@ async function animate() {
         // }
     }
 }
+// enemies.push(new NGon(canvas.width / 2, canvas.height / 2, 50, playerColor, 5));
+/* Spawns a boss enemy if conditions are met.
+    * Conditions:
+    * - No boss currently exists in this window.
+    * - Global boss count is less than 3.
+    * This function generates a random number of sides (between 5 and 8) for the boss,
+    * places it at a random position within the canvas, and adds it to the enemies array.
+    * It also increments the global boss count and sends a sync message to notify other windows.
+ */
+function trySpawnBoss() {
+    if (boss || globalBossCount >= 3) return
+    const sides = 5 + Math.floor(Math.random() * 4)
+    const radius = 40
+    const x = Math.random() * (canvas.width - 2 * radius) + radius
+    const y = Math.random() * (canvas.height - 2 * radius) + radius
+    boss = new NGon(x, y, radius, getColor(), sides)
+    enemies.push(boss)
+    globalBossCount++
+    invoke('send_sync_message', {
+        msg: JSON.stringify({ type: 'boss_spawned', windowId: id, count: globalBossCount, messageId: `b_${Math.floor(Math.random() * 1e8)}` })
+    })
+    startBossShooting()
+}
+
+/**
+ * Removes the boss from the enemies array, clears its shooting interval,
+ * and decrements the global boss count.
+ * It also sends a sync message to notify other windows that the boss has been removed.
+ */
+function removeBoss() {
+    if (bossShootInterval) clearInterval(bossShootInterval)
+    bossShootInterval = null
+    const bossIndex = enemies.indexOf(boss)
+    if (bossIndex !== -1) enemies.splice(bossIndex, 1)
+    boss = null
+    globalBossCount = Math.max(0, globalBossCount - 1)
+    invoke('send_sync_message', {
+        msg: JSON.stringify({ type: 'boss_removed', windowId: id, count: globalBossCount, messageId: `b_${Math.floor(Math.random() * 1e8)}` })
+    })
+}
+
+/**
+ * Starts the boss shooting interval, where the boss shoots projectiles towards the center of the screen.
+ * The projectiles are created with a velocity that is faster than normal enemies.
+*/
+function startBossShooting() {
+    if (!boss) return
+    bossShootInterval = setInterval(() => {
+        const dest = monitorToCanvas(screenWidth / 2, screenHeight / 2, outerPos);
+        const angle = Math.atan2(dest.y - boss.y, dest.x - boss.x)
+        const velocityMultiplier = 0.5 + Math.random() * 0.5; // Boss shoots faster
+        const velocity = {
+            x: Math.cos(angle) * velocityMultiplier, // Boss shoots faster
+            y: Math.sin(angle) * velocityMultiplier,
+        }
+        enemies.push(new Entity(boss.x, boss.y, 10, boss.color, velocity, velocityMultiplier));
+    }, 2000)
+}
 
 animate();
-// spawnEnemy();
-// setInterval(() => {
-//     if (paused) return;
-//     spawnEnemy();
-// }, 1000 * Math.random() * 5 + 5000);
+spawnEnemy();
+setInterval(() => {
+    if (!paused && !boss) spawnEnemy();
+}, 1000 * Math.random() * 5 + 5000);
 
-enemies.push(new NGon(canvas.width / 2, canvas.height / 2, 50, playerColor, 5));
+// Try to spawn a boss every 20 seconds if allowed
+setInterval(() => {
+    if (!paused) trySpawnBoss()
+}, 20000)
+
+setInterval(async () => {
+    if (enemies.length == 0 && !boss) {
+        await invoke("send_sync_message", { msg: JSON.stringify({ type: "window_closed", id: id, messageId: `m_${Math.floor(Math.random() * 1e8)}` }) })
+        await invoke("close_window", { id: id })
+    }
+}, 5000); // Check every 5 seconds
