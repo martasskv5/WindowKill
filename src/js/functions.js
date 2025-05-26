@@ -1,5 +1,6 @@
-import * as C from "./classes.js";
+import { Entity } from "./classes.js";
 import { GameUtils } from "./gameUtils.js";
+const { listen } = window.__TAURI__.event;
 const { LogicalSize, LogicalPosition } = window.__TAURI__.window;
 const { isPermissionGranted, requestPermission, sendNotification, } = window.__TAURI__.notification;
 
@@ -63,7 +64,7 @@ async function _sendNotification(title, body) {
     // If not we need to request it
     if (!permissionGranted) {
         const permission = await requestPermission();
-        permissionGranted = permission === 'granted';
+        permissionGranted = permission === "granted";
     }
 
     // Once permission has been granted we can send the notification
@@ -91,7 +92,7 @@ function scaleDownBgGradient(start = 100, duration = 1000) {
         // Second color stop is double the first, but max 100%
         const secondStop = Math.min(current * 2, 100)
         root.style.setProperty(
-            '--bg-gradient',
+            "--bg-gradient",
             `radial-gradient(circle at 50% 50%, rgb(24, 24, 24) ${current}%, rgba(255,255,255,0) ${secondStop}%)`
         )
         if (current > 0) setTimeout(animate, stepTime)
@@ -119,7 +120,7 @@ function scaleUpBgGradient(start = 0, duration = 1000) {
         // Second color stop is double the first, but max 100%
         const secondStop = Math.min(current * 2, 100)
         root.style.setProperty(
-            '--bg-gradient',
+            "--bg-gradient",
             `radial-gradient(circle at 50% 50%, rgb(24, 24, 24) ${current}%, rgba(255,255,255,0) ${secondStop}%)`
         )
         if (current < 100) setTimeout(animate, stepTime)
@@ -129,14 +130,59 @@ function scaleUpBgGradient(start = 0, duration = 1000) {
 }
 
 /**
- * Starts the game.
+ * Generates a random hex color string that is not too dark for visibility on a dark background.
+ * Ensures the color's brightness is above a threshold.
+ * @returns {string} The generated hex color (e.g., "#ff5733").
+ */
+function generateRandomHexColor() {
+    let color, r, g, b, brightness
+    do {
+        color = Math.floor(Math.random() * 0xffffff)
+        r = (color >> 16) & 0xff
+        g = (color >> 8) & 0xff
+        b = color & 0xff
+        // Calculate brightness using the luminance formula
+        brightness = 0.299 * r + 0.587 * g + 0.114 * b
+    } while (brightness < 120) // Adjust threshold as needed for your background
+    return `#${color.toString(16).padStart(6, "0")}`
+}
+
+/**
+ * Converts canvas coordinates to monitor (screen) coordinates.
+ * @param {number} canvasX - X position on the canvas.
+ * @param {number} canvasY - Y position on the canvas.
+ * @param {Object} windowPos - The window's position on the monitor ({ x, y }).
+ * @returns {{x: number, y: number}} The position on the monitor.
+ */
+const canvasToMonitor = (canvasX, canvasY, windowPos) => ({
+    x: canvasX + windowPos.x,
+    y: canvasY + windowPos.y
+})
+
+/**
+ * Converts monitor (screen) coordinates to canvas coordinates.
+ * @param {number} monitorX - X position on the monitor.
+ * @param {number} monitorY - Y position on the monitor.
+ * @param {Object} windowPos - The window's position on the monitor ({ x, y }).
+ * @returns {{x: number, y: number}} The position on the canvas.
+ */
+const monitorToCanvas = (monitorX, monitorY, windowPos) => ({
+    x: monitorX - windowPos.x,
+    y: monitorY - windowPos.y
+})
+
+/**
+ * Starts the game: sets up the player, canvas, timer, event listeners, and game loop.
+ * Handles window resizing, pausing, projectile firing (left/right click),
+ * and synchronizes state with other windows via Tauri sync messages.
  * @param {Object} appWindow - The Tauri app window object.
  * @param {Object} options - The game options object.
  * @param {HTMLElement} timer - The timer element.
  */
 async function startGame(appWindow, options, timer) {
     // Resize the window to 400x400px
-    await _resizeWindow(appWindow, -200, -200, 200);
+    const resizeW = -200 / options.screenMultiplier;
+    await _resizeWindow(appWindow, resizeW, resizeW, 200);
 
     const canvas = document.querySelector("canvas");
     const c = canvas.getContext("2d");
@@ -148,7 +194,7 @@ async function startGame(appWindow, options, timer) {
     let playerX = canvas.width / 2;
     let playerY = canvas.height / 2;
 
-    const player = new C.Player(playerX, playerY, playerRadius, options.playerColor);
+    const player = new Entity(playerX, playerY, playerRadius, options.playerColor);
 
     const gameUtils = new GameUtils(appWindow, canvas, player, playerRadius, options);
 
@@ -200,24 +246,80 @@ async function startGame(appWindow, options, timer) {
                 x: Math.cos(angle) * 5,
                 y: Math.sin(angle) * 5,
             };
-            gameUtils.projectiles.push(new C.Projectile(player.x, player.y, 5, options.playerColor, velocity));
+            gameUtils.projectiles.push(new Entity(player.x, player.y, 5, options.playerColor, velocity));
         }
     });
+
+    /**
+     * Adds a projectile with multiWindow property when right-click is used.
+     * Right-click projectiles can be transferred between windows.
+     */
+    document.addEventListener("contextmenu", event => {
+        event.preventDefault() // Prevent the default context menu
+        if (!gameUtils.gameOver || !gameUtils.paused) {
+            const angle = Math.atan2(event.clientY - player.y, event.clientX - player.x)
+            const velocity = {
+                x: Math.cos(angle) * 5,
+                y: Math.sin(angle) * 5,
+            }
+            // Set multiWindow to true for right-click projectiles
+            gameUtils.projectiles.push(
+                new Entity(player.x, player.y, 5, options.playerColor, velocity, 1, true)
+            )
+        }
+    })
 
     // Add event listener for the Escape key
-    document.addEventListener("keydown", (event) => {
+    document.addEventListener("keydown", async event => {
         if (event.key === "Escape" && !gameUtils.gameOver) {
-            gameUtils.paused ? gameUtils.resume() : gameUtils.pause();
+            gameUtils.paused ? await gameUtils.resume() : await gameUtils.pause();
         }
     });
 
-    appWindow.onFocusChanged(({ payload: focused }) => {
-        !focused && !gameUtils.paused && !gameUtils.gameOver ? gameUtils.pause() : null;
+    appWindow.onFocusChanged(async ({ payload: focused }) => {
+        !focused && !gameUtils.paused && !gameUtils.gameOver ? await gameUtils.pause() : null;
     });
 
+    let messages = []
+
+    await listen("sync-message", async event => {
+        try {
+            const data = JSON.parse(event.payload)
+
+            if (messages.includes(data.messageId)) return; // If the message ID already exists, ignore it
+            // console.log(`Received messageId: ${JSON.stringify(data.messageId)}`);  
+            // console.log(messages);
+
+            messages = []
+            messages.push(data.messageId); // Add the message ID to the list
+            if (data.type === "window_closed") {
+                const idx = gameUtils.windows.indexOf(data.id)
+                if (idx !== -1) gameUtils.windows.splice(idx, 1)
+                console.log(`Window ${data.id} closed, remaining windows: ${windows.length}`);
+            }
+            if (data.type === "enemy_transfer") {
+                const enemyData = data.enemy;
+                console.log(`Received enemy data: ${JSON.stringify(enemyData)}`);
+                const pos = await appWindow.outerPosition()
+                const { x, y } = monitorToCanvas(enemyData.x, enemyData.y, pos);
+                const enemy = new Entity(x, y, enemyData.radius, enemyData.color, enemyData.velocity, enemyData.velocityMultiplier);
+                gameUtils.enemies.push(enemy);
+            }
+            if (data.type === "boss_spawned" || data.type === "boss_removed") {
+                gameUtils.bosses = data.count;
+            }
+            if (data.type === "killcount_increase") {
+                gameUtils.killCount++;
+                document.querySelector("#killCount").innerHTML = gameUtils.killCount;
+            }
+
+        } catch { }
+    })
+
     gameUtils.animate();
-    gameUtils.spawnEnemies()
+    gameUtils.spawnEnemies();
     gameUtils.shrinkWindow();
+    gameUtils.spawnRandomWindow();
 }
 
-export { startGame, _resizeWindow, _sendNotification, scaleDownBgGradient, scaleUpBgGradient };
+export { startGame, _resizeWindow, _sendNotification, scaleDownBgGradient, scaleUpBgGradient, generateRandomHexColor, canvasToMonitor, monitorToCanvas };

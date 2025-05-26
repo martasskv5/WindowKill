@@ -1,6 +1,7 @@
-import * as C from "./classes.js";
-import { _resizeWindow } from "./functions.js";
-const { currentMonitor, LogicalSize, LogicalPosition } = window.__TAURI__.window;
+import { Entity, ParticleSystem } from "./classes.js";
+import { _resizeWindow, generateRandomHexColor, canvasToMonitor } from "./functions.js";
+const { invoke } = window.__TAURI__.core;
+const { currentMonitor, getAllWindows, LogicalSize, LogicalPosition } = window.__TAURI__.window;
 const { exists, BaseDirectory, readTextFile, writeTextFile } = window.__TAURI__.fs;
 
 /**
@@ -20,6 +21,12 @@ class GameUtils {
      * @param {Array} enemies - The array of enemies.
      * @param {number} killCount - The number of enemies killed.
      * @param {Object} options - The game options object.
+     * @param {number} animationFrameId - The ID of the animation frame.
+     * @param {number} enemySpawnTimeout - The timeout ID for enemy spawning.
+     * @param {number} shrinkInterval - The interval ID for shrinking the window.
+     * @param {boolean} paused - The paused state of the game.
+     * @param {Array} windows - The array of windows in the game.
+     * @param {number} bosses - The number of bosses spawned in the game.
      */
     constructor(appWindow, canvas, player, playerRadius, options) {
         this.appWindow = appWindow;
@@ -39,22 +46,32 @@ class GameUtils {
         this.enemySpawnTimeout = null;
         this.shrinkInterval = null;
         this.paused = false;
+        this.windows = [];
+        this.bosses = 0;
     }
 
-    pause() {
+    /**
+     * Pauses the game, stops animations, and clears intervals.
+     */
+    async pause() {
         this.paused = true;
         cancelAnimationFrame(this.animationFrameId);
         clearInterval(this.enemySpawnTimeout);
         clearInterval(this.shrinkInterval);
+        await invoke("send_sync_message", { msg: JSON.stringify({ type: "paused", value: true }) })
         document.querySelector("#pauseMenu").classList.toggle("hidden");
     }
 
-    resume() {
+    /**
+     * Resumes the game, restarts animations, and spawns enemies.
+     */
+    async resume() {
         if (this.gameOver) return;
         this.paused = false;
         this.animate();
         this.spawnEnemies();
         this.shrinkWindow();
+        await invoke("send_sync_message", { msg: JSON.stringify({ type: "paused", value: false }) })
         document.querySelector("#pauseMenu").classList.toggle("hidden");
     }
 
@@ -174,7 +191,7 @@ class GameUtils {
      */
     async shrinkWindow() {
         // Only initialize decreaseAmount if not already set (so it doesn't reset on resume)
-        if (typeof this.decreaseAmount !== 'number') {
+        if (typeof this.decreaseAmount !== "number") {
             this.decreaseAmount = this.options.difficulty.decreasePower / this.options.screenMultiplier
         }
         const decreaseMax = this.options.difficulty.decreaseMax / this.options.screenMultiplier
@@ -182,37 +199,39 @@ class GameUtils {
 
         const shrink = async () => {
             if (this.gameOver || this.paused) return
-    
+
             const currentSize = await this.appWindow.innerSize()
             let newWidth = currentSize.width - this.decreaseAmount
             let newHeight = currentSize.height - this.decreaseAmount
-    
+
             if (newWidth <= this.playerRadius * 2 || newHeight <= this.playerRadius * 2) {
                 this.gameOver = true
                 this._gameOver(true)
                 return
             }
-    
+
             // Calculate new position to shrink from all sides
             const outerPos = await this.appWindow.outerPosition()
             const newX = outerPos.x + this.decreaseAmount / 2
             const newY = outerPos.y + this.decreaseAmount / 2
-    
+
             await this.animateWindowSize(-this.decreaseAmount, -this.decreaseAmount, 50, "shrink")
             await this.appWindow.setPosition(new LogicalPosition(newX, newY)).catch(console.error)
-    
+
             this.decreaseAmount = Math.min(this.decreaseAmount * decreaseMultiplier, decreaseMax) // Decrease the amount for the next iteration
-    
+
             this.shrinkTimeout = setTimeout(shrink, 50)
         }
-    
+
         // Clear any previous timeout before starting
         if (this.shrinkTimeout) clearTimeout(this.shrinkTimeout)
         this.shrinkTimeout = setTimeout(shrink, 50)
     }
 
     /**
-     * Animates the game elements.
+     * Animates the game elements: player, projectiles, and enemies.
+     * Handles projectile transfer between windows, window expansion, and removal of out-of-bounds projectiles.
+     * Handles enemy updates, collisions with player and projectiles, and triggers game over if needed.
      */
     animate() {
         if (this.gameOver || this.paused) return;
@@ -222,7 +241,7 @@ class GameUtils {
         this.player.draw(this.c);
 
         // Update and handle projectiles
-        this.projectiles.forEach((projectile, projectilesIndex) => {
+        this.projectiles.forEach(async (projectile, projectilesIndex) => {
             projectile.update(this.c);
             if (
                 projectile.x + projectile.radius < 0 ||
@@ -230,17 +249,30 @@ class GameUtils {
                 projectile.y + projectile.radius < 0 ||
                 projectile.y - projectile.radius > this.canvas.height
             ) {
-                // Expand window in the direction of the collision
-                if (projectile.x + projectile.radius < 0) {
-                    this.expandWindow("left");
-                } else if (projectile.x - projectile.radius > this.canvas.width) {
-                    this.expandWindow("right");
-                } else if (projectile.y + projectile.radius < 0) {
-                    this.expandWindow("top");
-                } else if (projectile.y - projectile.radius > this.canvas.height) {
-                    this.expandWindow("bottom");
+                // If projectile is multiWindow, transfer to another window, else expand window in direction of collision
+                if (projectile.multiWindow) {
+                    const outerPos = await this.appWindow.outerPosition()
+                    const { x, y } = canvasToMonitor(projectile.x, projectile.y, outerPos);
+                    let newProjectile = projectile;
+                    newProjectile.x = x;
+                    newProjectile.y = y;
+                    console.log("Sending projectile to other windows");
+                    await invoke("send_sync_message", {
+                        msg: JSON.stringify({ type: "transfer_projectile", messageId: `p_${Math.floor(Math.random() * 1e8)}`, projectile: newProjectile }),
+                    });
+                } else {
+                    // Expand window in the direction of the collision
+                    if (projectile.x + projectile.radius < 0) {
+                        this.expandWindow("left");
+                    } else if (projectile.x - projectile.radius > this.canvas.width) {
+                        this.expandWindow("right");
+                    } else if (projectile.y + projectile.radius < 0) {
+                        this.expandWindow("top");
+                    } else if (projectile.y - projectile.radius > this.canvas.height) {
+                        this.expandWindow("bottom");
+                    }
                 }
-
+                // Remove projectile after handling
                 setTimeout(() => {
                     this.projectiles.splice(projectilesIndex, 1);
                 }, 0);
@@ -305,6 +337,17 @@ class GameUtils {
         // Define the original size (e.g., 600x600)
         const originalWidth = this.options.newWidth;
 
+        try {
+            this.windows.forEach(async (id) => {
+                // Notify all windows to remove this window from their list
+                // await invoke("send_sync_message", { msg: JSON.stringify({ type: "window_closed", id: id }) });
+                await invoke("close_window", { id: id });
+                this.windows.slice(this.windows.indexOf(id), 1);
+            });
+        } catch (error) {
+            console.error("Error closing windows:", error);
+        }
+
         // Get the current monitor and calculate the center position
         const monitor = await currentMonitor();
         if (monitor) {
@@ -331,12 +374,13 @@ class GameUtils {
 
         document.querySelector("#timer").classList.toggle("hidden"); // Hide the timer display
         document.querySelector("#killCount").classList.toggle("hidden");
+        document.querySelector("#killCount").innerHTML = 0; // Reset kill count display
         if (score > this.highScore) {
             this.highScore = score;
             await this.saveScore(this.highScore);
             document.querySelector("#score").innerText = `Your new high score is: ${score}`;
             document.querySelector("#gameEnd").getElementsByTagName("h1")[0].innerText = "New High Score!";
-            const particleSystem = new C.ParticleSystem();
+            const particleSystem = new ParticleSystem();
             particleSystem.explode(0, 0);
             particleSystem.explode(this.canvas.width, 0);
         } else {
@@ -344,7 +388,7 @@ class GameUtils {
             document.querySelector("#scoreBest").innerText = `Your best score is: ${this.highScore}`;
         }
         document.querySelector("#gameEnd").classList.toggle("hidden");
-        console.log(this.options.achievements.achievements.colorful.current);        
+        console.log(this.options.achievements.achievements.colorful.current);
         this.options.achievements.handle(canvasCollision, this.player.color, this.killCount, this.score, score);
     }
 
@@ -398,7 +442,7 @@ class GameUtils {
         const intervalDecrement = this.options.difficulty.enemySpawnDecrease
 
         const spawn = () => {
-            if (this.gameOver || this.paused) return // Stop spawning if the game is over or paused
+            if (this.bosses > 0 || this.gameOver || this.paused) return // Stop spawning if the game is over or paused or if a boss is active
 
             const radius = ((Math.random() * (30 - 4) + 4) / this.options.screenMultiplier)
 
@@ -416,7 +460,7 @@ class GameUtils {
             // Generate a random hex color that is not the player's color
             let color
             do {
-                color = this.generateRandomHexColor()
+                color = generateRandomHexColor()
             } while (color === this.player.color)
 
             // Calculate angle towards the player's current position
@@ -429,7 +473,7 @@ class GameUtils {
             }
 
             // Spawn the enemy targeting the player
-            this.enemies.push(new C.Player(x, y, radius, color, velocity))
+            this.enemies.push(new Entity(x, y, radius, color, velocity))
 
             // Decrease the spawn interval over time, but don't go below minInterval
             this.spawnInterval = Math.max(this.spawnInterval - intervalDecrement, minInterval)
@@ -456,12 +500,69 @@ class GameUtils {
     }
 
     /**
-     * Generates a random hex color string.
-     * @returns {string} The generated hex color (e.g., "#ff5733").
+     * Spawns a new window at a random position and size, adds its ID to the list,
+     * waits 10 seconds, closes the window, and sends a sync message to remove it from the list.
+     * Ensures the new window does not overlap with the main window.
      */
-    generateRandomHexColor() {
-        const randomColor = Math.floor(Math.random() * 16777215).toString(16); // Generate a random number and convert to hex
-        return `#${randomColor.padStart(6, "0")}`; // Ensure the hex color is 6 characters long
+    spawnRandomWindow() {
+        setInterval(async () => {
+            if (this.windows.length >= 6 || this.gameOver || this.paused) return
+
+            // Calculate overlapping with all existing windows
+            const allWindows = await getAllWindows()
+            const windowRects = []
+
+            // Gather rectangles for all open windows
+            for (let win of allWindows) {
+                const pos = await win.outerPosition()
+                const size = await win.innerSize()
+                windowRects.push({
+                    x: pos.x,
+                    y: pos.y,
+                    w: size.width,
+                    h: size.height
+                })
+            }
+
+            const screenW = window.screen.width
+            const screenH = window.screen.height
+            const maxAttempts = 20
+            let x, y, w, h, tries = 0, overlaps
+
+            do {
+                w = Math.floor(Math.random() * 200) + 300
+                h = Math.floor(Math.random() * 200) + 300
+                x = Math.floor(Math.random() * (screenW - w))
+                y = Math.floor(Math.random() * (screenH - h))
+                overlaps = windowRects.some(rect =>
+                    x < rect.x + rect.w &&
+                    x + w > rect.x &&
+                    y < rect.y + rect.h &&
+                    y + h > rect.y
+                )
+                tries++
+            } while (overlaps && tries < maxAttempts)
+
+            if (overlaps) return // Could not find a non-overlapping spot
+
+
+            const id = `win_${Math.floor(Math.random() * 1e8)}`
+
+            await invoke('create_window', {
+                id,
+                url: "html/canvas.html",
+                x,
+                y,
+                w,
+                h,
+                title: "Canvas",
+                decorations: false,
+                focused: false
+            })
+
+            this.windows.push(id)
+            // }, Math.random() * 10000 + 5000)
+        }, 5000)
     }
 }
 
