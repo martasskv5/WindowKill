@@ -14,10 +14,8 @@ const id = await invoke("get_current_window_id")
 const monitor = await currentMonitor();
 const screenWidth = monitor.size.width;
 const screenHeight = monitor.size.height;
-// console.log(`Current monitor size: ${screenWidth}x${screenHeight}`);
 let appWindow = await getCurrentWindow();
 const outerPos = await appWindow.outerPosition()
-// console.log(`Outer position: (${outerPos.x}, ${outerPos.y})`);
 
 const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
@@ -25,6 +23,7 @@ canvas.width = innerWidth;
 canvas.height = innerHeight;
 
 let enemies = [];
+let projectiles = [];
 let paused = false;
 let screenMultiplier = localStorage.getItem("screenMultiplier") ? parseFloat(localStorage.getItem("screenMultiplier")) : 1;
 let playerColor = localStorage.getItem("playerColor") || "#00ff00"; // Default player color
@@ -33,11 +32,14 @@ let boss = null // Track the boss in this window
 let globalBossCount = 0 // Track total bosses globally
 let bossShootInterval = null
 
+let messages = []
 listen('sync-message', event => {
     try {
         const data = JSON.parse(event.payload)
         // console.log(data);        
-
+        if (messages.includes(data.messageId)) return; // If the message ID already exists, ignore it
+        messages = []
+        messages.push(data.messageId); // Add the message ID to the list
         if (data.type === 'paused') {
             paused = data.paused;
         }
@@ -47,6 +49,14 @@ listen('sync-message', event => {
         if (data.type === 'boss_removed') {
             globalBossCount = data.count
             if (boss) removeBoss()
+        }
+        if (data.type === "transfer_projectile") {
+            const projectileData = data.projectile;
+            console.log(`Transferring projectile: ${JSON.stringify(projectileData)}`);            
+            const { x, y } = monitorToCanvas(projectileData.x, projectileData.y, outerPos);
+            projectiles.push(new Entity(x, y, projectileData.radius, projectileData.color, projectileData.velocity, projectileData.velocityMultiplier));
+            console.log(projectiles);
+            
         }
     } catch { }
 })
@@ -112,6 +122,11 @@ async function animate() {
     if (paused) return;
     animateId = requestAnimationFrame(() => animate());
     c.clearRect(0, 0, canvas.width, canvas.height);
+    
+    projectiles.forEach((projectile) => {
+        projectile.update(c);
+    });
+    
     // Update and handle enemies
     for (let index = enemies.length - 1; index >= 0; index--) {
         const enemy = enemies[index];
@@ -138,24 +153,28 @@ async function animate() {
         }
 
         // Check for collision between projectiles and enemy
-        // for (let projectilesIndex = projectiles.length - 1; projectilesIndex >= 0; projectilesIndex--) {
-        //     const projectile = projectiles[projectilesIndex];
-        //     const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
+        for (let projectilesIndex = projectiles.length - 1; projectilesIndex >= 0; projectilesIndex--) {
+            const projectile = projectiles[projectilesIndex];
+            const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
 
-        //     // When projectile hits enemy
-        //     if (dist - enemy.radius - projectile.radius < 1) {
-        //         if (enemy.radius - 10 > 5) {
-        //             enemy.radius -= 10;
-        //             projectiles.splice(projectilesIndex, 1);
-        //         } else {
-        //             // Remove enemy if too small
-        //             killCount++;
-        //             document.querySelector("#killCount").innerHTML = killCount;
-        //             enemies.splice(index, 1);
-        //             projectiles.splice(projectilesIndex, 1);
-        //         }
-        //     }
-        // }
+            // When projectile hits enemy
+            if (dist - enemy.radius - projectile.radius < 1) {
+                if (enemy.radius - 10 > 5) {
+                    enemy.radius -= 10;
+                    projectiles.splice(projectilesIndex, 1);
+                } else {
+                    // Remove enemy if too small
+                    await invoke("send_sync_message", {
+                        msg: JSON.stringify({
+                            type: "killcount_increase",
+                            messageId: `e_${Math.floor(Math.random() * 1e8)}`,
+                        })
+                    });
+                    enemies.splice(index, 1);
+                    projectiles.splice(projectilesIndex, 1);
+                }
+            }
+        }
     }
 }
 // enemies.push(new NGon(canvas.width / 2, canvas.height / 2, 50, playerColor, 5));

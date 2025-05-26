@@ -194,7 +194,8 @@ Zhrnutie projektu to jednotlivých bodov
         -   [x] Successfully spawn enemies in `random` windows
         -   [x] Correctly transfer enemies between windows
         -   [x] Spawn bosses in `random` windows
-        -   [ ] Successfully transfer projectiles between windows
+        -   [x] Successfully transfer projectiles between windows
+        -   [ ] Remove old projectiles
     -   [ ] ? Game modes
 	       - [ ] Player stays in center of screen (default - currently working on)
 		   - [ ] Player movement allowed

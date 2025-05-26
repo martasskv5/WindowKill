@@ -248,6 +248,24 @@ async function startGame(appWindow, options, timer) {
         }
     });
 
+    /**
+     * Adds a projectile with multiWindow property when right-click is used.
+     */
+    document.addEventListener("contextmenu", event => {
+        event.preventDefault() // Prevent the default context menu
+        if (!gameUtils.gameOver || !gameUtils.paused) {
+            const angle = Math.atan2(event.clientY - player.y, event.clientX - player.x)
+            const velocity = {
+                x: Math.cos(angle) * 5,
+                y: Math.sin(angle) * 5,
+            }
+            // Set multiWindow to true for right-click projectiles
+            gameUtils.projectiles.push(
+                new Entity(player.x, player.y, 5, options.playerColor, velocity, 1, true)
+            )
+        }
+    })
+
     // Add event listener for the Escape key
     document.addEventListener("keydown", async event => {
         if (event.key === "Escape" && !gameUtils.gameOver) {
@@ -268,7 +286,7 @@ async function startGame(appWindow, options, timer) {
             if (messages.includes(data.messageId)) return; // If the message ID already exists, ignore it
             // console.log(`Received messageId: ${JSON.stringify(data.messageId)}`);  
             // console.log(messages);
-                      
+
             messages = []
             messages.push(data.messageId); // Add the message ID to the list
             if (data.type === 'window_closed') {
@@ -276,7 +294,7 @@ async function startGame(appWindow, options, timer) {
                 if (idx !== -1) gameUtils.windows.splice(idx, 1)
                 console.log(`Window ${data.id} closed, remaining windows: ${windows.length}`);
             }
-            else if (data.type === 'enemy_transfer') {
+            if (data.type === 'enemy_transfer') {
                 const enemyData = data.enemy;
                 console.log(`Received enemy data: ${JSON.stringify(enemyData)}`);
                 const pos = await appWindow.outerPosition()
@@ -284,10 +302,14 @@ async function startGame(appWindow, options, timer) {
                 const enemy = new Entity(x, y, enemyData.radius, enemyData.color, enemyData.velocity, enemyData.velocityMultiplier);
                 gameUtils.enemies.push(enemy);
             }
-            else if (data.type === 'boss_spawned' || data.type === 'boss_removed') { 
+            if (data.type === 'boss_spawned' || data.type === 'boss_removed') {
                 gameUtils.bosses = data.count;
             }
-            
+            if (data.type === "killcount_increase") {
+                gameUtils.killCount++;
+                document.querySelector("#killCount").innerHTML = gameUtils.killCount;
+            }
+
         } catch { }
     })
 

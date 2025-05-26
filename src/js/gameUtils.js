@@ -1,5 +1,5 @@
 import { Entity, ParticleSystem } from "./classes.js";
-import { _resizeWindow, generateRandomHexColor } from "./functions.js";
+import { _resizeWindow, generateRandomHexColor, canvasToMonitor } from "./functions.js";
 const { invoke } = window.__TAURI__.core;
 const { currentMonitor, getAllWindows, LogicalSize, LogicalPosition } = window.__TAURI__.window;
 const { exists, BaseDirectory, readTextFile, writeTextFile } = window.__TAURI__.fs;
@@ -239,7 +239,7 @@ class GameUtils {
         this.player.draw(this.c);
 
         // Update and handle projectiles
-        this.projectiles.forEach((projectile, projectilesIndex) => {
+        this.projectiles.forEach(async (projectile, projectilesIndex) => {
             projectile.update(this.c);
             if (
                 projectile.x + projectile.radius < 0 ||
@@ -247,15 +247,28 @@ class GameUtils {
                 projectile.y + projectile.radius < 0 ||
                 projectile.y - projectile.radius > this.canvas.height
             ) {
-                // Expand window in the direction of the collision
-                if (projectile.x + projectile.radius < 0) {
-                    this.expandWindow("left");
-                } else if (projectile.x - projectile.radius > this.canvas.width) {
-                    this.expandWindow("right");
-                } else if (projectile.y + projectile.radius < 0) {
-                    this.expandWindow("top");
-                } else if (projectile.y - projectile.radius > this.canvas.height) {
-                    this.expandWindow("bottom");
+                if (projectile.multiWindow) {
+                    const outerPos = await this.appWindow.outerPosition()
+                    const { x, y } = canvasToMonitor(projectile.x, projectile.y, outerPos);
+                    let newProjectile = projectile;
+                    newProjectile.x = x;
+                    newProjectile.y = y;
+                    console.log(`Sending projectile to other windows`);                    
+                    await invoke("send_sync_message", {
+                        msg: JSON.stringify({ type: "transfer_projectile", messageId: `p_${Math.floor(Math.random() * 1e8)}`, projectile: newProjectile }),
+                    });
+                }
+                else {
+                    // Expand window in the direction of the collision
+                    if (projectile.x + projectile.radius < 0) {
+                        this.expandWindow("left");
+                    } else if (projectile.x - projectile.radius > this.canvas.width) {
+                        this.expandWindow("right");
+                    } else if (projectile.y + projectile.radius < 0) {
+                        this.expandWindow("top");
+                    } else if (projectile.y - projectile.radius > this.canvas.height) {
+                        this.expandWindow("bottom");
+                    }
                 }
 
                 setTimeout(() => {
@@ -427,7 +440,7 @@ class GameUtils {
         const intervalDecrement = this.options.difficulty.enemySpawnDecrease
 
         const spawn = () => {
-            if ( this.bosses > 0 || this.gameOver || this.paused) return // Stop spawning if the game is over or paused or if a boss is active
+            if (this.bosses > 0 || this.gameOver || this.paused) return // Stop spawning if the game is over or paused or if a boss is active
 
             const radius = ((Math.random() * (30 - 4) + 4) / this.options.screenMultiplier)
 

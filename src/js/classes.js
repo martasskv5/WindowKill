@@ -12,14 +12,17 @@ class Entity {
      * @param {Object} velocity - The velocity of the entity.
      * @param {number} velocity.x - The x-component of the velocity.
      * @param {number} velocity.y - The y-component of the velocity.
+     * @param {number} velocityMultiplier - The multiplier for the velocity.
+     * @param {boolean} multiWindow - Flag to indicate if the entity is multi-window.
      */
-    constructor(x, y, radius, color, velocity = { x: 0, y: 0 }, velocityMultiplier = 1) {
+    constructor(x, y, radius, color, velocity = { x: 0, y: 0 }, velocityMultiplier = 1, multiWindow = false) {
         this.x = x
         this.y = y
         this.radius = radius
         this.color = color
         this.velocity = velocity
         this.velocityMultiplier = velocityMultiplier
+        this.multiWindow = multiWindow; // Flag to indicate if the entity is multi-window
     }
 
     /**
@@ -72,9 +75,11 @@ class NGon extends Entity {
 	 * @param {Object} velocity - The velocity of the NGon.
 	 * @param {number} velocity.x - The x-component of the velocity.
 	 * @param {number} velocity.y - The y-component of the velocity.
+     * @param {number} velocityMultiplier - The multiplier for the velocity.
+     * @param {boolean} multiWindow - Flag to indicate if the NGon is multi-window.
 	 */
-	constructor(x, y, radius, color, sides, velocity = { x: 0, y: 0 }, velocityMultiplier = 1) {
-		super(x, y, radius, color, velocity, velocityMultiplier)
+	constructor(x, y, radius, color, sides, velocity = { x: 0, y: 0 }, velocityMultiplier = 1, multiWindow = false) {
+		super(x, y, radius, color, velocity, velocityMultiplier, multiWindow)
 		this.sides = Math.max(3, Math.floor(sides))
 		this.rotation = Math.random() * 2 * Math.PI // Random rotation in radians
 	}
