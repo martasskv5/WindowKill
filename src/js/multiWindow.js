@@ -247,12 +247,13 @@ setInterval(() => {
 }, 1000 * Math.random() * 5 + 5000);
 
 // Try to spawn a boss every 20 seconds if allowed
-setInterval(() => {
-    if (!paused) trySpawnBoss()
-}, 20000)
+// setInterval(() => {
+//     if (!paused) trySpawnBoss()
+// }, 20000)
 
 setInterval(async () => {
-    if (enemies.length == 0 && !boss) {
+    if (!paused) trySpawnBoss();
+    if (enemies.length == 0 && !boss && !paused) {
         await invoke("send_sync_message", { msg: JSON.stringify({ type: "window_closed", id: id, messageId: `m_${Math.floor(Math.random() * 1e8)}` }) })
         await invoke("close_window", { id: id })
     }
