@@ -200,7 +200,9 @@ Zhrnutie projektu to jednotlivých bodov
 	       - [ ] Player stays in center of screen (default - currently working on)
 		   - [ ] Player movement allowed
 -   [ ] Other
-    -   [ ] ? Good Soundtrack
+    -   [x] ? Good Soundtrack
+        -   [x] Stop music on game over
+        -   [ ] ~~Disable playback start/stop with multimedia keys~~ - tested => event is not reaching app and cannot be blocked by JavaScript
 -   [ ] ! Fix
     -   [x] !! Correctly set window size on restart
     -   [ ] Fix glitches on resize

@@ -3,24 +3,24 @@ import { Options } from "./js/options.js";
 const { getCurrentWindow, currentMonitor, LogicalSize, LogicalPosition } = window.__TAURI__.window;
 const { invoke } = window.__TAURI__.core;
 
-// ✅ Prehrávanie hudby
-const bgMusic = new Audio("sound/mojtrack.mp3");
-bgMusic.loop = true;
-bgMusic.volume = parseFloat(localStorage.getItem("volume")) || 0.5;
-
 let isPaused = false;
 
-window.addEventListener("DOMContentLoaded", async () => {
+// window.addEventListener("DOMContentLoaded", async () => {
     let appWindow = await getCurrentWindow();
     const monitor = await currentMonitor();
     const screenWidth = monitor.size.width;
     const screenHeight = monitor.size.height;
-
+    
     const options = new Options();
     await options.initialize();
     localStorage.setItem("achievements", JSON.stringify(options.achievements.achievements));
     options.screenMultiplier = 1920 / screenWidth;
     localStorage.setItem("screenMultiplier", options.screenMultiplier);
+    
+    // ✅ Prehrávanie hudby
+    const bgMusic = new Audio("assets/sound/mojtrack.mp3");
+    bgMusic.loop = true;
+    bgMusic.volume = options.volume / 100;
 
     const windowWidth = options.defaultWidth / options.screenMultiplier;
     options.newWidth = windowWidth;
@@ -59,7 +59,7 @@ window.addEventListener("DOMContentLoaded", async () => {
             console.error("Failed to play music:", err);
         }
 
-        await startGame(appWindow, options, timer);
+        await startGame(appWindow, options, timer, bgMusic);
     });
 
     optionsButton.addEventListener("click", () => {
@@ -92,8 +92,8 @@ window.addEventListener("DOMContentLoaded", async () => {
             playerColor,
         };
 
-        bgMusic.volume = volume;
-        localStorage.setItem("volume", volume);
+        bgMusic.volume = volume / 100;
+        localStorage.setItem("volume", volume / 100);
         options.updateOptions(newOptions);
     });
 
@@ -106,10 +106,10 @@ window.addEventListener("DOMContentLoaded", async () => {
         timer.classList.toggle("hidden");
         killCount.classList.toggle("hidden");
 
-        bgMusic.pause();
         bgMusic.currentTime = 0;
+        bgMusic.play();
 
-        await startGame(appWindow, options, timer);
+        await startGame(appWindow, options, timer, bgMusic);
     });
 
     mainMenuButton.addEventListener("click", () => {
@@ -150,4 +150,4 @@ window.addEventListener("DOMContentLoaded", async () => {
             }
         }
     });
-});
+// });

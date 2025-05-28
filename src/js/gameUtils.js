@@ -12,7 +12,7 @@ class GameUtils {
      * Creates an instance of GameUtils.
      * @param {Object} appWindow - The Tauri app window object.
      * @param {HTMLCanvasElement} canvas - The canvas element.
-     * @param {Object} player - The player object.
+     * @param {Entity} player - The player object.
      * @param {number} playerRadius - The radius of the player.
      * @param {Array} projectiles - The array of projectiles.
      * @param {boolean} gameOver - The game over flag.
@@ -27,8 +27,9 @@ class GameUtils {
      * @param {boolean} paused - The paused state of the game.
      * @param {Array} windows - The array of windows in the game.
      * @param {number} bosses - The number of bosses spawned in the game.
+     * @param {Audio} bgMusic - The background music audio object.
      */
-    constructor(appWindow, canvas, player, playerRadius, options) {
+    constructor(appWindow, canvas, player, playerRadius, options, bgMusic) {
         this.appWindow = appWindow;
         this.canvas = canvas;
         this.player = player;
@@ -48,6 +49,7 @@ class GameUtils {
         this.paused = false;
         this.windows = [];
         this.bosses = 0;
+        this.bgMusic = bgMusic;
     }
 
     /**
@@ -334,6 +336,7 @@ class GameUtils {
         this.enemySpawnTimeout = null;
         this.shrinkInterval = null;
         this.paused = false;
+        this.bgMusic.pause();
         // Define the original size (e.g., 600x600)
         const originalWidth = this.options.newWidth;
 

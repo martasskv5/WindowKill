@@ -178,8 +178,9 @@ const monitorToCanvas = (monitorX, monitorY, windowPos) => ({
  * @param {Object} appWindow - The Tauri app window object.
  * @param {Object} options - The game options object.
  * @param {HTMLElement} timer - The timer element.
+ * @param {HTMLAudioElement} bgMusic - The background music audio element.
  */
-async function startGame(appWindow, options, timer) {
+async function startGame(appWindow, options, timer, bgMusic) {
     // Resize the window to 400x400px
     const resizeW = -200 / options.screenMultiplier;
     await _resizeWindow(appWindow, resizeW, resizeW, 200);
@@ -196,7 +197,7 @@ async function startGame(appWindow, options, timer) {
 
     const player = new Entity(playerX, playerY, playerRadius, options.playerColor);
 
-    const gameUtils = new GameUtils(appWindow, canvas, player, playerRadius, options);
+    const gameUtils = new GameUtils(appWindow, canvas, player, playerRadius, options, bgMusic);
 
     player.draw(c);
     gameUtils.updateCanvasSize();
