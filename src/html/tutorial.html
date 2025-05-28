@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const { invoke } = window.__TAURI__.core;
+
+        const playButton = document.querySelector('.button.green');
+        playButton.addEventListener('click', async () => {
+            try {
+                await invoke('send_sync_message', {
+                    msg: JSON.stringify({
+                        type: 'tutorial',
+                    })
+                });
+                const id = await invoke("get_current_window_id");
+                await invoke("close_window", {
+                    id: id
+                });
+            } catch (error) {
+                console.error('Error starting game:', error);
+            }
+        });
+    });
+</script>
+
+<body>
+    <div class="uiWrapper" style="width: 90vw;">
+        <h1>How to play</h1>
+
+        <p><strong>Left-Click</strong>: Expands window & damage enemies in direction user is pointing</p>
+        <p><strong>Right-Click</strong>: Shoots multi-window projectiles & damage enemies in direction user is pointing</p>
+
+        <button class="button green">Play</button>
+    </div>
+</body>
+
+</html>

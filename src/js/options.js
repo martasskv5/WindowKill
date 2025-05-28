@@ -30,6 +30,7 @@ class Options {
         this.defaultWidth = 600;
         this.screenMultiplier = 1;
         this.newWidth = 600;
+        this.tutorial = false;
     }
 
     /**
@@ -59,6 +60,7 @@ class Options {
                 this.volume = options.volume || this.volume;
                 this.playerColor = options.playerColor || this.playerColor;
                 localStorage.setItem("playerColor", this.playerColor);
+                this.tutorial = options.tutorial || this.tutorial;
                 // Update the UI with loaded options
                 document.querySelector("#difficulty").value = this.difficulty.difficulty;
                 document.querySelector("#volume").value = this.volume;
@@ -84,6 +86,7 @@ class Options {
             difficulty: this.difficulty.difficulty,
             volume: this.volume,
             playerColor: this.playerColor,
+            tutorial: this.tutorial,
         };
         const data = JSON.stringify(options, null, 4);
 
