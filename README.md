@@ -132,6 +132,7 @@ Zhrnutie projektu to jednotlivých bodov
     -   [x] Set app icon
     -   [x] Disable Windows header
     -   [x] Custom cursor [source](https://aspecsgaming.itch.io/pixel-art-cursors)
+    -   [x] How to play window at first run
 -   [ ] Mechanics
     -   [x] Difficulties
         -   [x] Shrinking power
