@@ -46,7 +46,8 @@ listen("sync-message", event => {
         messages = []
         messages.push(data.messageId); // Add the message ID to the list
         if (data.type === "paused") {
-            paused = data.paused;
+            console.log(data.value);
+            setPaused(data.value);            
         }
         if (data.type === "boss_spawned") {
             globalBossCount = data.count
@@ -64,6 +65,20 @@ listen("sync-message", event => {
         }
     } catch { }
 })
+
+/**
+ * Sets the paused state and cancels or restarts animation as needed.
+ * @param {boolean} value - Whether the game should be paused.
+ */
+const setPaused = value => {
+    paused = value
+    if (paused && animateId) {
+        cancelAnimationFrame(animateId) // Cancel the animation frame when pausing
+        animateId = null
+    } else if (!paused) {
+        animate() // Restart animation when unpausing
+    }
+}
 
 /**
  * Spawns a new enemy at a random position inside the canvas, targeting the center.

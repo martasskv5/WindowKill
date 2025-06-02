@@ -60,7 +60,7 @@ class GameUtils {
         cancelAnimationFrame(this.animationFrameId);
         clearInterval(this.enemySpawnTimeout);
         clearInterval(this.shrinkInterval);
-        await invoke("send_sync_message", { msg: JSON.stringify({ type: "paused", value: true }) })
+        await invoke("send_sync_message", { msg: JSON.stringify({ type: "paused", value: true, messageId: `p_${Math.floor(Math.random() * 1e8)}` }) })
         document.querySelector("#pauseMenu").classList.toggle("hidden");
     }
 
@@ -73,7 +73,7 @@ class GameUtils {
         this.animate();
         this.spawnEnemies();
         this.shrinkWindow();
-        await invoke("send_sync_message", { msg: JSON.stringify({ type: "paused", value: false }) })
+        await invoke("send_sync_message", { msg: JSON.stringify({ type: "paused", value: false, messageId: `p_${Math.floor(Math.random() * 1e8)}` }) })
         document.querySelector("#pauseMenu").classList.toggle("hidden");
     }
 
@@ -432,6 +432,7 @@ class GameUtils {
     /**
      * Spawns enemies at random intervals and positions, targeting the player.
      * The spawn interval decreases over time to increase difficulty.
+     * Enemies will not spawn within 100px of the player's position.
      */
     spawnEnemies() {
         if (this.enemySpawnTimeout) clearTimeout(this.enemySpawnTimeout) // Clear any previous timeout
@@ -450,15 +451,23 @@ class GameUtils {
             const radius = ((Math.random() * (30 - 4) + 4) / this.options.screenMultiplier)
 
             let x, y
+            let attempts = 0
+            const maxAttempts = 20
 
-            // Randomly determine spawn position (left/right or top/bottom)
-            if (Math.random() < 0.5) {
-                x = Math.random() < 0.5 ? 0 - radius : this.canvas.width + radius
-                y = Math.random() * this.canvas.height
-            } else {
-                x = Math.random() * this.canvas.width
-                y = Math.random() < 0.5 ? 0 - radius : this.canvas.height + radius
-            }
+            // Try to find a spawn position at least 100px away from the player
+            do {
+                if (Math.random() < 0.5) {
+                    x = Math.random() < 0.5 ? 0 - radius : this.canvas.width + radius
+                    y = Math.random() * this.canvas.height
+                } else {
+                    x = Math.random() * this.canvas.width
+                    y = Math.random() < 0.5 ? 0 - radius : this.canvas.height + radius
+                }
+                attempts++
+            } while (
+                Math.hypot(this.player.x - x, this.player.y - y) < 100 + radius &&
+                attempts < maxAttempts
+            )
 
             // Generate a random hex color that is not the player's color
             let color
