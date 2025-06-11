@@ -2,9 +2,12 @@
     "$schema": "https://schema.tauri.app/config/2",
     "productName": "windowkill",
     "version": "0.6.2",
-    "identifier": "com.windowkill.app",
+    "identifier": "martas.windowkill",
     "build": {
-        "frontendDist": "../src"
+        "beforeDevCommand": "npm run dev",
+        "devUrl": "http://localhost:1420",
+        "beforeBuildCommand": "npm run build",
+        "frontendDist": "../dist"
     },
     "app": {
         "withGlobalTauri": true,
