@@ -171,109 +171,64 @@ class Options {
  * @class
  */
 class Difficulties {
-    /**
-     * @type {string}
-     */
-    difficulty: string;
-    /**
-     * @type {{ [key: string]: any }}
-     */
-    difficulties: { [key: string]: any };
-    /**
-     * Constructor for the Difficulties class. Initializes default difficulty settings.
-     * @constructor
-     */
+    difficulty: string
+    difficulties: { [key: string]: any }
+    increasePower!: number
+    decreasePower!: number
+    decreaseMax!: number
+    decreaseMultiplier!: number
+    enemySpawnSpeed!: number
+    enemyMinSpawn!: number
+    enemySpawnDecrease!: number
+    scoreMultiplier!: number
+    transparent!: boolean
+    timeMultiplier!: number
+
     constructor() {
-        this.difficulty = "normal"; // Default difficulty
+        this.difficulty = "normal"
         this.difficulties = {
-            easy: {
-                increasePower: 10,
-                decreasePower: 1,
-                decreaseMax: 3,
-                decreaseMultiplier: 1.05,
-                enemySpawnSpeed: 2,
-                enemyMinSpawn: 1700,
-                enemySpawnDecrease: 5,
-                scoreMultiplier: 0.25,
-                transparent: false,
-                timeMultiplier: 1.2,
-            },
-            normal: {
-                increasePower: 20,
-                decreasePower: 2,
-                decreaseMax: 6,
-                decreaseMultiplier: 1.6,
-                enemySpawnSpeed: 1,
-                enemyMinSpawn: 1500,
-                enemySpawnDecrease: 10,
-                scoreMultiplier: 0.5,
-                transparent: false,
-                timeMultiplier: 1.5,
-            },
-            hard: {
-                increasePower: 25,
-                decreasePower: 2.5,
-                decreaseMax: 8,
-                decreaseMultiplier: 1.5,
-                enemySpawnSpeed: 0.85,
-                enemyMinSpawn: 1200,
-                enemySpawnDecrease: 15,
-                scoreMultiplier: 1,
-                transparent: false,
-                timeMultiplier: 1.5,
-            },
-            impossible: {
-                increasePower: 30,
-                decreasePower: 3,
-                decreaseMax: 10,
-                decreaseMultiplier: 1.3,
-                enemySpawnSpeed: 1,
-                enemyMinSpawn: 1000,
-                enemySpawnDecrease: 30,
-                scoreMultiplier: 2,
-                transparent: true,
-                timeMultiplier: 1.7,
-            },
-        };
-        this.updateDifficulty(); // Initialize with default difficulty
+            easy: { increasePower: 10, decreasePower: 1, decreaseMax: 3, decreaseMultiplier: 1.05, enemySpawnSpeed: 2, enemyMinSpawn: 1700, enemySpawnDecrease: 5, scoreMultiplier: 0.25, transparent: false, timeMultiplier: 1.2 },
+            normal: { increasePower: 20, decreasePower: 2, decreaseMax: 6, decreaseMultiplier: 1.6, enemySpawnSpeed: 1, enemyMinSpawn: 1500, enemySpawnDecrease: 10, scoreMultiplier: 0.5, transparent: false, timeMultiplier: 1.5 },
+            hard: { increasePower: 25, decreasePower: 2.5, decreaseMax: 8, decreaseMultiplier: 1.5, enemySpawnSpeed: 0.85, enemyMinSpawn: 1200, enemySpawnDecrease: 15, scoreMultiplier: 1, transparent: false, timeMultiplier: 1.5 },
+            impossible: { increasePower: 30, decreasePower: 3, decreaseMax: 10, decreaseMultiplier: 1.3, enemySpawnSpeed: 1, enemyMinSpawn: 1000, enemySpawnDecrease: 30, scoreMultiplier: 2, transparent: true, timeMultiplier: 1.7 }
+        }
+        // Initialize properties with default difficulty
+        this.updateDifficulty()
     }
 
-    /**
-     * Updates the current difficulty settings based on the selected difficulty.
-     */
     updateDifficulty() {
-        const currentSettings = this.difficulties[this.difficulty];
-        Object.assign(this, currentSettings); // Dynamically copy properties
+        const currentSettings = this.difficulties[this.difficulty]
+        this.increasePower = currentSettings.increasePower
+        this.decreasePower = currentSettings.decreasePower
+        this.decreaseMax = currentSettings.decreaseMax
+        this.decreaseMultiplier = currentSettings.decreaseMultiplier
+        this.enemySpawnSpeed = currentSettings.enemySpawnSpeed
+        this.enemyMinSpawn = currentSettings.enemyMinSpawn
+        this.enemySpawnDecrease = currentSettings.enemySpawnDecrease
+        this.scoreMultiplier = currentSettings.scoreMultiplier
+        this.transparent = currentSettings.transparent
+        this.timeMultiplier = currentSettings.timeMultiplier
 
-        // Update the background color based on transparency
         if (currentSettings.transparent) {
-            scaleDownBgGradient();
-            localStorage.setItem("transparent", "true");
+            scaleDownBgGradient()
+            localStorage.setItem("transparent", "true")
         } else {
-            scaleUpBgGradient();
-            localStorage.setItem("transparent", "");
+            scaleUpBgGradient()
+            localStorage.setItem("transparent", "")
         }
     }
 
-    /**
-     * Sets a new difficulty level and updates settings.
-     * @param {string} newDifficulty - The new difficulty level to set.
-     */
     setDifficulty(newDifficulty: string) {
         if (this.difficulties[newDifficulty]) {
-            this.difficulty = newDifficulty;
-            this.updateDifficulty();
+            this.difficulty = newDifficulty
+            this.updateDifficulty()
         } else {
-            console.error(`Invalid difficulty: ${newDifficulty}`);
+            console.error(`Invalid difficulty: ${newDifficulty}`)
         }
     }
 
-    /**
-     * Gets the current difficulty settings.
-     * @returns {Object} The current difficulty settings.
-     */
     getCurrentSettings(): object {
-        return this.difficulties[this.difficulty];
+        return this.difficulties[this.difficulty]
     }
 }
 

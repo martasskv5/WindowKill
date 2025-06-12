@@ -1,7 +1,7 @@
 // @ts-ignore
-import { startGame } from "./js/functions.js";
+import { startGame } from "./js/functions";
 // @ts-ignore
-import { Options } from "./js/options.js";
+import { Options } from "./js/options";
 import { getCurrentWindow, currentMonitor, LogicalSize, LogicalPosition } from "@tauri-apps/api/window";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
@@ -23,7 +23,7 @@ const options = new Options();
 await options.initialize();
 localStorage.setItem("achievements", JSON.stringify(options.achievements.achievements));
 options.screenMultiplier = 1920 / screenWidth;
-localStorage.setItem("screenMultiplier", options.screenMultiplier);
+localStorage.setItem("screenMultiplier", options.screenMultiplier.toString());
 
 // Tutorial window
 if (!options.tutorial) {
@@ -57,7 +57,7 @@ unlisten = listen<string>("sync-message", async (event) => {
 // ✅ Prehrávanie hudby
 const bgMusic = new Audio("assets/sound/mojtrack.mp3");
 bgMusic.loop = true;
-bgMusic.volume = options.volume / 100;
+bgMusic.volume = parseInt(options.volume) / 100;
 
 const windowWidth = options.defaultWidth / options.screenMultiplier;
 options.newWidth = windowWidth;
@@ -112,7 +112,7 @@ startButton.addEventListener("click", async () => {
 		console.error("Failed to play music:", err);
 	}
 
-	await startGame(appWindow, options, timer, bgMusic);
+	await startGame(appWindow, options, timer as HTMLElement, bgMusic);
 });
 
 optionsButton.addEventListener("click", () => {
@@ -136,11 +136,11 @@ backButton.addEventListener("click", () => {
 
 saveButton.addEventListener("click", () => {
     // @ts-ignore
-	const difficulty = document.querySelector("#difficulty").value;
+	const difficulty: string = document.querySelector("#difficulty").value;
     // @ts-ignore
-	const volume = parseFloat(document.querySelector("#volume").value);
+	const volume: string = parseFloat(document.querySelector("#volume").value);
     // @ts-ignore
-	const playerColor = document.querySelector("#playerColor").value;
+	const playerColor: string = document.querySelector("#playerColor").value;
 
 	const newOptions = {
 		difficulty,
@@ -148,8 +148,8 @@ saveButton.addEventListener("click", () => {
 		playerColor,
 	};
 
-	bgMusic.volume = volume / 100;
-	localStorage.setItem("volume", (volume / 100).toString());
+	bgMusic.volume = parseInt(volume) / 100;
+	localStorage.setItem("volume", (parseInt(volume) / 100).toString());
 	options.updateOptions(newOptions);
 });
 
@@ -166,7 +166,7 @@ restartButton.addEventListener("click", async () => {
 	bgMusic.currentTime = 0;
 	bgMusic.play();
 
-	await startGame(appWindow, options, timer, bgMusic);
+	await startGame(appWindow, options, timer as HTMLElement, bgMusic);
 });
 
 mainMenuButton.addEventListener("click", () => {

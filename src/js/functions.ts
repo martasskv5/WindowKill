@@ -1,7 +1,7 @@
 import { Entity } from "./classes";
 import { Options } from "./options";
 // @ts-ignore
-import { GameUtils } from "./gameUtils.js";
+import { GameUtils } from "./gameUtils";
 import { listen } from "@tauri-apps/api/event";
 import { Window, LogicalSize, LogicalPosition } from "@tauri-apps/api/window";
 import { sendNotification, isPermissionGranted, requestPermission } from "@tauri-apps/plugin-notification";
@@ -320,7 +320,7 @@ async function startGame(appWindow: Window, options: Options, timer: HTMLElement
             if (data.type === "killcount_increase") {
                 gameUtils.killCount++;
                 const killCountElem = document.querySelector("#killCount")
-                if (killCountElem) killCountElem.innerHTML = gameUtils.killCount
+                if (killCountElem) killCountElem.innerHTML = gameUtils.killCount.toString();
             }
 
         } catch { }

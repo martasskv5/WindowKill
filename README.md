@@ -215,7 +215,10 @@ Zhrnutie projektu to jednotlivých bodov
 -   [ ] Typescript migration
     -   [ ] Fix all errors
     -   [x] Update links in html files
-        -   [ ] Update links to scripts in html when migrating to TypeScript
+        -   [x] Update links to scripts in html when migrating to TypeScript
+    -   [ ] Update Options Volume to use `number` instead of `string`
+    -   [ ] Remove duplicate null checks / update declarations (mainly in `gameUtils.ts`)
+    -   [ ] Update game to version `0.7.0` when finished migrating to TypeScript
 
 ## Development
 
