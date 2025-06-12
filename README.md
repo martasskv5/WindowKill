@@ -214,7 +214,8 @@ Zhrnutie projektu to jednotlivých bodov
     -   [x] ! Exclude some colors for enemy
 -   [ ] Typescript migration
     -   [ ] Fix all errors
-    -   [ ] Update links in html files
+    -   [x] Update links in html files
+        -   [ ] Update links to scripts in html when migrating to TypeScript
 
 ## Development
 
