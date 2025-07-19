@@ -27,9 +27,9 @@ class Options {
     /**
      * @type {string}
      */
-    volume: string
+    volume: number
     /**
-     * @type {string}
+     * @type {number}
      */
     playerColor: string
     /**
@@ -60,7 +60,7 @@ class Options {
         // Default options
         this.difficulty = new Difficulties();
         this.achievements = new Achievements();
-        this.volume = "50";
+        this.volume = 50;
         this.playerColor = "#ffffff";
         this.config = "options.json";
         this.defaultWidth = 600;
@@ -100,8 +100,8 @@ class Options {
                 // Update the UI with loaded options
                 const difficultyElem = document.querySelector("#difficulty") as HTMLInputElement;
                 if (difficultyElem) difficultyElem.value = this.difficulty.difficulty;
-                (document.querySelector("#volume") as HTMLInputElement).value = this.volume;
-                (document.querySelector("#volumeValue") as HTMLElement).innerHTML = this.volume;
+                (document.querySelector("#volume") as HTMLInputElement).value = String(this.volume);
+                (document.querySelector("#volumeValue") as HTMLElement).innerHTML = String(this.volume);
                 (document.querySelector("#playerColor") as HTMLInputElement).value = this.playerColor;
             } else {
                 // Create default options file if it doesn't exist
@@ -136,10 +136,10 @@ class Options {
 
     /**
      * Updates options with new values and saves them.
-     * @param {{difficulty?: string, volume?: string, playerColor?: string}} newOptions - New options to apply.
+     * @param {{difficulty?: string, volume?: number, playerColor?: string}} newOptions - New options to apply.
      * @returns {Promise<void>}
      */
-    async updateOptions(newOptions: {difficulty?: string, volume?: string, playerColor?: string}): Promise<void> {
+    async updateOptions(newOptions: {difficulty?: string, volume?: number, playerColor?: string}): Promise<void> {
         this.difficulty.setDifficulty(newOptions.difficulty || this.difficulty.difficulty);
         this.volume = newOptions.volume || this.volume;
         this.playerColor = newOptions.playerColor || this.playerColor;
