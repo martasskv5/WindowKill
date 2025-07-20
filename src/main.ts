@@ -7,7 +7,7 @@ import { listen } from "@tauri-apps/api/event";
 import { confirm } from "@tauri-apps/plugin-dialog";
 
 // Check for updates on app start
-checkForUpdates().catch((error) => {
+await checkForUpdates().catch((error) => {
     console.error("Error checking for updates:", error);
 });
 
