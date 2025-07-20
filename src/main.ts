@@ -1,9 +1,15 @@
 import { startGame } from "./js/functions";
 import { Options } from "./js/options";
+import { checkForUpdates } from "./js/checkForUpdates";
 import { getCurrentWindow, currentMonitor, LogicalSize, LogicalPosition } from "@tauri-apps/api/window";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { confirm } from "@tauri-apps/plugin-dialog";
+
+// Check for updates on app start
+checkForUpdates().catch((error) => {
+    console.error("Error checking for updates:", error);
+});
 
 await invoke("start_sync_server");
 await invoke("subscribe_sync");

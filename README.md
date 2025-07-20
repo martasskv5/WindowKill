@@ -220,7 +220,7 @@ Zhrnutie projektu to jednotlivých bodov
     -   [ ] Remove duplicate null checks / update declarations (mainly in `gameUtils.ts`)
     -   [ ] Update game to version `0.7.0` when finished migrating to TypeScript
     -   [x] Update alert to `Dialog` [plugin](https://tauri.app/plugin/dialog/) **Only for display scaling pop-up**
-    -   [ ] Try implement `Updater` [plugin](https://tauri.app/plugin/updater/)
+    -   [x] Try implement `Updater` [plugin](https://tauri.app/plugin/updater/)
     -   [x] Try implement `Single Instance` [plugin](https://tauri.app/plugin/single-instance/)
     -   [ ] Set all variable types to explicit
     -   [ ] Try creating custom type for `sync-message` events
